@@ -60,7 +60,7 @@ keys = [
 
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
-    Key([mod], "r", lazy.spawncmd()),
+    Key([mod], "r", lazy.spawn('rofi -show run')),
 ]
 
 groups = [Group(i) for i in "asdfuiop"]
