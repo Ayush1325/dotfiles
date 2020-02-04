@@ -26,11 +26,19 @@
 
 from libqtile.config import Key, Screen, Group, Drag, Click
 from libqtile.command import lazy
-from libqtile import layout, bar, widget
+from libqtile import layout, bar, widget, hook
 
 from typing import List  # noqa: F401
+import os
+import subprocess
 
 mod = "mod4"
+
+# STARTUP APPLICATIONS
+@hook.subscribe.startup_once
+def start_once():
+    home = os.path.expanduser('~')
+    subprocess.call([home + '/.config/qtile/autostart.sh'])
 
 keys = [
     # Switch between windows in current stack pane
@@ -61,6 +69,11 @@ keys = [
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawn('rofi -show run')),
+
+    # Sound
+    Key([], "XF86AudioMute", lazy.spawn("pamixer -t")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer -d 5 -u")),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer -i 5 -u"))
 ]
 
 groups = [Group(i) for i in "asdfuiop"]

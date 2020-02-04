@@ -1,0 +1,217 @@
+#+TITLE: Emacs Config
+#+AUTHOR: Ayush Singh
+#+EMAIL: ayushsingh1325@gmail.com
+
+* Basic Setup
+** Use Package
+#+BEGIN_SRC emacs-lisp
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+
+  (use-package auto-package-update
+    :config
+    (setq auto-package-update-delete-old-versions t)
+    (setq auto-package-update-hide-results t)
+    (auto-package-update-maybe))
+
+  (use-package use-package-ensure-system-package
+    :ensure t)
+#+END_SRC
+
+* Set Personal Information
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Ayush Singh"
+	user-mail-address "ayushsingh1325@gmail.com"
+	calendar-latitude 23.046593
+	calendar-longitude 72.530460
+	calendar-location-name "Gujarat, India"
+	)
+#+END_SRC
+
+* UI Preferemces
+** Tweak Window Chrome
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode 0)
+  (tool-bar-mode 0)
+  (setq frame-title-format '((:eval (projectile-project-name))))
+  (global-prettify-symbols-mode t)
+#+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+	       :config
+	       (defun hrs/apply-theme ()
+		 (interactive)
+		 (load-theme 'dracula t)))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+		(lambda (frame)
+		  (with-selected-frame frame (hrs/apply-theme))))
+    (hrs/apply-theme))
+#+END_SRC
+** Moody for modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+** Scroll Conservatively
+#+BEGIN_SRC emacs-lisp
+  (setq scroll-conservatively 100)
+#+END_SRC
+** Font related stuff
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(font .  "UbuntuMono Nerd Font Bold" ))
+  (set-face-attribute 'default nil :height 150)
+#+END_SRC
+** Highlight uncommited changes
+#+BEGIN_SRC emacs-lisp
+  (use-package diff-hl
+    :config
+    (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+    (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+#+END_SRC
+** Global line numbers
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode)
+#+END_SRC
+
+* Programming
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+	       :config
+	       (setq git-commit-summary-max-length 50))
+  (use-package git-timemachine)
+#+END_SRC
+** Python
+#+BEGIN_SRC emacs-lisp
+  (use-package python-mode)
+  (use-package pipenv)
+
+  (use-package elpy
+    :init
+    (elpy-enable))
+
+  (add-hook 'elpy-mode-hook 'Flycheck-mode)
+
+  (use-package blacken
+    :hook (elpy-mode . blacken-mode))
+#+END_SRC
+** Lisps
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit)
+  (use-package rainbow-delimiters)
+
+  (setq lispy-mode-hooks
+	'(clojure-mode-hook
+	  emacs-lisp-mode-hook
+	  lisp-mode-hook
+	  scheme-mode-hook))
+
+  (dolist (hook lispy-mode-hooks)
+    (add-hook hook (lambda ()
+		     (setq show-paren-style 'expression)
+		     (paredit-mode)
+		     (rainbow-delimiters-mode))))
+
+  (setq lispy-mode-hooks
+	'(clojure-mode-hook
+	  emacs-lisp-mode-hook
+	  lisp-mode-hook
+	  scheme-mode-hook))
+
+  (dolist (hook lispy-mode-hooks)
+    (add-hook hook (lambda ()
+		     (setq show-paren-style 'expression)
+		     (paredit-mode)
+		     (rainbow-delimiters-mode))))
+
+  (use-package eldoc
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
+
+  (use-package flycheck-package)
+
+  (eval-after-load 'flycheck
+    '(flycheck-package-setup))
+#+END_SRC
+** sh
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'sh-mode-hook
+	    (lambda ()
+	      (setq sh-basic-offset 2
+		    sh-indentation 2)))
+#+END_SRC
+
+* Org Mode
+** Display Preferences
+*** Pretty Bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :init
+    (add-hook 'org-mode-hook 'org-bullets-mode))
+#+END_SRC
+*** Header collapse symbol
+#+BEGIN_SRC emacs-lisp
+  (setq org-ellipsis "⤵")
+#+END_SRC
+*** Syntax Highlighting
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
+*** Make TAB act as if in the language's major mode
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-tab-acts-natively t)
+#+END_SRC
+** Exporting
+*** Markdown
+#+BEGIN_SRC emacs-lisp
+(require 'ox-md)
+#+END_SRC
+*** Allow Babble to evaluate Languages
+#+BEGIN_SRC emacs-lisp
+  (use-package gnuplot)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (dot . t)))
+#+END_SRC
+*** Syntax Hightlight exported code blocs
+#+BEGIN_SRC emacs-lisp
+  (use-package htmlize)
+#+END_SRC
+*** Associate dot language with graphviz-dot major mode
+#+BEGIN_SRC emacs-lisp
+  (use-package graphviz-dot-mode)
+  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+#+END_SRC
+
+* Dired
+** Switvhes that gets passed to ls when dired gets a list of files
+#+BEGIN_SRC emacs-lisp
+  (setq-default dired-listing-switches "-lhvA")
+#+END_SRC
+** Kill buffers of files/dirs that are deleted in dired
+#+BEGIN_SRC emacs-lisp
+  (setq dired-clean-up-buffers-too t)
+#+END_SRC
+** Copy directories recursively
+#+BEGIN_SRC emacs-lisp
+  (setq dired-recursive-copies 'always)
+#+END_SRC
+** Ask Before Recursively deleting a directory
+#+BEGIN_SRC emacs-lisp
+  (setq dired-recursive-deletes 'top)
+#+END_SRC
+** Perform actions asynchronously
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :config
+    (dired-async-mode 1))
+#+END_SRC
