@@ -70,8 +70,9 @@ def init_keys():
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
         EzKey("M-d", lazy.spawn(my_term + " -e ranger")),
-        EzKey("M-e", lazy.spawn("emacs")),
+        EzKey("M-e", lazy.spawn("emacsclient -nc")),
         EzKey("M-i", lazy.spawn("firefox")),
+        EzKey("M-h", lazy.spawn(my_term + " -e htop")),
     ]
 
 
@@ -130,7 +131,7 @@ def init_screens():
                     widget.Systray(),
                     widget.Sep(),
                     widget.Pacman(
-                        foreground="#76FF03", execute=my_term + "-e sudo pacman -Syu",
+                        foreground="#76FF03", execute=my_term + " -e sudo pacman -Syu",
                     ),
                     widget.Sep(),
                     widget.CurrentLayout(foreground="#2962FF",),
