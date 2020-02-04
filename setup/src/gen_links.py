@@ -1,15 +1,20 @@
 import os
 
 apps = [
-    ('/home/ayush/dotfiles/qtile', '/home/ayush/.config/qtile'),
-    ('/home/ayush/dotfiles/.Xresources', '/home/ayush/.Xresources'),
-    ('/home/ayush/dotfiles/.zshrc', '/home/ayush/.zshrc')
+    ("/dotfiles/qtile", "/.config/qtile"),
+    ("/dotfiles/.Xresources", "/.Xresources"),
+    ("/dotfiles/.zshrc", "/.zshrc"),
+    ("/dotfiles/picom", "/.config/picom"),
+    ("/dotfiles/ranger", "/.config/ranger"),
+    ("/dotfiles/.emacs.d", "/.emacs.d"),
 ]
 
-def create_all(l):
-    for (abs, des) in l:
-        os.symlink(abs, des)
 
-        
+def create_all(l):
+    for (a, d) in l:
+        home = os.path.expanduser("~")
+        os.symlink(home + a, home + d)
+
+
 def init():
     create_all(apps)
