@@ -1,5 +1,7 @@
 *~
+elpy
 elpa
+eshell
 .last-package-update-day
 configuration.el
 transient
