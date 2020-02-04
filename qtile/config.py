@@ -85,6 +85,15 @@ def init_groups(ks):
     return groups
 
 
+def init_layout_theme():
+    return {
+        "border_width": 3,
+        "margin": 5,
+        "border_focus": "#7C4DFF",
+        "border_normal": "1D2330",
+    }
+
+
 def init_screens():
     return [
         Screen(
@@ -140,28 +149,11 @@ def init_mouse():
 
 
 def init_layouts():
-    return [layout.MonadTall(), layout.Max(), layout.Floating()]
-
-
-def init_folating_layout():
-    return layout.Floating(
-        float_rules=[
-            {"wmclass": "confirm"},
-            {"wmclass": "dialog"},
-            {"wmclass": "download"},
-            {"wmclass": "error"},
-            {"wmclass": "file_progress"},
-            {"wmclass": "notification"},
-            {"wmclass": "splash"},
-            {"wmclass": "toolbar"},
-            {"wmclass": "confirmreset"},  # gitk
-            {"wmclass": "makebranch"},  # gitk
-            {"wmclass": "maketag"},  # gitk
-            {"wname": "branchdialog"},  # gitk
-            {"wname": "pinentry"},  # GPG key password entry
-            {"wmclass": "ssh-askpass"},  # ssh-askpass
-        ]
-    )
+    return [
+        layout.MonadTall(**layout_theme),
+        layout.Max(**layout_theme),
+        layout.Floating(**layout_theme),
+    ]
 
 
 if __name__ in ["config", "__main__"]:
@@ -174,9 +166,9 @@ if __name__ in ["config", "__main__"]:
     main = None
     widget_defaults = dict(font="Ubuntu Bold", fontsize=16, padding=3,)
     extension_defaults = widget_defaults.copy()
+    layout_theme = init_layout_theme()
     dgroups_key_binder = None
     dgroups_app_rules = []  # type: List
-    floating_layout = init_folating_layout()
     layouts = init_layouts()
     screens = init_screens()
     keys = init_keys()
