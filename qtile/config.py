@@ -24,14 +24,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click
+from libqtile.config import EzKey, Screen, Group, Drag, Click
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
 from typing import List  # noqa: F401
 import os
 import subprocess
-
-mod = "mod4"
 
 # STARTUP APPLICATIONS
 @hook.subscribe.startup_once
@@ -43,43 +41,60 @@ def start_once():
 def init_keys():
     return [
         # Switch between windows in current stack pane
-        Key([mod], "k", lazy.layout.down()),
-        Key([mod], "j", lazy.layout.up()),
+        EzKey("M-b", lazy.layout.down()),
+        EzKey("M-f", lazy.layout.up()),
         # Move windows up or down in current stack
-        Key([mod, "control"], "k", lazy.layout.shuffle_down()),
-        Key([mod, "control"], "j", lazy.layout.shuffle_up()),
+        EzKey("M-S-b", lazy.layout.shuffle_down()),
+        EzKey("M-S-f", lazy.layout.shuffle_up()),
         # Switch window focus to other pane(s) of stack
-        Key([mod], "space", lazy.layout.next()),
+        EzKey("M-<space>", lazy.layout.next()),
         # Swap panes of split stack
-        Key([mod, "shift"], "space", lazy.layout.rotate()),
+        EzKey("M-S-<space>", lazy.layout.rotate()),
         # Toggle between split and unsplit sides of stack.
         # Split = all windows displayed
         # Unsplit = 1 window displayed, like Max layout, but still with
         # multiple stack panes
-        Key([mod, "shift"], "Return", lazy.layout.toggle_split()),
-        Key([mod], "Return", lazy.spawn("urxvt")),
+        EzKey("M-S-<Return>", lazy.layout.toggle_split()),
         # Toggle between different layouts as defined below
-        Key([mod], "Tab", lazy.next_layout()),
-        Key([mod], "w", lazy.window.kill()),
-        Key([mod, "control"], "r", lazy.restart()),
-        Key([mod, "control"], "q", lazy.shutdown()),
-        Key([mod], "r", lazy.spawn("rofi -show run")),
+        EzKey("M-<Tab>", lazy.next_layout()),
+        EzKey("M-C-r", lazy.restart()),
+        EzKey("M-C-q", lazy.shutdown()),
+        # Window Stuff
+        EzKey("M-w", lazy.window.kill()),
+        EzKey("M-m", lazy.layout.maximize()),
         # Sound
-        Key([], "XF86AudioMute", lazy.spawn("pamixer -t")),
-        Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer -d 5 -u")),
-        Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer -i 5 -u")),
+        EzKey("<XF86AudioMute>", lazy.spawn("pamixer -t")),
+        EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 2 -u")),
+        EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 2 -u")),
+        # Applications
+        EzKey("M-r", lazy.spawn("rofi -show run")),
+        EzKey("M-<Return>", lazy.spawn(my_term)),
+        EzKey("M-d", lazy.spawn(my_term + " -e ranger")),
+        EzKey("M-e", lazy.spawn("emacs")),
+        EzKey("M-i", lazy.spawn("firefox")),
+    ]
+
+
+def init_group_names():
+    return [
+        ("DEF", {"layout": "monadtall"}),
+        ("WEB", {"layout": "max"}),
+        ("CONF", {"layout": "monadtall"}),
+        ("MEDIA", {"layout": "max"}),
+        ("GIMP", {"layout": "floating"}),
     ]
 
 
 def init_groups(ks):
-    groups = [Group(i) for i in "asdfuiop"]
-    for i in groups:
+    group_names = init_group_names()
+    groups = [Group(name, **kwargs) for name, kwargs in group_names]
+    for i, (name, _) in enumerate(group_names, 1):
         ks.extend(
             [
                 # mod1 + letter of group = switch to group
-                Key([mod], i.name, lazy.group[i.name].toscreen()),
+                EzKey("M-" + str(i), lazy.group[name].toscreen()),
                 # mod1 + shift + letter of group = switch to & move focused window to group
-                Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
+                EzKey("M-S-" + str(i), lazy.window.togroup(name)),
             ]
         )
     return groups
@@ -115,7 +130,7 @@ def init_screens():
                     widget.Systray(),
                     widget.Sep(),
                     widget.Pacman(
-                        foreground="#76FF03", execute="urxvt -e sudo pacman -Syu",
+                        foreground="#76FF03", execute=my_term + "-e sudo pacman -Syu",
                     ),
                     widget.Sep(),
                     widget.CurrentLayout(foreground="#2962FF",),
@@ -164,6 +179,14 @@ if __name__ in ["config", "__main__"]:
     bring_front_click = False
     cursor_warp = False
     main = None
+    my_term = "urxvtc"
+    modifier_keys = {
+        "M": "mod4",
+        "A": "mod1",
+        "S": "shift",
+        "C": "control",
+    }
+    mod = "mod4"
     widget_defaults = dict(font="Ubuntu Bold", fontsize=16, padding=3,)
     extension_defaults = widget_defaults.copy()
     layout_theme = init_layout_theme()
