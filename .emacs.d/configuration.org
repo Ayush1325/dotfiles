@@ -146,6 +146,36 @@
 	      (setq sh-basic-offset 2
 		    sh-indentation 2)))
 #+END_SRC
+** Rust
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+    :config
+    (add-hook 'rust-mode-hook (lambda ()
+				(setq indent-tabs-mode nil)
+				(setq rust-format-on-save t))))
+
+  (use-package flycheck-rust
+    :config
+    (add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
+
+  (use-package cargo
+    :config
+    (add-hook 'rust-mode-hook 'cargo-minor-mode))
+#+END_SRC
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+	   ("\\.md\\'" . markdown-mode)
+	   ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
+
+  (use-package markdownfmt
+    :config
+    (add-hook 'markdown-mode-hook 'markdownfmt-enable-on-save))
+#+END_SRC
 
 * Org Mode
 ** Display Preferences
@@ -214,4 +244,36 @@
   (use-package async
     :config
     (dired-async-mode 1))
+#+END_SRC
+** Sidebar
+#+BEGIN_SRC emacs-lisp
+  (use-package dired-sidebar
+    :ensure t
+    :commands (dired-sidebar-toggle-sidebar))
+
+  (use-package dired-sidebar
+    :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+    :ensure t
+    :commands (dired-sidebar-toggle-sidebar)
+    :init
+    (add-hook 'dired-sidebar-mode-hook
+	      (lambda ()
+		(unless (file-remote-p default-directory)
+		  (auto-revert-mode))))
+    :config
+    (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+    (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+    (setq dired-sidebar-subtree-line-prefix "__")
+    (setq dired-sidebar-theme 'vscode)
+    (setq dired-sidebar-use-term-integration t)
+    (setq dired-sidebar-use-custom-font t))
+#+END_SRC
+
+* Eshell
+** Autosuggestions
+#+BEGIN_SRC emacs-lisp
+  (use-package esh-autosuggest
+    :hook (eshell-mode . esh-autosuggest-mode)
+    :ensure t)
 #+END_SRC
