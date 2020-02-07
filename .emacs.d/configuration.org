@@ -170,11 +170,15 @@
     :mode (("README\\.md\\'" . gfm-mode)
 	   ("\\.md\\'" . markdown-mode)
 	   ("\\.markdown\\'" . markdown-mode))
-    :init (setq markdown-command "multimarkdown"))
+    :config
+    (setq markdown-command "multimarkdown")
+    (setq markdown-fontify-code-blocks-natively t))
 
   (use-package markdownfmt
     :config
     (add-hook 'markdown-mode-hook 'markdownfmt-enable-on-save))
+
+  (use-package edit-indirect)
 #+END_SRC
 
 * Org Mode
@@ -276,4 +280,146 @@
   (use-package esh-autosuggest
     :hook (eshell-mode . esh-autosuggest-mode)
     :ensure t)
+#+END_SRC
+
+* Documents
+** PDF
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools)
+#+END_SRC
+
+* Modalk
+** Basic Install
+#+BEGIN_SRC emacs-lisp
+  (use-package modalka
+    :config
+    (modalka-global-mode 1)
+    (add-to-list 'modalka-excluded-modes 'magit-status-mode)
+    (add-to-list 'modalka-excluded-modes 'magit-popup-mode)
+    (add-to-list 'modalka-excluded-modes 'eshell-mode))
+#+END_SRC
+** Cursor
+#+BEGIN_SRC emacs-lisp
+  (setq-default cursor-type '(bar . 1))
+  (setq modalka-cursor-type 'box)
+#+END_SRC
+** Enter and exit
+#+BEGIN_SRC emacs-lisp
+  (define-key modalka-mode-map (kbd "i") (lambda () (interactive)
+				 (modalka-mode 0)))
+
+  (global-set-key (kbd "<escape>") (lambda () (interactive)
+					       (modalka-mode 1)))
+#+END_SRC
+** Keybindings
+*** Navigation
+| Command | Modalka   | Action                 |
+|---------+-----------+------------------------|
+| C-f     | f         | Forward                |
+| C-b     | b         | Backward               |
+| C-n     | n         | Next Line              |
+| C-p     | p         | Previous Line          |
+| C-e     | e         | End of line            |
+| C-a     | a         | Start Of Line          |
+| M-f     | F         | Forward By word        |
+| M-b     | B         | Backward by word       |
+| M-e     | E         | Next Sentence          |
+| M-a     | A         | Previous Sentence      |
+| C-v     | v         | Next Screen            |
+| M-v     | V         | Previous Screen        |
+| M->     | >         | End of buffer          |
+| M-<     | <         | Start of Buffer        |
+| M-g g   | g         | To go to a line number |
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "f" "C-f")
+  (modalka-define-kbd "b" "C-b")
+  (modalka-define-kbd "n" "C-n")
+  (modalka-define-kbd "p" "C-p")
+
+  (modalka-define-kbd "F" "M-f")
+  (modalka-define-kbd "B" "M-b")
+
+  (modalka-define-kbd "e" "C-e")
+  (modalka-define-kbd "a" "C-a")
+
+  (modalka-define-kbd "E" "M-e")
+  (modalka-define-kbd "A" "M-a")
+
+  (modalka-define-kbd "v" "C-v")
+  (modalka-define-kbd "V" "M-v")
+
+  (modalka-define-kbd ">" "M->")
+  (modalka-define-kbd "<" "M-<")
+
+  (modalka-define-kbd "G" "M-g g")
+#+END_SRC
+*** File Operations
+| Command | Modalka | Action    |
+|---------+---------+-----------|
+| C-x C-s | x s     | Save      |
+| C-x C-f | x f     | Open File |
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "x s" "C-x C-s")
+  (modalka-define-kbd "x f" "C-x C-f")
+#+END_SRC
+*** Buffer Operations
+| Command | Modalka | Action                      |
+|---------+---------+-----------------------------|
+| C-x b   | x b     | Switch Buffer               |
+| C-x C-b | x l     | List Buffers                |
+| C-x o   | o       | Move cursor to other buffer |
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "o" "C-x o")
+  (modalka-define-kbd "x l" "C-x C-b")
+  (modalka-define-kbd "x b" "C-x b")
+#+END_SRC
+*** Other Operaions
+| Command           | Modalka | Actions                   |
+|-------------------+---------+---------------------------|
+| C-s               | s       | Search, Next in search    |
+| C-M-s             |         | Regular Expression Search |
+| C-r               | r       | Previous search           |
+| C-u times Command |         | To repeat Commands        |
+| C-x u             | u       | Undo                      |
+| M-%               |         | Query replace             |
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "s" "C-s")
+  (modalka-define-kbd "r" "C-r")
+  (modalka-define-kbd "u" "C-x u")
+#+END_SRC
+*** Clipboard
+| Command   | Modalka | Action                          |
+|-----------+---------+---------------------------------|
+| C-y       | y       | Yank Text                       |
+| C-k       | k       | Kill till end of line           |
+| M-k       | K       | Kill to end of sentence         |
+| C-d       | d       | Delete current character        |
+| M-d       | D       | Kill next word                  |
+| C-<space> | <space> | Start Selection                 |
+| C-x C-x   |         | To retrun to start of selection |
+| C-w       | w       | Kill Selected text              |
+| M-w       | W       | Copy Selected text              |
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "W" "M-w")
+  (modalka-define-kbd "Y" "M-y")
+  (modalka-define-kbd "w" "C-w")
+  (modalka-define-kbd "y" "C-y")
+  (modalka-define-kbd "SPC" "C-SPC")
+  (modalka-define-kbd "k" "C-k")
+  (modalka-define-kbd "K" "M-k")
+  (modalka-define-kbd "d" "C-d")
+  (modalka-define-kbd "D" "M-d")
+#+END_SRC
+*** Numbers
+#+BEGIN_SRC emacs-lisp
+  (modalka-define-kbd "0" "C-0")
+  (modalka-define-kbd "1" "C-1")
+  (modalka-define-kbd "2" "C-2")
+  (modalka-define-kbd "3" "C-3")
+  (modalka-define-kbd "4" "C-4")
+  (modalka-define-kbd "5" "C-5")
+  (modalka-define-kbd "6" "C-6")
+  (modalka-define-kbd "7" "C-7")
+  (modalka-define-kbd "8" "C-8")
+  (modalka-define-kbd "9" "C-9")
 #+END_SRC
