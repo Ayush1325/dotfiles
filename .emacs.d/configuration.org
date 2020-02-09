@@ -150,11 +150,6 @@
 		 :config
 		 (setq git-commit-summary-max-length 50))
   (use-package git-timemachine)
-  (use-package magithub
-    :after magit
-    :config
-    (magithub-feature-autoinject t)
-    (setq magithub-clone-default-directory "~/github"))
 #+END_SRC
 ** Markdown
 #+BEGIN_SRC emacs-lisp

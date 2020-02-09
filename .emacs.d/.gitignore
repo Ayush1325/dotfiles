@@ -5,5 +5,10 @@ eshell
 .last-package-update-day
 configuration.el
 transient
-/.emacs.d/configuration.org_archive
-/.emacs.d/#new_config.org#
+configuration.org_archive
+#new_config.org#
+.cache/
+recentf
+projectile-bookmarks.eld
+.lsp-session-v1
+.mc-lists.el
