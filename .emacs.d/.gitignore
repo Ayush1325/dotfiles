@@ -6,3 +6,4 @@ eshell
 configuration.el
 transient
 /.emacs.d/configuration.org_archive
+/.emacs.d/#new_config.org#

@@ -28,139 +28,133 @@
 	)
 #+END_SRC
 
-* UI Preferemces
-** Tweak Window Chrome
+* Interface
+** Helm
 #+BEGIN_SRC emacs-lisp
-  (menu-bar-mode 0)
-  (tool-bar-mode 0)
-  (setq frame-title-format '((:eval (projectile-project-name))))
-  (global-prettify-symbols-mode t)
+  (use-package helm
+    :ensure t
+    :bind (("M-x" . #'helm-M-x)
+	   ("C-x r b" . #'helm-filtered-bookmarks)
+	   ("C-x C-f" . #'helm-find-files)
+	   ("C-x C-b" . #'helm-buffers-list))
+    :config
+    (helm-mode 1))
+#+END_SRC
+** Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons)
+#+END_SRC
+** Page Breaker
+#+BEGIN_SRC emacs-lisp
+  (use-package page-break-lines
+    :config
+    (setq global-page-break-lines-mode 1))
+#+END_SRC
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq initial-buffer-choice (lambda ()
+				  (get-buffer "*dashboard*")))
+    (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+    (setq dashboard-startup-banner 'logo)
+    (setq dashboard-center-content t)
+    (setq dashboard-items '((recents  . 5)
+			  (bookmarks . 5)
+			  (projects . 5)
+			  (agenda . 5)
+			  (registers . 5)))
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-set-init-info t))
 #+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp
   (use-package dracula-theme
-	       :config
-	       (defun hrs/apply-theme ()
-		 (interactive)
-		 (load-theme 'dracula t)))
-
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-		(lambda (frame)
-		  (with-selected-frame frame (hrs/apply-theme))))
-    (hrs/apply-theme))
-#+END_SRC
-** Moody for modeline
-#+BEGIN_SRC emacs-lisp
-  (use-package moody
+    :ensure t
     :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+    (load-theme 'dracula t))
 #+END_SRC
-** Scroll Conservatively
-#+BEGIN_SRC emacs-lisp
-  (setq scroll-conservatively 100)
-#+END_SRC
-** Font related stuff
+** Font
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'default-frame-alist '(font .  "UbuntuMono Nerd Font Bold" ))
   (set-face-attribute 'default nil :height 150)
 #+END_SRC
-** Highlight uncommited changes
+** Pretty Stuff
 #+BEGIN_SRC emacs-lisp
-  (use-package diff-hl
-    :config
-    (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
-    (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+  (use-package highlight-parentheses
+    :hook (prog-mode . highlight-parentheses-mode))
+  (global-prettify-symbols-mode +1)
+  (use-package rainbow-mode
+    :hook prog-mode)
+  (menu-bar-mode 0)
+  (tool-bar-mode 0)
+  (setq frame-title-format '((:eval (projectile-project-name))))
 #+END_SRC
-** Global line numbers
+** Multiple Cursors
 #+BEGIN_SRC emacs-lisp
-  (global-display-line-numbers-mode)
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . 'mc/edit-lines)
+	   ("C->" . 'mc/mark-next-like-this)
+	   ("C-c C-<" . 'mc/mark-all-like-this)))
+#+END_SRC
+** Modline
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+	:ensure t
+	:hook (after-init . doom-modeline-mode))
+#+END_SRC
+** Line Numbers
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode t)
+  (setq display-line-numbers-type 'relative)
 #+END_SRC
 
 * Programming
+** Projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :bind (:map projectile-mode-map
+		("s-p" . 'projectile-command-map)
+		("C-c p" . 'projectile-command-map))
+    :config
+    (projectile-mode +1))
+#+END_SRC
+
+** LSP
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :init (setq lsp-keymap-prefix "s-l")
+    :hook ((prog-mode . lsp)
+	   (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
+
+
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package company-lsp :commands company-lsp)
+
+  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+  (use-package dap-mode)
+
+  (use-package which-key
+    :config
+    (which-key-mode))
+#+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-	       :config
-	       (setq git-commit-summary-max-length 50))
+		 :config
+		 (setq git-commit-summary-max-length 50))
   (use-package git-timemachine)
-#+END_SRC
-** Python
-#+BEGIN_SRC emacs-lisp
-  (use-package python-mode)
-  (use-package pipenv)
-
-  (use-package elpy
-    :init
-    (elpy-enable))
-
-  (add-hook 'elpy-mode-hook 'Flycheck-mode)
-
-  (use-package blacken
-    :hook (elpy-mode . blacken-mode))
-#+END_SRC
-** Lisps
-#+BEGIN_SRC emacs-lisp
-  (use-package paredit)
-  (use-package rainbow-delimiters)
-
-  (setq lispy-mode-hooks
-	'(clojure-mode-hook
-	  emacs-lisp-mode-hook
-	  lisp-mode-hook
-	  scheme-mode-hook))
-
-  (dolist (hook lispy-mode-hooks)
-    (add-hook hook (lambda ()
-		     (setq show-paren-style 'expression)
-		     (paredit-mode)
-		     (rainbow-delimiters-mode))))
-
-  (setq lispy-mode-hooks
-	'(clojure-mode-hook
-	  emacs-lisp-mode-hook
-	  lisp-mode-hook
-	  scheme-mode-hook))
-
-  (dolist (hook lispy-mode-hooks)
-    (add-hook hook (lambda ()
-		     (setq show-paren-style 'expression)
-		     (paredit-mode)
-		     (rainbow-delimiters-mode))))
-
-  (use-package eldoc
+  (use-package magithub
+    :after magit
     :config
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
-
-  (use-package flycheck-package)
-
-  (eval-after-load 'flycheck
-    '(flycheck-package-setup))
-#+END_SRC
-** sh
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'sh-mode-hook
-	    (lambda ()
-	      (setq sh-basic-offset 2
-		    sh-indentation 2)))
-#+END_SRC
-** Rust
-#+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :config
-    (add-hook 'rust-mode-hook (lambda ()
-				(setq indent-tabs-mode nil)
-				(setq rust-format-on-save t))))
-
-  (use-package flycheck-rust
-    :config
-    (add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
-
-  (use-package cargo
-    :config
-    (add-hook 'rust-mode-hook 'cargo-minor-mode))
+    (magithub-feature-autoinject t)
+    (setq magithub-clone-default-directory "~/github"))
 #+END_SRC
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -170,76 +164,64 @@
     :mode (("README\\.md\\'" . gfm-mode)
 	   ("\\.md\\'" . markdown-mode)
 	   ("\\.markdown\\'" . markdown-mode))
-    :config
-    (setq markdown-command "multimarkdown")
-    (setq markdown-fontify-code-blocks-natively t))
-
-  (use-package markdownfmt
-    :config
-    (add-hook 'markdown-mode-hook 'markdownfmt-enable-on-save))
-
-  (use-package edit-indirect)
+    :init (setq markdown-command "multimarkdown"))
+#+END_SRC
+** Lisp
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit)
+  (use-package eldoc
+     :config
+     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
+  (use-package highlight-defined
+    :hook (emacs-lisp-mode-hook . highlight-defined-mode))
 #+END_SRC
 
 * Org Mode
-** Display Preferences
-*** Pretty Bullets
+** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-    :init
-    (add-hook 'org-mode-hook 'org-bullets-mode))
+    :hook (org-mode . org-bullets-mode))
 #+END_SRC
-*** Header collapse symbol
+** Babble
 #+BEGIN_SRC emacs-lisp
-  (setq org-ellipsis "⤵")
-#+END_SRC
-*** Syntax Highlighting
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
-#+END_SRC
-*** Make TAB act as if in the language's major mode
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-tab-acts-natively t)
-#+END_SRC
-** Exporting
-*** Markdown
-#+BEGIN_SRC emacs-lisp
-(require 'ox-md)
-#+END_SRC
-*** Allow Babble to evaluate Languages
-#+BEGIN_SRC emacs-lisp
-  (use-package gnuplot)
-
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
      (python . t)
      (dot . t)))
 #+END_SRC
-*** Syntax Hightlight exported code blocs
+** Syntax Highlighting
 #+BEGIN_SRC emacs-lisp
-  (use-package htmlize)
+  (setq org-src-fontify-natively t)
 #+END_SRC
-*** Associate dot language with graphviz-dot major mode
+** Header Collapse Symbol
 #+BEGIN_SRC emacs-lisp
-  (use-package graphviz-dot-mode)
-  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+  (setq org-ellipsis "⤵")
+#+END_SRC
+** Make TAB act as if in language's major mode
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-tab-acts-natively t)
+#+END_SRC
+
+* Eshell
+** Autosuggestion
+#+BEGIN_SRC emacs-lisp
+  (use-package esh-autosuggest
+    :hook (eshell-mode . esh-autosuggest-mode)
+    :ensure t)
+#+END_SRC
+
+* Documents
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools)
 #+END_SRC
 
 * Dired
-** Switvhes that gets passed to ls when dired gets a list of files
-#+BEGIN_SRC emacs-lisp
-  (setq-default dired-listing-switches "-lhvA")
-#+END_SRC
-** Kill buffers of files/dirs that are deleted in dired
-#+BEGIN_SRC emacs-lisp
-  (setq dired-clean-up-buffers-too t)
-#+END_SRC
-** Copy directories recursively
+** Copy Directories recusrsively
 #+BEGIN_SRC emacs-lisp
   (setq dired-recursive-copies 'always)
 #+END_SRC
-** Ask Before Recursively deleting a directory
+** Ask before recursively deleting
 #+BEGIN_SRC emacs-lisp
   (setq dired-recursive-deletes 'top)
 #+END_SRC
@@ -248,178 +230,4 @@
   (use-package async
     :config
     (dired-async-mode 1))
-#+END_SRC
-** Sidebar
-#+BEGIN_SRC emacs-lisp
-  (use-package dired-sidebar
-    :ensure t
-    :commands (dired-sidebar-toggle-sidebar))
-
-  (use-package dired-sidebar
-    :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-    :ensure t
-    :commands (dired-sidebar-toggle-sidebar)
-    :init
-    (add-hook 'dired-sidebar-mode-hook
-	      (lambda ()
-		(unless (file-remote-p default-directory)
-		  (auto-revert-mode))))
-    :config
-    (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-    (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-
-    (setq dired-sidebar-subtree-line-prefix "__")
-    (setq dired-sidebar-theme 'vscode)
-    (setq dired-sidebar-use-term-integration t)
-    (setq dired-sidebar-use-custom-font t))
-#+END_SRC
-
-* Eshell
-** Autosuggestions
-#+BEGIN_SRC emacs-lisp
-  (use-package esh-autosuggest
-    :hook (eshell-mode . esh-autosuggest-mode)
-    :ensure t)
-#+END_SRC
-
-* Documents
-** PDF
-#+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools)
-#+END_SRC
-
-* Modalk
-** Basic Install
-#+BEGIN_SRC emacs-lisp
-  (use-package modalka
-    :config
-    (modalka-global-mode 1)
-    (add-to-list 'modalka-excluded-modes 'magit-status-mode)
-    (add-to-list 'modalka-excluded-modes 'magit-popup-mode)
-    (add-to-list 'modalka-excluded-modes 'eshell-mode))
-#+END_SRC
-** Cursor
-#+BEGIN_SRC emacs-lisp
-  (setq-default cursor-type '(bar . 1))
-  (setq modalka-cursor-type 'box)
-#+END_SRC
-** Enter and exit
-#+BEGIN_SRC emacs-lisp
-  (define-key modalka-mode-map (kbd "i") (lambda () (interactive)
-				 (modalka-mode 0)))
-
-  (global-set-key (kbd "<escape>") (lambda () (interactive)
-					       (modalka-mode 1)))
-#+END_SRC
-** Keybindings
-*** Navigation
-| Command | Modalka   | Action                 |
-|---------+-----------+------------------------|
-| C-f     | f         | Forward                |
-| C-b     | b         | Backward               |
-| C-n     | n         | Next Line              |
-| C-p     | p         | Previous Line          |
-| C-e     | e         | End of line            |
-| C-a     | a         | Start Of Line          |
-| M-f     | F         | Forward By word        |
-| M-b     | B         | Backward by word       |
-| M-e     | E         | Next Sentence          |
-| M-a     | A         | Previous Sentence      |
-| C-v     | v         | Next Screen            |
-| M-v     | V         | Previous Screen        |
-| M->     | >         | End of buffer          |
-| M-<     | <         | Start of Buffer        |
-| M-g g   | g         | To go to a line number |
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "f" "C-f")
-  (modalka-define-kbd "b" "C-b")
-  (modalka-define-kbd "n" "C-n")
-  (modalka-define-kbd "p" "C-p")
-
-  (modalka-define-kbd "F" "M-f")
-  (modalka-define-kbd "B" "M-b")
-
-  (modalka-define-kbd "e" "C-e")
-  (modalka-define-kbd "a" "C-a")
-
-  (modalka-define-kbd "E" "M-e")
-  (modalka-define-kbd "A" "M-a")
-
-  (modalka-define-kbd "v" "C-v")
-  (modalka-define-kbd "V" "M-v")
-
-  (modalka-define-kbd ">" "M->")
-  (modalka-define-kbd "<" "M-<")
-
-  (modalka-define-kbd "G" "M-g g")
-#+END_SRC
-*** File Operations
-| Command | Modalka | Action    |
-|---------+---------+-----------|
-| C-x C-s | x s     | Save      |
-| C-x C-f | x f     | Open File |
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "x s" "C-x C-s")
-  (modalka-define-kbd "x f" "C-x C-f")
-#+END_SRC
-*** Buffer Operations
-| Command | Modalka | Action                      |
-|---------+---------+-----------------------------|
-| C-x b   | x b     | Switch Buffer               |
-| C-x C-b | x l     | List Buffers                |
-| C-x o   | o       | Move cursor to other buffer |
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "o" "C-x o")
-  (modalka-define-kbd "x l" "C-x C-b")
-  (modalka-define-kbd "x b" "C-x b")
-#+END_SRC
-*** Other Operaions
-| Command           | Modalka | Actions                   |
-|-------------------+---------+---------------------------|
-| C-s               | s       | Search, Next in search    |
-| C-M-s             |         | Regular Expression Search |
-| C-r               | r       | Previous search           |
-| C-u times Command |         | To repeat Commands        |
-| C-x u             | u       | Undo                      |
-| M-%               |         | Query replace             |
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "s" "C-s")
-  (modalka-define-kbd "r" "C-r")
-  (modalka-define-kbd "u" "C-x u")
-#+END_SRC
-*** Clipboard
-| Command   | Modalka | Action                          |
-|-----------+---------+---------------------------------|
-| C-y       | y       | Yank Text                       |
-| C-k       | k       | Kill till end of line           |
-| M-k       | K       | Kill to end of sentence         |
-| C-d       | d       | Delete current character        |
-| M-d       | D       | Kill next word                  |
-| C-<space> | <space> | Start Selection                 |
-| C-x C-x   |         | To retrun to start of selection |
-| C-w       | w       | Kill Selected text              |
-| M-w       | W       | Copy Selected text              |
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "W" "M-w")
-  (modalka-define-kbd "Y" "M-y")
-  (modalka-define-kbd "w" "C-w")
-  (modalka-define-kbd "y" "C-y")
-  (modalka-define-kbd "SPC" "C-SPC")
-  (modalka-define-kbd "k" "C-k")
-  (modalka-define-kbd "K" "M-k")
-  (modalka-define-kbd "d" "C-d")
-  (modalka-define-kbd "D" "M-d")
-#+END_SRC
-*** Numbers
-#+BEGIN_SRC emacs-lisp
-  (modalka-define-kbd "0" "C-0")
-  (modalka-define-kbd "1" "C-1")
-  (modalka-define-kbd "2" "C-2")
-  (modalka-define-kbd "3" "C-3")
-  (modalka-define-kbd "4" "C-4")
-  (modalka-define-kbd "5" "C-5")
-  (modalka-define-kbd "6" "C-6")
-  (modalka-define-kbd "7" "C-7")
-  (modalka-define-kbd "8" "C-8")
-  (modalka-define-kbd "9" "C-9")
 #+END_SRC

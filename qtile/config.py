@@ -92,9 +92,7 @@ def init_groups(ks):
     for i, (name, _) in enumerate(group_names, 1):
         ks.extend(
             [
-                # mod1 + letter of group = switch to group
                 EzKey("M-" + str(i), lazy.group[name].toscreen()),
-                # mod1 + shift + letter of group = switch to & move focused window to group
                 EzKey("M-S-" + str(i), lazy.window.togroup(name)),
             ]
         )
