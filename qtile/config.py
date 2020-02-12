@@ -41,11 +41,11 @@ def start_once():
 def init_keys():
     return [
         # Switch between windows in current stack pane
-        EzKey("M-b", lazy.layout.down()),
-        EzKey("M-f", lazy.layout.up()),
+        # EzKey("-b", lazy.layout.down()),
+        # EzKey("C-f", lazy.layout.up()),
         # Move windows up or down in current stack
-        EzKey("M-S-b", lazy.layout.shuffle_down()),
-        EzKey("M-S-f", lazy.layout.shuffle_up()),
+        EzKey("C-S-b", lazy.layout.shuffle_down()),
+        EzKey("C-S-f", lazy.layout.shuffle_up()),
         # Switch window focus to other pane(s) of stack
         EzKey("M-<space>", lazy.layout.next()),
         # Swap panes of split stack
@@ -69,20 +69,23 @@ def init_keys():
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
-        EzKey("M-d", lazy.spawn(my_term + " -e ranger")),
+        EzKey("M-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
         EzKey("M-i", lazy.spawn("firefox")),
+        EzKey("M-j", lazy.spawn("joplin-desktop")),
         EzKey("M-h", lazy.spawn(my_term + " -e htop")),
     ]
 
 
 def init_group_names():
     return [
-        ("DEF", {"layout": "monadtall"}),
-        ("WEB", {"layout": "max"}),
-        ("CONF", {"layout": "monadtall"}),
-        ("MEDIA", {"layout": "max"}),
-        ("GIMP", {"layout": "floating"}),
+            ("DEF", {"layout": "monadtall"}),
+            ("WEB", {"layout": "max"}),
+            ("CONF", {"layout": "monadtall"}),
+            ("MEDIA", {"layout": "max"}),
+            ("DEV", {"layout": "max"}),
+            ("NOTE", {"layout": "max"}),
+            ("VBOX", {"layout": "max"})
     ]
 
 
