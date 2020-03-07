@@ -1,0 +1,185 @@
+* Startup Stuff
+** User info
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Ayush Singh")
+  (setq user-mail-address "ayush1325@protonmail.com")
+#+END_SRC
+** Start screen
+#+BEGIN_SRC emacs-lisp
+  (setq inhabit-startup-message t)
+#+END_SRC
+** Menus stuff
+- Disable toolbar
+- Shortent prompt answers
+- Use ibuffer
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (defalias 'list-buffers 'ibuffer)
+#+END_SRC
+** Refresh Buffer
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f5>") 'revert-buffer)
+#+END_SRC
+** Window Stuff
+#+BEGIN_SRC emacs-lisp
+  (windmove-default-keybindings)
+  (winner-mode 1)
+
+  (use-package ace-window
+    :ensure t
+    :bind
+    ([remap other-window] . ace-window)
+    :custom-face
+    (aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+#+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :ensure t
+    :config
+    (load-theme 'dracula t))
+#+END_SRC
+** Line stuff
+- Highlight current line
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode 1)
+#+END_SRC
+** Expand Select
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :bind (("C-=" . er/expand-region)))
+#+END_SRC
+** Multiple cursors
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C->" . mc/mark-next-like-this)
+    ("C-<" . mc/mark-previous-like-this)))
+#+END_SRC
+** IEdit
+Allows to edit same word at all instances
+#+BEGIN_SRC emacs-lisp
+  (use-package iedit
+    :ensure t)
+#+END_SRC
+** Snart narrowing
+#+BEGIN_SRC emacs-lisp
+  (defun narrow-or-widen-dwim (p)
+    (interactive "P")
+    (declare (interactive-only))
+    (cond ((and (buffer-narrowed-p) (not p)) (widen))
+   ((region-active-p)
+    (narrow-to-region (region-beginning) (region-end)))
+   ((derived-mode-p 'org-mode)
+     (cond ((ignore-errors (org-edit-src-code))
+    (delete-other-windows))
+   ((org-at-block-p)
+    (org-narrow-to-block))
+   (t (org-narrow-to-subtree))))
+   (t (narrow-to-defun))))
+   (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+#+END_SRC
+** Kill behaviour
+For better integration with system clipboard
+#+BEGIN_SRC emacs-lisp
+  (setq save-interprogram-paste-before-kill t)
+#+END_SRC
+* Useful packages
+** Try
+To try out packages without installing
+#+BEGIN_SRC emacs-lisp
+  (use-package try
+    :ensure t)
+#+END_SRC
+** Which Key
+For key suggestions
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config (which-key-mode))
+#+END_SRC
+** Lorem ipsum
+Random text generator
+#+BEGIN_SRC emacs-lisp
+  (use-package lorem-ipsum
+    :ensure t)
+#+END_SRC
+** Consel
+For ivy and better kill support
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t
+    :bind
+    (("M-y" . counsel-yank-pop)
+     :map ivy-minibuffer-map
+     ("M-y" . ivy-next-line)))
+
+  (use-package counsel-projectile
+    :ensure t
+    :bind ("C-c p" . projectile-command-map)
+    :config
+    (counsel-projectile-on))
+#+END_SRC
+** Ivy
+Lot of autocompletions
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :ensure t
+    :bind (("C-s" . swiper)
+           ("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file))
+    :config
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t)
+    (ivy-mode 1))
+#+END_SRC
+** Company 
+For autocomplete inside buffer
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (global-company-mode 1))
+
+  (setq company-global-modes '(not org-mode))
+#+END_SRC
+** Undo Tree
+For better undo and redo
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :config
+    (global-undo-tree-mode 1))
+#+END_SRC
+* Programming
+** Projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-mode +1)
+    (setq projectile-completion-system 'ivy))
+#+END_SRC
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :config
+    (setq git-commit-summary-max-length 50))
+#+END_SRC
+* Org Mode
+** Pretty Bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+#+END_SRC
+** Custom variables
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables
+   '(org-startup-indented t)
+   '(org-startup-folded (quote overview))
+   )
+#+END_SRC

@@ -1,33 +1,28 @@
-
-;; Configure package.el to include MELPA.
-(require 'package)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(package-initialize)
-
-
-;; Ensure that use-package is installed.
-;;
-;; If use-package isn't already installed, it's extremely likely that this is a
-;; fresh installation! So we'll want to update the package repository and
-;; install use-package before loading the literate configuration.
-(when (not (package-installed-p 'use-package))
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(org-babel-load-file "~/.emacs.d/configuration.org")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-startup-folded (quote overview))
+ '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (graphviz-dot-mode htmlize gnuplot org-bullets flycheck-package rainbow-delimiters paredit blacken elpy pipenv python-mode git-timemachine magit diff-hl moody dracula-theme use-package-ensure-system-package auto-package-update use-package))))
+    (magit counsel-projectile projectile iedit multiple-cursors expand-region undo-tree dracula-theme company company-mode counsel consel ivy helm lorem-ipsum ace-window org-bullets try which-key use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+
+(require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives
+	     '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
