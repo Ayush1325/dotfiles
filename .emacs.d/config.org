@@ -33,19 +33,6 @@
     :custom-face
     (aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 #+END_SRC
-** Theme
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    :ensure t
-    :config
-    (setq doom-themes-enable-bold t
-          doom-themes-enable-italic t)
-    (load-theme 'doom-dracula t))
-
-  (doom-themes-visual-bell-config)
-
-  (doom-themes-org-config))
-#+END_SRC
 ** Line stuff
 - Highlight current line
 #+BEGIN_SRC emacs-lisp
@@ -62,7 +49,7 @@
   (use-package multiple-cursors
     :ensure t
     :bind (("C->" . mc/mark-next-like-this)
-    ("C-<" . mc/mark-previous-like-this)))
+           ("C-<" . mc/mark-previous-like-this)))
 #+END_SRC
 ** IEdit
 Allows to edit same word at all instances
@@ -70,7 +57,7 @@ Allows to edit same word at all instances
   (use-package iedit
     :ensure t)
 #+END_SRC
-** Snart narrowing
+** Smart narrowing
 #+BEGIN_SRC emacs-lisp
   (defun narrow-or-widen-dwim (p)
     (interactive "P")
@@ -98,11 +85,6 @@ For better integration with system clipboard
     :ensure t
     :init (doom-modeline-mode 1))
 #+END_SRC
-** Fonts
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'default-frame-alist '(font .  "UbuntuMono Nerd Font Bold" ))
-  (set-face-attribute 'default nil :height 150)
-#+END_SRC
 ** Dashboard
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
@@ -121,29 +103,12 @@ For better integration with system clipboard
     (setq dashboard-set-file-icons t)
     (setq dashboard-set-init-info t))
 #+END_SRC
-** Icons
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons
-    :ensure t)
-#+END_SRC
 ** Page breaker
 #+BEGIN_SRC emacs-lisp
   (use-package page-break-lines
     :ensure t
     :config
     (setq global-page-break-lines-mode 1))
-#+END_SRC
-** Pretty stuff
-#+BEGIN_SRC emacs-lisp
-  (use-package highlight-parentheses
-    :ensure t
-    :hook (prog-mode . highlight-parentheses-mode))
-
-  (global-prettify-symbols-mode +1)
-
-  (use-package rainbow-mode
-    :ensure t
-    :hook prog-mode)
 #+END_SRC
 * Useful packages
 ** Try
@@ -257,6 +222,19 @@ For better undo and redo
   (use-package rust-mode
     :ensure t)
 #+END_SRC
+** Lisp
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit
+    :ensure t)
+
+  (use-package eldoc
+    :ensure t
+    :hook (emacs-lisp-mode-hook . eldoc-mode))
+
+  (use-package highlight-defined
+    :ensure t
+    :hook (emacs-lisp-mode-hook . highlight-defined-mode))
+#+END_SRC
 * Org Mode
 ** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
@@ -266,8 +244,64 @@ For better undo and redo
 #+END_SRC
 ** Custom variables
 #+BEGIN_SRC emacs-lisp
-  (custom-set-variables
-   '(org-startup-indented t)
-   '(org-startup-folded (quote overview))
-   )
+  (setq org-startup-indented t)
+  (setq org-startup-folded (quote overview))
+#+END_SRC
+** Pretty stuff
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+  (setq org-ellipsis "⤵")
+  (setq org-src-tab-acts-natively t)
+#+END_SRC
+* Eshell
+** Autosuggestions
+#+BEGIN_SRC emacs-lisp
+  (use-package esh-autosuggest
+    :ensure t
+    :hook (eshell-mode . esh-autosuggest-mode))
+#+END_SRC
+* Dired
+** Async
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :ensure t
+    :config
+    (dired-async-mode 1))
+#+END_SRC
+* Asthetic Stuff
+** Pretty stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-parentheses
+    :ensure t
+    :hook (prog-mode . highlight-parentheses-mode))
+
+  (global-prettify-symbols-mode +1)
+
+  (use-package rainbow-mode
+    :ensure t
+    :hook prog-mode)
+
+  (setq frame-title-format '((:eval (projectile-project-name))))
+#+END_SRC
+** Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t)
+#+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :config
+    (setq doom-themes-enable-bold t)
+    (setq doom-themes-enable-italic t)
+    (load-theme 'doom-dracula t))
+
+  (doom-themes-visual-bell-config)
+
+  (doom-themes-org-config)
+#+END_SRC
+** Fonts
+#+BEGIN_SRC emacs-lisp
+  (set-frame-font "UbuntuMono Nerd Font Bold 20" nil t)
 #+END_SRC

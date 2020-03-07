@@ -3,11 +3,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-startup-folded (quote overview))
- '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (doom-themes rainbow-mode highlight-parentheses dashboard doom-modeline rust-mode dap-mode lsp-ivy company-lsp lsp-ui lsp-mode magit counsel-projectile projectile iedit multiple-cursors expand-region undo-tree dracula-theme company company-mode counsel consel ivy helm lorem-ipsum ace-window org-bullets try which-key use-package))))
+    (highlight-defined paredit esh-autosuggest doom-themes rainbow-mode highlight-parentheses dashboard doom-modeline rust-mode dap-mode lsp-ivy company-lsp lsp-ui lsp-mode magit counsel-projectile projectile iedit multiple-cursors expand-region undo-tree dracula-theme company company-mode counsel consel ivy helm lorem-ipsum ace-window org-bullets try which-key use-package)))
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
