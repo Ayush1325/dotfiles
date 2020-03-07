@@ -35,10 +35,16 @@
 #+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp
-  (use-package dracula-theme
+  (use-package doom-themes
     :ensure t
     :config
-    (load-theme 'dracula t))
+    (setq doom-themes-enable-bold t
+          doom-themes-enable-italic t)
+    (load-theme 'doom-dracula t))
+
+  (doom-themes-visual-bell-config)
+
+  (doom-themes-org-config))
 #+END_SRC
 ** Line stuff
 - Highlight current line
@@ -85,6 +91,59 @@ Allows to edit same word at all instances
 For better integration with system clipboard
 #+BEGIN_SRC emacs-lisp
   (setq save-interprogram-paste-before-kill t)
+#+END_SRC
+** Modline
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+#+END_SRC
+** Fonts
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(font .  "UbuntuMono Nerd Font Bold" ))
+  (set-face-attribute 'default nil :height 150)
+#+END_SRC
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq initial-buffer-choice (lambda ()
+                                    (get-buffer "*dashboard*")))
+    (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+    (setq dashboard-startup-banner 'logo)
+    (setq dashboard-center-content t)
+    (setq dashboard-items '((recents  . 5)
+                            (bookmarks . 5)
+                            (projects . 5)))
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-set-init-info t))
+#+END_SRC
+** Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t)
+#+END_SRC
+** Page breaker
+#+BEGIN_SRC emacs-lisp
+  (use-package page-break-lines
+    :ensure t
+    :config
+    (setq global-page-break-lines-mode 1))
+#+END_SRC
+** Pretty stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package highlight-parentheses
+    :ensure t
+    :hook (prog-mode . highlight-parentheses-mode))
+
+  (global-prettify-symbols-mode +1)
+
+  (use-package rainbow-mode
+    :ensure t
+    :hook prog-mode)
 #+END_SRC
 * Useful packages
 ** Try
@@ -168,6 +227,35 @@ For better undo and redo
     :ensure t
     :config
     (setq git-commit-summary-max-length 50))
+#+END_SRC
+** LSP
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :init (setq lsp-keymap-prefix "s-l")
+    :hook ((XXX-mode . lsp)
+           (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
+
+  (use-package lsp-ivy
+    :ensure t
+    :commands lsp-ivy-workspace-symbol)
+
+  (use-package dap-mode
+    :ensure t)
+#+END_SRC
+** Rust Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+    :ensure t)
 #+END_SRC
 * Org Mode
 ** Pretty Bullets

@@ -7,7 +7,7 @@
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (magit counsel-projectile projectile iedit multiple-cursors expand-region undo-tree dracula-theme company company-mode counsel consel ivy helm lorem-ipsum ace-window org-bullets try which-key use-package))))
+    (doom-themes rainbow-mode highlight-parentheses dashboard doom-modeline rust-mode dap-mode lsp-ivy company-lsp lsp-ui lsp-mode magit counsel-projectile projectile iedit multiple-cursors expand-region undo-tree dracula-theme company company-mode counsel consel ivy helm lorem-ipsum ace-window org-bullets try which-key use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
