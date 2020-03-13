@@ -4,10 +4,6 @@
   (setq user-full-name "Ayush Singh")
   (setq user-mail-address "ayush1325@protonmail.com")
 #+END_SRC
-** Start screen
-#+BEGIN_SRC emacs-lisp
-  (setq inhabit-startup-message t)
-#+END_SRC
 ** Menus stuff
 - Disable toolbar
 - Shortent prompt answers
@@ -26,12 +22,18 @@
   (windmove-default-keybindings)
   (winner-mode 1)
 
+  (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+  (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+  (global-set-key (kbd "S-C-<down>") 'shrink-window)
+  (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
   (use-package ace-window
     :ensure t
     :bind
     ([remap other-window] . ace-window)
     :custom-face
     (aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+
 #+END_SRC
 ** Line stuff
 - Highlight current line
@@ -89,10 +91,11 @@ For better integration with system clipboard
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :ensure t
+    :if (< (length command-line-args) 2)
     :config
     (dashboard-setup-startup-hook)
     (setq initial-buffer-choice (lambda ()
-                                    (get-buffer "*dashboard*")))
+                                  (get-buffer "*dashboard*")))
     (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
     (setq dashboard-startup-banner 'logo)
     (setq dashboard-center-content t)
@@ -109,6 +112,11 @@ For better integration with system clipboard
     :ensure t
     :config
     (setq global-page-break-lines-mode 1))
+#+END_SRC
+** Quelpa
+#+BEGIN_SRC emacs-lisp
+  (use-package quelpa-use-package
+    :ensure t)
 #+END_SRC
 * Useful packages
 ** Try
@@ -137,14 +145,14 @@ For ivy and better kill support
     :ensure t
     :bind
     (("M-y" . counsel-yank-pop)
+     ("C-h f" . counsel-describe-function)
+     ("C-h v" . counsel-describe-variable)
      :map ivy-minibuffer-map
      ("M-y" . ivy-next-line)))
 
   (use-package counsel-projectile
     :ensure t
-    :bind ("C-c p" . projectile-command-map)
-    :config
-    (counsel-projectile-on))
+    :bind (("C-c p" . projectile-command-map)))
 #+END_SRC
 ** Ivy
 Lot of autocompletions
@@ -167,7 +175,12 @@ For autocomplete inside buffer
     :config
     (global-company-mode 1))
 
-  (setq company-global-modes '(not org-mode))
+  (setq company-global-modes '(not org-mode markdown-mode))
+
+  (use-package company-emoji
+    :ensure t
+    :config
+    (add-to-list 'company-backends 'company-emoji))
 #+END_SRC
 ** Undo Tree
 For better undo and redo
@@ -176,6 +189,28 @@ For better undo and redo
     :ensure t
     :config
     (global-undo-tree-mode 1))
+#+END_SRC
+** Edit Indirect
+#+BEGIN_SRC emacs-lisp
+  (use-package edit-indirect
+    :ensure t)
+#+END_SRC
+** Emoji Support
+#+BEGIN_SRC emacs-lisp
+  (use-package emojify
+    :ensure t)
+#+END_SRC
+** IBuffer Projectile
+Group ibuffer files based on projects
+#+BEGIN_SRC emacs-lisp
+  (use-package ibuffer-projectile
+    :ensure t
+    :config
+    (add-hook 'ibuffer-hook
+      (lambda ()
+        (ibuffer-projectile-set-filter-groups)
+        (unless (eq ibuffer-sorting-mode 'alphabetic)
+          (ibuffer-do-sort-by-alphabetic)))))
 #+END_SRC
 * Programming
 ** Projectile
@@ -198,7 +233,8 @@ For better undo and redo
   (use-package lsp-mode
     :ensure t
     :init (setq lsp-keymap-prefix "s-l")
-    :hook ((XXX-mode . lsp)
+    :hook ((prog-mode . lsp)
+           (vue-mode . lsp)
            (lsp-mode . lsp-enable-which-key-integration))
     :commands lsp)
 
@@ -235,6 +271,41 @@ For better undo and redo
     :ensure t
     :hook (emacs-lisp-mode-hook . highlight-defined-mode))
 #+END_SRC
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
+
+  (use-package adaptive-wrap
+    :ensure t
+    :hook (markdown-mode . adaptive-wrap-prefix-mode))
+#+END_SRC
+** Vuejs
+#+BEGIN_SRC emacs-lisp
+  (use-package vue-mode
+    :ensure t
+    :config
+    (setq mmm-submode-decoration-level 0))
+
+  (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+  (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+#+END_SRC
+** Rest Client
+- Basic package
+#+BEGIN_SRC emacs-lisp
+  (use-package restclient
+    :ensure t)
+#+END_SRC
+- Org support
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-restclient
+    :ensure t)
+#+END_SRC
 * Org Mode
 ** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
@@ -253,12 +324,31 @@ For better undo and redo
   (setq org-ellipsis "⤵")
   (setq org-src-tab-acts-natively t)
 #+END_SRC
+** Babel
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((restclient . t)
+     (emacs-lisp . t)))
+#+END_SRC
+
 * Eshell
 ** Autosuggestions
 #+BEGIN_SRC emacs-lisp
   (use-package esh-autosuggest
     :ensure t
     :hook (eshell-mode . esh-autosuggest-mode))
+#+END_SRC
+** Extras
+#+BEGIN_SRC emacs-lisp
+  (use-package eshell-prompt-extras
+    :ensure t
+    )
+
+  (with-eval-after-load "esh-opt"
+    (autoload 'epe-theme-lambda "eshell-prompt-extras")
+    (setq eshell-highlight-prompt nil
+          eshell-prompt-function 'epe-theme-lambda))
 #+END_SRC
 * Dired
 ** Async
@@ -267,6 +357,12 @@ For better undo and redo
     :ensure t
     :config
     (dired-async-mode 1))
+#+END_SRC
+** Dired+
+#+BEGIN_SRC emacs-lisp
+  (use-package dired+
+    :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
+    :defer 1)
 #+END_SRC
 * Asthetic Stuff
 ** Pretty stuff
@@ -300,8 +396,4 @@ For better undo and redo
   (doom-themes-visual-bell-config)
 
   (doom-themes-org-config)
-#+END_SRC
-** Fonts
-#+BEGIN_SRC emacs-lisp
-  (set-frame-font "UbuntuMono Nerd Font Bold 20" nil t)
 #+END_SRC

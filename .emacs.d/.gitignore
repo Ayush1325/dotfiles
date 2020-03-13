@@ -10,3 +10,9 @@ ido.last
 recentf
 session.*
 transient/
+\#recentf\#
+.cache/
+.lsp-session-v1
+emojis/
+quelpa/
+url/
