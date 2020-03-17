@@ -212,16 +212,11 @@ Group ibuffer files based on projects
         (unless (eq ibuffer-sorting-mode 'alphabetic)
           (ibuffer-do-sort-by-alphabetic)))))
 #+END_SRC
-** Smart Hungry Delete
-Delete all white spaces together.
+** Hungry Delete
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-hungry-delete
+  (use-package hungry-delete
     :ensure t
-    :bind (("<backspace>" . smart-hungry-delete-backward-char)
-                   ("C-d" . smart-hungry-delete-forward-char))
-    :defer nil ;; dont defer so we can add our functions to hooks 
-    :config (smart-hungry-delete-add-default-hooks)
-    )
+    :config (global-hungry-delete-mode t))
 #+END_SRC
 * Programming
 ** Projectile
