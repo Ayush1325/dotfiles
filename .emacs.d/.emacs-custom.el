@@ -5,6 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(counsel-projectile-mode t nil (counsel-projectile))
  '(dired-hide-details-hide-information-lines t)
+ '(dired-listing-switches "-ahl")
  '(diredp-hide-details-initially-flag t)
  '(diredp-hide-details-propagate-flag t)
  '(global-dired-hide-details-mode t)
@@ -15,7 +16,8 @@
  '(markdown-fontify-code-blocks-natively t)
  '(package-selected-packages
    (quote
-    (ob-restclient restclient quelpa-use-package dired+ ibuffer-projectile adaptive-wrap vue-mode emojify company-emoji which-key use-package undo-tree try rust-mode rainbow-mode paredit org-bullets org-ac multiple-cursors magit lsp-ui lsp-ivy lorem-ipsum iedit highlight-parentheses highlight-defined helm expand-region eshell-prompt-extras esh-autosuggest edit-indirect dracula-theme doom-themes doom-modeline dashboard dap-mode counsel-projectile company-lsp)))
+    (sunrise smart-hungry-delete pdf-view-restore pdf-tools engine-mode ob-restclient restclient quelpa-use-package dired+ ibuffer-projectile adaptive-wrap vue-mode emojify company-emoji which-key use-package undo-tree try rust-mode rainbow-mode paredit org-bullets org-ac multiple-cursors magit lsp-ui lsp-ivy lorem-ipsum iedit highlight-parentheses highlight-defined helm expand-region eshell-prompt-extras esh-autosuggest edit-indirect dracula-theme doom-themes doom-modeline dashboard dap-mode counsel-projectile company-lsp)))
+ '(sunrise-attributes-display-mask (quote (t nil nil nil nil)))
  '(tool-bar-mode nil))
 
 (custom-set-faces

@@ -14,4 +14,4 @@
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
 
-(put 'dired-find-alternate-file 'disabled nil)
+;(put 'dired-find-alternate-file 'disabled nil)
