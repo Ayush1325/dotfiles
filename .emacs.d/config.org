@@ -243,6 +243,13 @@ Group ibuffer files based on projects
                ("a" . sx-ask)
                ("s" . sx-search)))
 #+END_SRC
+** Move Text
+#+BEGIN_SRC emacs-lisp
+  (use-package move-text
+    :ensure t
+    :bind (("M-<up>" . move-text-up)
+           ("M-<down>" . move-text-down)))
+#+END_SRC
 * Programming
 ** Projectile
 #+BEGIN_SRC emacs-lisp
@@ -327,14 +334,29 @@ Group ibuffer files based on projects
     :hook (markdown-mode . adaptive-wrap-prefix-mode))
 #+END_SRC
 ** Vuejs
+- Web Mode
 #+BEGIN_SRC emacs-lisp
-  (use-package vue-mode
+  (use-package web-mode
     :ensure t
     :config
-    (setq mmm-submode-decoration-level 0))
-
-  (setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
-  (setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2))
+#+END_SRC
+- Emmet
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+    :ensure t
+    :hook web-mode)
+#+END_SRC
+- Prettier
+#+BEGIN_SRC emacs-lisp
+  (use-package prettier-js
+    :ensure t
+    :hook (web-mode . prettier-js-mode))
 #+END_SRC
 ** Rest Client
 - Basic package
@@ -346,6 +368,23 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package ob-restclient
     :ensure t)
+#+END_SRC
+- Company integration
+#+BEGIN_SRC emacs-lisp
+  (use-package company-restclient
+    :ensure t
+    :config
+    (add-to-list 'company-backends 'company-restclient))
+#+END_SRC
+** Python
+#+BEGIN_SRC emacs-lisp
+  (use-package pipenv
+    :ensure t
+    :hook (python-mode . pipenv-mode)
+    :init
+    (setq
+     pipenv-projectile-after-switch-function
+     #'pipenv-projectile-after-switch-extended))
 #+END_SRC
 * Org Mode
 ** Pretty Bullets
