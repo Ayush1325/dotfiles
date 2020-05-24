@@ -1,29 +1,3 @@
-# Copyright (c) 2010 Aldo Cortesi
-# Copyright (c) 2010, 2014 dequis
-# Copyright (c) 2012 Randall Ma
-# Copyright (c) 2012-2014 Tycho Andersen
-# Copyright (c) 2012 Craig Barnes
-# Copyright (c) 2013 horsik
-# Copyright (c) 2013 Tao Sauvage
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 from libqtile.config import EzKey, Screen, Group, Drag, Click
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
@@ -31,11 +5,48 @@ from typing import List  # noqa: F401
 import os
 import subprocess
 
+
 # STARTUP APPLICATIONS
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser("~")
     subprocess.call([home + "/.config/qtile/autostart.sh"])
+
+
+# Make steam windows floating
+@hook.subscribe.client_new
+def float_steam(window):
+    wm_class = window.window.get_wm_class()
+    w_name = window.window.get_name()
+    if (
+        wm_class == ("Steam", "Steam")
+        and (
+            w_name != "Steam"
+            # w_name == "Friends List"
+            # or w_name == "Screenshot Uploader"
+            # or w_name.startswith("Steam - News")
+            or "PMaxSize" in window.window.get_wm_normal_hints().get("flags", ())
+        )
+    ):
+        window.floating = True
+
+
+# Lutris
+@hook.subscribe.client_new
+def float_lutris(window):
+    wm_class = window.window.get_wm_class()
+    w_name = window.window.get_name()
+    if (
+        wm_class == ("Lutris", "Lutris")
+        and (
+            w_name != "Lutris"
+            # w_name == "Friends List"
+            # or w_name == "Screenshot Uploader"
+            # or w_name.startswith("Steam - News")
+            or "PMaxSize" in window.window.get_wm_normal_hints().get("flags", ())
+        )
+    ):
+        window.floating = True
 
 
 def init_keys():
@@ -69,23 +80,22 @@ def init_keys():
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
-        EzKey("M-d", lazy.spawn("pcmanfm")),
+        EzKey("M-S-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
-        EzKey("M-i", lazy.spawn("firefox")),
-        EzKey("M-j", lazy.spawn("joplin-desktop")),
-        EzKey("M-h", lazy.spawn(my_term + " -e htop")),
+        EzKey("M-S-i", lazy.spawn("firefox")),
+        EzKey("M-S-j", lazy.spawn(my_term + " -e joplin")),
+        EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
     ]
 
 
 def init_group_names():
     return [
-            ("DEF", {"layout": "monadtall"}),
-            ("WEB", {"layout": "max"}),
-            ("CONF", {"layout": "monadtall"}),
-            ("MEDIA", {"layout": "max"}),
-            ("DEV", {"layout": "max"}),
-            ("NOTE", {"layout": "max"}),
-            ("VBOX", {"layout": "max"})
+        ("WEB", {"layout": "max"}),
+        ("CONF", {"layout": "monadtall"}),
+        ("DEV", {"layout": "max"}),
+        ("NOTE", {"layout": "max"}),
+        ("MEDIA", {"layout": "max"}),
+        ("GAME", {"layout": "floating"}),
     ]
 
 
@@ -112,35 +122,89 @@ def init_layout_theme():
 
 
 def init_screens():
+    colors = {
+        "foreground": "#d8dee9",
+        "foreground-alt": "#555555",
+        "highlight": "#444444",
+        "underline": "#268bd2",
+        "alert": "#ed0b0b",
+    }
     return [
         Screen(
             top=bar.Bar(
                 [
                     widget.GroupBox(
-                        margin_y=0,
-                        margin_x=0,
-                        borderwidth=1,
-                        active="#AA00FF",
-                        inactive="#4A148C",
-                        rounded=True,
-                        highlight_method="block",
-                        foreground="#4A148C",
-                        this_screen_border="#4A148C",
-                        this_current_screen_border="#EA80FC",
+                        active=colors["foreground"],
+                        inactive=colors["foreground-alt"],
+                        highlight_method="line",
+                        highlight_color=colors["highlight"],
+                        this_current_screen_border=colors["underline"],
+                        urgent_border=colors["alert"],
                     ),
-                    widget.WindowName(fontsize=14, foreground="#64FFDA",),
-                    widget.Systray(),
-                    widget.Sep(),
-                    widget.Pacman(
-                        foreground="#76FF03", execute=my_term + " -e sudo pacman -Syu",
-                    ),
-                    widget.Sep(),
-                    widget.CurrentLayout(foreground="#2962FF",),
-                    widget.Sep(),
-                    widget.TextBox(text=" 🕒 ", foreground="#D50000",),
-                    widget.Clock(foreground="#D32F2F", format="%A, %B %d - %H:%M",),
+                    widget.Spacer(),
+                    widget.Image(filename="~/.config/qtile/icons/sound.png",
+                                 margin=4,
+                                 background=colors["highlight"]),
+                    widget.Volume(volume_app="pavucontrol",
+                                  padding=4,
+                                  fontsize=18,
+                                  background=colors["highlight"]),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/network.png",
+                                 margin=4, background=colors["highlight"]),
+                    widget.Net(background=colors["highlight"],
+                               format="{down} ↓↑ {up}"),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/memory.png",
+                                 margin=4,
+                                 background=colors["highlight"]),
+                    widget.Memory(format="{MemUsed}M/{MemTotal}M",
+                                  background=colors["highlight"]),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/cpu.png",
+                                 margin=4,
+                                 background=colors["highlight"]),
+                    widget.CPU(format="{freq_current}GHz {load_percent}%",
+                               background=colors["highlight"]),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/temp.png",
+                                 margin=4,
+                                 background=colors["highlight"]),
+                    widget.ThermalSensor(background=colors["highlight"]),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/updates.png",
+                                 background=colors["highlight"], margin=4),
+                    widget.CheckUpdates(background=colors["highlight"],
+                                        display_format="{updates}"),
+                    widget.Spacer(length=10),
+                    widget.CurrentLayoutIcon(background=colors["highlight"],
+                                             foreground=colors["underline"],
+                                             custom_icon_paths=["~/.config/qtile/icons/layouts/"],
+                                             padding=5),
+                    widget.Spacer(length=10),
+                    widget.Clock(foreground=colors["foreground"],
+                                 background=colors["highlight"],
+                                 format="%A, %B %d - %H:%M",),
+                    widget.Spacer(length=10),
+                    widget.Systray(background=colors["highlight"],
+                                   icon_size=24, padding=5),
+                    widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/restart.png",
+                                 margin=2,
+                                 background=colors["highlight"],
+                                 mouse_callbacks={"Button1": lambda _: os.system("sudo reboot")}),
+                    widget.Image(filename="~/.config/qtile/icons/suspend.png",
+                                 margin=2,
+                                 background=colors["highlight"],
+                                 mouse_callbacks={"Button1": lambda _: os.system("dm-tool lock")}),
+                    widget.Image(filename="~/.config/qtile/icons/shutdown.png",
+                                 margin=4,
+                                 background=colors["highlight"],
+                                 mouse_callbacks={"Button1": lambda _: os.system("sudo shutdown now")}),
                 ],
-                28,
+                30,
+                background="#1d1f21",
+                margin=0,
             ),
         ),
     ]
@@ -181,7 +245,7 @@ if __name__ in ["config", "__main__"]:
     bring_front_click = False
     cursor_warp = False
     main = None
-    my_term = "urxvtc"
+    my_term = "alacritty"
     modifier_keys = {
         "M": "mod4",
         "A": "mod1",
@@ -189,7 +253,7 @@ if __name__ in ["config", "__main__"]:
         "C": "control",
     }
     mod = "mod4"
-    widget_defaults = dict(font="Ubuntu Bold", fontsize=16, padding=3,)
+    widget_defaults = dict(font="Ubuntu Bold", fontsize=16, padding=5,)
     extension_defaults = widget_defaults.copy()
     layout_theme = init_layout_theme()
     dgroups_key_binder = None

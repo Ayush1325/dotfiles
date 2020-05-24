@@ -128,6 +128,19 @@ For better integration with system clipboard
     (setq auto-package-update-hide-results t)
     (auto-package-update-maybe))
 #+END_SRC
+** Transparency
+#+BEGIN_SRC emacs-lisp
+  (set-frame-parameter (selected-frame) 'alpha '(95 90))
+  (add-to-list 'default-frame-alist '(alpha 95 90))
+#+END_SRC
+** Improve Joplin
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables
+      '(server-switch-hook
+        '((lambda nil
+           (let (server-buf)
+             (setq backup-by-copying t))))))
+#+END_SRC
 * Useful packages
 ** Try
 To try out packages without installing
@@ -411,6 +424,20 @@ Group ibuffer files based on projects
     :ensure t)
 #+END_SRC
 ** Lisp
+*** Common
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook ((lisp-mode clojure-mode) . rainbow-delimiters-mode))
+
+  (use-package smartparens
+    :ensure t
+    :hook ((clojure-mode cider-repl-mode) . smartparens-strict-mode))
+
+  (use-package aggressive-indent
+    :ensure t
+    :hook (clojure-mode . aggressive-indent-mode))
+#+END_SRC
 *** Common Lisp
 #+BEGIN_SRC emacs-lisp
   (use-package slime
@@ -432,6 +459,15 @@ Group ibuffer files based on projects
   (use-package highlight-defined
     :ensure t
     :hook (emacs-lisp-mode . highlight-defined-mode))
+#+END_SRC
+*** Clojure
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :ensure t)
+
+  (use-package cider
+    :ensure t
+    :hook (clojure-mode . cider-mode))
 #+END_SRC
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -510,7 +546,6 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package pipenv
     :ensure t
-    :hook (python-mode . pipenv-mode)
     :config
     (setq pipenv-with-flycheck nil))
 #+END_SRC
@@ -573,9 +608,11 @@ Group ibuffer files based on projects
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((restclient . t)
-     (emacs-lisp . t)))
-#+END_SRC
+     (emacs-lisp . t)
+     (clojure . t)))
 
+  (setq org-babel-clojure-backend 'cider)
+#+END_SRC
 * Eshell
 ** Aweshell
 #+BEGIN_SRC emacs-lisp
@@ -612,6 +649,12 @@ Group ibuffer files based on projects
   (setq eshell-where-to-jump 'begin)
   (setq eshell-review-quick-commands nil)
   (setq eshell-smart-space-goes-to-end t)
+#+END_SRC
+** Load Path
+#+BEGIN_SRC emacs-lisp
+  (setenv "PATH" (concat
+                  "/usr/local/bin" path-separator
+                  (getenv "PATH")))
 #+END_SRC
 * Dired
 ** Async
