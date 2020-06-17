@@ -18,6 +18,7 @@
   (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
 ** Window Stuff
+- Ace window for better window switching.
 #+BEGIN_SRC emacs-lisp
   (windmove-default-keybindings)
   (winner-mode 1)
@@ -81,6 +82,7 @@ For better integration with system clipboard
   (setq save-interprogram-paste-before-kill t)
 #+END_SRC
 ** Modline
+- Using doom modeline
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
@@ -366,8 +368,7 @@ Group ibuffer files based on projects
   (use-package lsp-mode
     :ensure t
     :init (setq lsp-keymap-prefix "s-l")
-    :hook ((prog-mode . lsp)
-           (vue-mode . lsp)
+    :hook ((latex-mode . lsp)
            (lsp-mode . lsp-enable-which-key-integration))
     :commands lsp)
 
@@ -422,21 +423,27 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode
     :ensure t)
+
+  (use-package ob-rust
+    :ensure t)
 #+END_SRC
 ** Lisp
 *** Common
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
     :ensure t
-    :hook ((lisp-mode clojure-mode) . rainbow-delimiters-mode))
+    :hook ((lisp-mode clojure-mode emacs-lisp-mode cider-repl-mode) . rainbow-delimiters-mode))
 
   (use-package smartparens
     :ensure t
-    :hook ((clojure-mode cider-repl-mode) . smartparens-strict-mode))
+    :hook ((clojure-mode cider-repl-mode emacs-lisp-mode slime-repl-mode lisp-mode) . smartparens-strict-mode)
+    :config (sp-use-smartparens-bindings))
 
   (use-package aggressive-indent
     :ensure t
     :hook (clojure-mode . aggressive-indent-mode))
+
+  (require 'smartparens-config)
 #+END_SRC
 *** Common Lisp
 #+BEGIN_SRC emacs-lisp
@@ -448,10 +455,6 @@ Group ibuffer files based on projects
 #+END_SRC
 *** Emacs Lisp
 #+BEGIN_SRC emacs-lisp
-  (use-package paredit
-    :ensure t
-    :hook ((emacs-lisp-mode slime-repl-mode lisp-mode) . paredit-mode))
-
   (use-package eldoc
     :ensure t
     :hook (emacs-lisp-mode . eldoc-mode))
@@ -596,6 +599,7 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
   (setq org-startup-folded (quote overview))
+  (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
 #+END_SRC
 ** Pretty stuff
 #+BEGIN_SRC emacs-lisp
@@ -609,9 +613,14 @@ Group ibuffer files based on projects
    'org-babel-load-languages
    '((restclient . t)
      (emacs-lisp . t)
+     (rust . t)
      (clojure . t)))
 
   (setq org-babel-clojure-backend 'cider)
+#+END_SRC
+** Latex
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
 * Eshell
 ** Aweshell
@@ -751,37 +760,32 @@ To search directly from eamcs
   (use-package yaml-mode
     :ensure t)
 #+END_SRC
-* Operating System stuff
-** System packages
+** LATEX
 #+BEGIN_SRC emacs-lisp
-  (use-package system-packages
+  (use-package latex-pretty-symbols
     :ensure t)
 #+END_SRC
-- Add yay Support
+* RSS
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'system-packages-supported-package-managers
-               '(yay .
-                        ((default-sudo . nil)
-                         (install . "yay -S")
-                         (search . "yay -Ss")
-                         (uninstall . "yay -Rs")
-                         (update . "yay -Syu")
-                         (clean-cache . "yay -Sc")
-                         (log . "cat /var/log/pacman.log")
-                         (change-log . "yay -Qc")
-                         (get-info . "yay -Qi")
-                         (get-info-remote . "yay -Si")
-                         (list-files-provided-by . "yay -Ql")
-                         (owning-file . "yay -Qo")
-                         (owning-file-remote . "yay -F")
-                         (verify-all-packages . "yay -Qkk")
-                         (verify-all-dependencies . "yay -Dk")
-                         (remove-orphaned . "yay -Rns $(pacman -Qtdq)")
-                         (list-installed-packages . "yay -Qe")
-                         (list-installed-packages-all . "yay -Q")
-                         (list-dependencies-of . "yay -Qi")
-                         (noconfirm . "--noconfirm"))))
+  (use-package elfeed
+    :ensure t)
 
-  (setq system-packages-package-manager 'yay)
-  (setq system-packages-use-sudo nil)
+  (use-package elfeed-org
+    :ensure t
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org")))
+
+  (use-package elfeed-protocol
+    :ensure t
+    :config
+    (setq elfeed-use-curl t)
+    (elfeed-set-timeout 36000)
+    (setq elfeed-curl-extra-arguments '("--insecure"))
+    (elfeed-protocol-enable))
+
+  (use-package elfeed-goodies
+    :ensure t
+    :config
+    (elfeed-goodies/setup))
 #+END_SRC

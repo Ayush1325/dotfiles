@@ -1,0 +1,142 @@
+[
+	{
+		"keys": [
+			":",
+			"ALT_X"
+		],
+		"type": "function",
+		"command": "enter_command_line_mode"
+	},
+	{
+		"keys": [
+			"TAB",
+			"CTRL_F"
+		],
+		"type": "function",
+		"command": "focus_next"
+	},
+	{
+		"keys": [
+			"SHIFT_TAB",
+			"CTRL_B"
+		],
+		"type": "function",
+		"command": "focus_previous"
+	},
+	{
+		"keys": [
+			"UP",
+			"CTRL_P"
+		],
+		"type": "function",
+		"command": "move_up"
+	},
+	{
+		"keys": [
+			"DOWN",
+			"CTRL_N"
+		],
+		"type": "function",
+		"command": "move_down"
+	},
+	{
+		"keys": [
+			"PAGE_UP",
+			"CTRL_V"
+		],
+		"type": "function",
+		"command": "page_up"
+	},
+	{
+		"keys": [
+			"PAGE_DOWN",
+			"ALT_V"
+		],
+		"type": "function",
+		"command": "page_down"
+	},
+	{
+		"keys": [
+			"ENTER"
+		],
+		"type": "function",
+		"command": "activate"
+	},
+	{
+		"keys": [
+			"DELETE",
+			"BACKSPACE"
+		],
+		"type": "function",
+		"command": "delete"
+	},
+	{
+		"keys": [
+			" "
+		],
+		"command": "todo toggle $n"
+	},
+	{
+		"keys": [
+			"tc"
+		],
+		"type": "function",
+		"command": "toggle_console"
+	},
+	{
+		"keys": [
+			"tm"
+		],
+		"type": "function",
+		"command": "toggle_metadata"
+	},
+	{
+		"keys": [
+		    "/",
+		    "CTRL_S"
+		],
+		"type": "prompt",
+		"command": "search \"\"",
+		"cursorPosition": -2
+	},
+	{
+		"keys": [
+		    "mn"
+		],
+		"type": "prompt",
+		"command": "mknote \"\"",
+		"cursorPosition": -2
+	},
+	{
+		"keys": [
+		    "mt"
+		],
+		"type": "prompt",
+		"command": "mktodo \"\"",
+		"cursorPosition": -2
+	},
+	{
+		"keys": [
+		    "mb"
+		],
+		"type": "prompt",
+		"command": "mkbook \"\"",
+		"cursorPosition": -2
+	},
+	{
+		"keys": [
+			"yn"
+		],
+		"type": "prompt",
+		"command": "cp $n \"\"",
+		"cursorPosition": -2
+	},
+	{
+		"keys": [
+			"dn"
+		],
+		"type": "prompt",
+		"command": "mv $n \"\"",
+		"cursorPosition": -2
+	}
+]

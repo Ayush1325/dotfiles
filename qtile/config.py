@@ -31,24 +31,6 @@ def float_steam(window):
         window.floating = True
 
 
-# Lutris
-@hook.subscribe.client_new
-def float_lutris(window):
-    wm_class = window.window.get_wm_class()
-    w_name = window.window.get_name()
-    if (
-        wm_class == ("Lutris", "Lutris")
-        and (
-            w_name != "Lutris"
-            # w_name == "Friends List"
-            # or w_name == "Screenshot Uploader"
-            # or w_name.startswith("Steam - News")
-            or "PMaxSize" in window.window.get_wm_normal_hints().get("flags", ())
-        )
-    ):
-        window.floating = True
-
-
 def init_keys():
     return [
         # Switch between windows in current stack pane
@@ -75,16 +57,22 @@ def init_keys():
         EzKey("M-m", lazy.layout.maximize()),
         # Sound
         EzKey("<XF86AudioMute>", lazy.spawn("pamixer -t")),
-        EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 2 -u")),
-        EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 2 -u")),
+        EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 4 -u")),
+        EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 4 -u")),
+        # Media
+        EzKey("<F1>", lazy.spawn("playerctl previous")),
+        EzKey("<F2>", lazy.spawn("playerctl play-pause")),
+        EzKey("<F3>", lazy.spawn("playerctl next")),
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
+        EzKey("M-n", lazy.spawn(["sh", "-c", "kill -s USR1 $(pidof deadd-notification-center)"])),
         EzKey("M-S-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
         EzKey("M-S-i", lazy.spawn("firefox")),
         EzKey("M-S-j", lazy.spawn(my_term + " -e joplin")),
         EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
+        EzKey("M-S-n", lazy.spawn("notion-app")),
     ]
 
 
@@ -95,7 +83,8 @@ def init_group_names():
         ("DEV", {"layout": "max"}),
         ("NOTE", {"layout": "max"}),
         ("MEDIA", {"layout": "max"}),
-        ("GAME", {"layout": "floating"}),
+        ("GAME", {"layout": "max"}),
+        ("GIT", {"layout": "max"}),
     ]
 
 
@@ -172,11 +161,6 @@ def init_screens():
                                  background=colors["highlight"]),
                     widget.ThermalSensor(background=colors["highlight"]),
                     widget.Spacer(length=10),
-                    widget.Image(filename="~/.config/qtile/icons/updates.png",
-                                 background=colors["highlight"], margin=4),
-                    widget.CheckUpdates(background=colors["highlight"],
-                                        display_format="{updates}"),
-                    widget.Spacer(length=10),
                     widget.CurrentLayoutIcon(background=colors["highlight"],
                                              foreground=colors["underline"],
                                              custom_icon_paths=["~/.config/qtile/icons/layouts/"],
@@ -189,6 +173,13 @@ def init_screens():
                     widget.Systray(background=colors["highlight"],
                                    icon_size=24, padding=5),
                     widget.Spacer(length=10),
+                    widget.Image(filename="~/.config/qtile/icons/notification-resume.png",
+                                 margin=2,
+                                 background=colors["highlight"],
+                                 mouse_callbacks={
+                                     "Button1":
+                                     lambda _: os.system("notify-send \"DUNST_COMMAND_TOGGLE\"")
+                                     }),
                     widget.Image(filename="~/.config/qtile/icons/restart.png",
                                  margin=2,
                                  background=colors["highlight"],
