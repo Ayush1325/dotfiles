@@ -5,15 +5,11 @@ from typing import List  # noqa: F401
 import os
 import subprocess
 
-
-# STARTUP APPLICATIONS
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser("~")
     subprocess.call([home + "/.config/qtile/autostart.sh"])
 
-
-# Make steam windows floating
 @hook.subscribe.client_new
 def float_steam(window):
     wm_class = window.window.get_wm_class()
@@ -27,9 +23,35 @@ def float_steam(window):
             # or w_name.startswith("Steam - News")
             or "PMaxSize" in window.window.get_wm_normal_hints().get("flags", ())
         )
+    ) or (
+        wm_class == ("lxpolkit", "Lxpolkit")
+    ) or (
+        wm_class == ("evelauncher.exe", "steam_app_8500")
+    ) or (
+        wm_class == ("pavucontrol", "Pavucontrol")
+    ) or (
+        wm_class == ("gw2-64.exe", "gw2-64.exe")
+    ) or (
+        wm_class == ("glyphclientapp.exe", "steam_app_743090")
     ):
         window.floating = True
 
+def init_mouse():
+    return [
+        Drag(
+            [mod],
+            "Button1",
+            lazy.window.set_position_floating(),
+            start=lazy.window.get_position(),
+        ),
+        Drag(
+            [mod],
+            "Button3",
+            lazy.window.set_size_floating(),
+            start=lazy.window.get_size(),
+        ),
+        Click([mod], "Button2", lazy.window.bring_to_front()),
+    ]
 
 def init_keys():
     return [
@@ -66,27 +88,24 @@ def init_keys():
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
-        EzKey("M-n", lazy.spawn(["sh", "-c", "kill -s USR1 $(pidof deadd-notification-center)"])),
         EzKey("M-S-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
         EzKey("M-S-i", lazy.spawn("firefox")),
-        EzKey("M-S-j", lazy.spawn(my_term + " -e joplin")),
         EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
         EzKey("M-S-n", lazy.spawn("notion-app")),
+        EzKey("M-S-m", lazy.spawn("ytmdesktop")),
     ]
-
 
 def init_group_names():
     return [
-        ("WEB", {"layout": "max"}),
-        ("CONF", {"layout": "monadtall"}),
-        ("DEV", {"layout": "max"}),
-        ("NOTE", {"layout": "max"}),
-        ("MEDIA", {"layout": "max"}),
-        ("GAME", {"layout": "max"}),
-        ("GIT", {"layout": "max"}),
+        ("🌐", {"layout": "max"}),
+        ("⚓", {"layout": "monadtall"}),
+        ("😎", {"layout": "max"}),
+        ("📓", {"layout": "max"}),
+        ("🎥", {"layout": "max"}),
+        ("🎮", {"layout": "max"}),
+        ("📁", {"layout": "max"}),
     ]
-
 
 def init_groups(ks):
     group_names = init_group_names()
@@ -100,6 +119,13 @@ def init_groups(ks):
         )
     return groups
 
+def init_layouts():
+    return [
+        layout.MonadTall(**layout_theme),
+        layout.Max(**layout_theme),
+        layout.TreeTab(**layout_theme),
+        layout.Floating(**layout_theme),
+    ]
 
 def init_layout_theme():
     return {
@@ -108,7 +134,6 @@ def init_layout_theme():
         "border_focus": "#7C4DFF",
         "border_normal": "1D2330",
     }
-
 
 def init_screens():
     colors = {
@@ -200,34 +225,6 @@ def init_screens():
         ),
     ]
 
-
-# Drag floating layouts.
-def init_mouse():
-    return [
-        Drag(
-            [mod],
-            "Button1",
-            lazy.window.set_position_floating(),
-            start=lazy.window.get_position(),
-        ),
-        Drag(
-            [mod],
-            "Button3",
-            lazy.window.set_size_floating(),
-            start=lazy.window.get_size(),
-        ),
-        Click([mod], "Button2", lazy.window.bring_to_front()),
-    ]
-
-
-def init_layouts():
-    return [
-        layout.MonadTall(**layout_theme),
-        layout.Max(**layout_theme),
-        layout.Floating(**layout_theme),
-    ]
-
-
 if __name__ in ["config", "__main__"]:
     wmname = "LG3D"
     auto_fullscreen = True
@@ -248,7 +245,7 @@ if __name__ in ["config", "__main__"]:
     extension_defaults = widget_defaults.copy()
     layout_theme = init_layout_theme()
     dgroups_key_binder = None
-    dgroups_app_rules = []  # type: List
+    dgroups_app_rules = []
     layouts = init_layouts()
     screens = init_screens()
     keys = init_keys()

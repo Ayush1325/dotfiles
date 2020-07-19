@@ -20,3 +20,5 @@ url/
 .last-package-update-day
 tramp
 .org-id-locations
+.dap-breakpoints
+.extension/

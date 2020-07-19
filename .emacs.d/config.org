@@ -1,3 +1,84 @@
+#+TITLE: Emacs Config
+
+* Table Of Contents :TOC:
+- [[#startup-stuff][Startup Stuff]]
+  - [[#user-info][User info]]
+  - [[#menus-stuff][Menus stuff]]
+  - [[#refresh-buffer][Refresh Buffer]]
+  - [[#window-stuff][Window Stuff]]
+  - [[#line-stuff][Line stuff]]
+  - [[#expand-select][Expand Select]]
+  - [[#multiple-cursors][Multiple cursors]]
+  - [[#iedit][IEdit]]
+  - [[#smart-narrowing][Smart narrowing]]
+  - [[#kill-behaviour][Kill behaviour]]
+  - [[#modline][Modline]]
+  - [[#dashboard][Dashboard]]
+  - [[#page-breaker][Page breaker]]
+  - [[#quelpa][Quelpa]]
+  - [[#auto-update-packages][Auto Update packages]]
+  - [[#transparency][Transparency]]
+  - [[#improve-joplin][Improve Joplin]]
+- [[#useful-packages][Useful packages]]
+  - [[#try][Try]]
+  - [[#which-key][Which Key]]
+  - [[#lorem-ipsum][Lorem ipsum]]
+  - [[#consel][Consel]]
+  - [[#ivy][Ivy]]
+  - [[#company][Company]]
+  - [[#undo-tree][Undo Tree]]
+  - [[#edit-indirect][Edit Indirect]]
+  - [[#emoji-support][Emoji Support]]
+  - [[#ibuffer-projectile][IBuffer Projectile]]
+  - [[#hungry-delete][Hungry Delete]]
+  - [[#move-text][Move Text]]
+  - [[#treemacs][Treemacs]]
+- [[#programming][Programming]]
+  - [[#snippets][Snippets]]
+  - [[#projectile][Projectile]]
+  - [[#magit][Magit]]
+  - [[#lsp][LSP]]
+  - [[#rust][Rust]]
+  - [[#lisp][Lisp]]
+  - [[#markdown][Markdown]]
+  - [[#web-dev][Web Dev]]
+  - [[#rest-client][Rest Client]]
+  - [[#python][Python]]
+  - [[#dart][Dart]]
+  - [[#golang][Golang]]
+  - [[#flutter][Flutter]]
+  - [[#general][General]]
+  - [[#godot][Godot]]
+  - [[#dap][DAP]]
+- [[#org-mode][Org Mode]]
+  - [[#easy-templates][Easy templates]]
+  - [[#pretty-bullets][Pretty Bullets]]
+  - [[#custom-variables][Custom variables]]
+  - [[#pretty-stuff][Pretty stuff]]
+  - [[#babel][Babel]]
+  - [[#latex][Latex]]
+  - [[#toc][TOC]]
+- [[#eshell][Eshell]]
+  - [[#aweshell][Aweshell]]
+  - [[#autosuggestions][Autosuggestions]]
+  - [[#extras][Extras]]
+  - [[#smart-display][Smart display]]
+  - [[#load-path][Load Path]]
+- [[#dired][Dired]]
+  - [[#async][Async]]
+  - [[#dired-1][Dired+]]
+- [[#asthetic-stuff][Asthetic Stuff]]
+  - [[#font][Font]]
+  - [[#pretty-stuff-1][Pretty stuff]]
+  - [[#icons][Icons]]
+  - [[#theme][Theme]]
+- [[#other-modes][Other Modes]]
+  - [[#engine-mode][Engine Mode]]
+  - [[#json][Json]]
+  - [[#yaml][Yaml]]
+  - [[#latex-1][LATEX]]
+- [[#rss][RSS]]
+
 * Startup Stuff
 ** User info
 #+BEGIN_SRC emacs-lisp
@@ -347,7 +428,21 @@ Group ibuffer files based on projects
     :after treemacs magit
     :ensure t)
 #+END_SRC
+- Perspective Integration
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs-persp
+    :after treemacs persp-mode
+    :ensure t
+    :config (treemacs-set-scope-type 'Perspectives))
+#+END_SRC
+
 * Programming
+** Snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config (yas-global-mode))
+#+end_src
 ** Projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
@@ -369,6 +464,7 @@ Group ibuffer files based on projects
     :ensure t
     :init (setq lsp-keymap-prefix "s-l")
     :hook ((latex-mode . lsp)
+           (gdscript-mode . lsp)
            (lsp-mode . lsp-enable-which-key-integration))
     :commands lsp)
 
@@ -404,28 +500,30 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (setq lsp-idle-delay 0.500)
 #+END_SRC
-- Perspective Integration
-#+BEGIN_SRC emacs-lisp
-  (use-package treemacs-persp
-    :after treemacs persp-mode
-    :ensure t
-    :config (treemacs-set-scope-type 'Perspectives))
-#+END_SRC
 - Treemacs Integration
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-treemacs
     :config
-    (lsp-metals-treeview-enable t)
     (setq lsp-metals-treeview-show-when-views-received t)
     (lsp-treemacs-sync-mode 1))
 #+END_SRC
-** Rust Mode
+** Rust
 #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode
-    :ensure t)
+  (use-package rustic
+    :ensure t
+    :mode ("\\.rs\\'" . rustic-mode)
+    :config
+    (setq rustic-analyzer-command "/usr/bin/rust-analyzer")
+    (setq rustic-lsp-server 'rust-analyzer)
+    (add-hook 'rustic-mode-hook #'subword-mode)
+    (add-hook 'rustic-mode-hook #'smartparens-mode)
+  ;  (add-hook 'rustic-mode-hook #'(lambda () (setq company-idle-delay nil)))
+    (add-hook 'rustic-mode-hook #'electric-pair-mode))
 
-  (use-package ob-rust
-    :ensure t)
+  (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
+                                      (lsp-format-buffer))))
+  (add-hook 'rustic-mode-hook
+            (lambda () (setq indent-tabs-mode nil)))
 #+END_SRC
 ** Lisp
 *** Common
@@ -581,6 +679,10 @@ Group ibuffer files based on projects
     :custom
     (flutter-sdk-path "~/flutter/"))
 #+END_SRC
+- Run app from Desktop without emulator
+#+begin_src emacs-lisp
+  (use-package hover :ensure t)
+#+end_src
 ** General
 - Some Keybindings
 #+BEGIN_SRC emacs-lisp
@@ -588,7 +690,22 @@ Group ibuffer files based on projects
             (lambda ()
               (define-key "\C-a" 'back-to-indentation)))
 #+END_SRC
+** Godot
+#+BEGIN_SRC emacs-lisp
+  (use-package gdscript-mode
+    :ensure t)
+#+END_SRC
+** DAP
+#+begin_src emacs-lisp
+  (use-package posframe
+    :ensure t)
+#+end_src
 * Org Mode
+** Easy templates
+- For <s shortcut and stuff.
+#+BEGIN_SRC emacs-lisp
+  (require 'org-tempo)
+#+END_SRC
 ** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
@@ -622,6 +739,12 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
+** TOC
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :ensure t
+    :hook (org-mode . toc-org-mode))
+#+end_src
 * Eshell
 ** Aweshell
 #+BEGIN_SRC emacs-lisp
@@ -680,6 +803,14 @@ Group ibuffer files based on projects
     :defer 1)
 #+END_SRC
 * Asthetic Stuff
+** Font
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil
+                      :family "JetBrainsMono Nerd Font Mono"
+                      :height 180
+                      :weight 'normal
+                      :width 'normal)
+#+end_src
 ** Pretty stuff
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-parentheses
@@ -700,17 +831,28 @@ Group ibuffer files based on projects
     :ensure t)
 #+END_SRC
 ** Theme
+*** Solari Mode
+#+begin_src emacs-lisp
+  (use-package solaire-mode
+    :ensure t
+    :hook
+    ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+    (minibuffer-setup . solaire-mode-in-minibuffer)
+    :config
+    (solaire-global-mode +1)
+    (solaire-mode-swap-bg))
+#+end_src
+*** Doom Themes
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
     :ensure t
     :config
     (setq doom-themes-enable-bold t)
     (setq doom-themes-enable-italic t)
-    (load-theme 'doom-dracula t))
-
-  (doom-themes-visual-bell-config)
-
-  (doom-themes-org-config)
+    (load-theme 'doom-one t)
+    (doom-themes-visual-bell-config)
+    (doom-themes-org-config)
+    (doom-themes-treemacs-config))
 #+END_SRC
 * Other Modes
 ** Engine Mode
@@ -724,31 +866,6 @@ To search directly from eamcs
   (defengine duckduckgo
     "https://duckduckgo.com/?q=%s"
     :keybinding "d")
-#+END_SRC
-** Pdf
-- Basic mode
-#+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :ensure t
-    :config
-    (require 'pdf-tools)
-    (require 'pdf-view)
-    (require 'pdf-misc)
-    (require 'pdf-occur)
-    (require 'pdf-util)
-    (require 'pdf-annot)
-    (require 'pdf-info)
-    (require 'pdf-isearch)
-    (require 'pdf-history)
-    (require 'pdf-links)
-    (pdf-tools-install :no-query))
-#+END_SRC
-- Save last position
-#+BEGIN_SRC emacs-lisp
-  (use-package pdf-view-restore
-    :ensure t
-    :config
-    (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+END_SRC
 ** Json
 #+BEGIN_SRC emacs-lisp
