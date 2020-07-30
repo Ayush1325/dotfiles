@@ -2,12 +2,19 @@
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/")
-	     '("elpa" . "https://elpa.gnu.org/packages"))
+	     t)
+
+(add-to-list 'package-archives
+	     '("elpa" . "https://elpa.gnu.org/packages")
+	     t)
+
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
+
+(setq byte-compile-warnings '(cl-functions))
 
 (setq custom-file "~/.emacs.d/.emacs-custom.el")
 (load custom-file)

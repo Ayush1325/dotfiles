@@ -2,6 +2,7 @@
 
 * Table Of Contents :TOC:
 - [[#startup-stuff][Startup Stuff]]
+  - [[#recompile-all-packages][Recompile All Packages]]
   - [[#user-info][User info]]
   - [[#menus-stuff][Menus stuff]]
   - [[#refresh-buffer][Refresh Buffer]]
@@ -58,12 +59,9 @@
   - [[#babel][Babel]]
   - [[#latex][Latex]]
   - [[#toc][TOC]]
-- [[#eshell][Eshell]]
-  - [[#aweshell][Aweshell]]
-  - [[#autosuggestions][Autosuggestions]]
-  - [[#extras][Extras]]
-  - [[#smart-display][Smart display]]
-  - [[#load-path][Load Path]]
+- [[#terminal][Terminal]]
+  - [[#vterm][Vterm]]
+  - [[#eshell][Eshell]]
 - [[#dired][Dired]]
   - [[#async][Async]]
   - [[#dired-1][Dired+]]
@@ -73,6 +71,7 @@
   - [[#icons][Icons]]
   - [[#theme][Theme]]
 - [[#other-modes][Other Modes]]
+  - [[#pdf][Pdf]]
   - [[#engine-mode][Engine Mode]]
   - [[#json][Json]]
   - [[#yaml][Yaml]]
@@ -80,6 +79,9 @@
 - [[#rss][RSS]]
 
 * Startup Stuff
+** Recompile All Packages
+- After upgrading emacs.
+(byte-recompile-directory package-user-dir nil 'force)
 ** User info
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Ayush Singh")
@@ -87,14 +89,19 @@
 #+END_SRC
 ** Menus stuff
 - Disable toolbar
+#+begin_src emacs-lisp
+  (tool-bar-mode -1)
+#+end_src
 - Shortent prompt answers
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
 - Use ibuffer
 #+BEGIN_SRC emacs-lisp
-  (tool-bar-mode -1)
-  (fset 'yes-or-no-p 'y-or-n-p)
   (defalias 'list-buffers 'ibuffer)
 #+END_SRC
 ** Refresh Buffer
+- Bind refresh to <f5>.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
@@ -104,11 +111,6 @@
   (windmove-default-keybindings)
   (winner-mode 1)
 
-  (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-  (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-  (global-set-key (kbd "S-C-<down>") 'shrink-window)
-  (global-set-key (kbd "S-C-<up>") 'enlarge-window)
-
   (use-package ace-window
     :ensure t
     :bind
@@ -116,12 +118,24 @@
     :custom-face
     (aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 #+END_SRC
+- Window Resizing. Key: *S-C-<arrow>*
+#+begin_src emacs-lisp
+  (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+  (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+  (global-set-key (kbd "S-C-<down>") 'shrink-window)
+  (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+#+end_src
 ** Line stuff
 - Highlight current line
 #+BEGIN_SRC emacs-lisp
   (global-hl-line-mode 1)
 #+END_SRC
+- Line Numbers
+#+begin_src emacs-lisp
+  (global-display-line-numbers-mode t)
+#+end_src
 ** Expand Select
+- Key: *C-=*
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
     :ensure t
@@ -135,12 +149,14 @@
            ("C-<" . mc/mark-previous-like-this)))
 #+END_SRC
 ** IEdit
-Allows to edit same word at all instances
+- Allows to edit same word at all instances.
+- Key: *C-;*
 #+BEGIN_SRC emacs-lisp
   (use-package iedit
     :ensure t)
 #+END_SRC
 ** Smart narrowing
+- Key: *C-x n*
 #+BEGIN_SRC emacs-lisp
   (defun narrow-or-widen-dwim (p)
     (interactive "P")
@@ -158,7 +174,7 @@ Allows to edit same word at all instances
    (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
 #+END_SRC
 ** Kill behaviour
-For better integration with system clipboard
+- For better integration with system clipboard
 #+BEGIN_SRC emacs-lisp
   (setq save-interprogram-paste-before-kill t)
 #+END_SRC
@@ -188,6 +204,7 @@ For better integration with system clipboard
     (setq dashboard-set-init-info t))
 #+END_SRC
 ** Page breaker
+- Mainly for Dashboard
 #+BEGIN_SRC emacs-lisp
   (use-package page-break-lines
     :ensure t
@@ -195,6 +212,7 @@ For better integration with system clipboard
     (setq global-page-break-lines-mode 1))
 #+END_SRC
 ** Quelpa
+- For installing some packages
 #+BEGIN_SRC emacs-lisp
   (use-package quelpa-use-package
     :ensure t
@@ -245,7 +263,7 @@ Random text generator
     :ensure t)
 #+END_SRC
 ** Consel
-For ivy and better kill support
+- For ivy and better kill support
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
     :ensure t
@@ -255,11 +273,12 @@ For ivy and better kill support
      ("C-h v" . counsel-describe-variable)
      :map ivy-minibuffer-map
      ("M-y" . ivy-next-line)))
-
-  (use-package counsel-projectile
-    :ensure t
-    :bind (("C-c p" . projectile-command-map)))
 #+END_SRC
+- Projectile Integration
+#+begin_src emacs-lisp
+  (use-package counsel-projectile
+      :bind (("C-c p" . projectile-command-map)))
+#+end_src
 ** Ivy
 Lot of autocompletions
 #+BEGIN_SRC emacs-lisp
@@ -276,30 +295,32 @@ Lot of autocompletions
 - Icons
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-ivy-rich
-    :ensure t
     :init (all-the-icons-ivy-rich-mode 1))
 
   (use-package ivy-rich
-    :ensure t
     :init (ivy-rich-mode 1))
 
   (setq all-the-icons-ivy-rich-icon-size 0.8)
 #+END_SRC
 ** Company 
-For autocomplete inside buffer
+- For autocomplete inside buffer
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
     :config
     (global-company-mode 1))
 
-  (setq company-global-modes '(not org-mode markdown-mode))
+  (setq company-minimum-prefix-length 1
+          company-idle-delay 0.0)
 
-  (use-package company-emoji
-    :ensure t
-    :config
-    (add-to-list 'company-backends 'company-emoji))
+  (setq company-global-modes '(not org-mode markdown-mode))
 #+END_SRC
+- Emoji Support with Company
+#+begin_src emacs-lisp
+  (use-package company-emoji
+      :config
+      (add-to-list 'company-backends 'company-emoji))
+#+end_src
 ** Undo Tree
 For better undo and redo
 #+BEGIN_SRC emacs-lisp
@@ -314,6 +335,7 @@ For better undo and redo
     :ensure t)
 #+END_SRC
 ** Emoji Support
+- Emoji mode.
 #+BEGIN_SRC emacs-lisp
   (use-package emojify
     :ensure t)
@@ -459,50 +481,61 @@ Group ibuffer files based on projects
     (setq git-commit-summary-max-length 50))
 #+END_SRC
 ** LSP
+*** Base Install
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :ensure t
     :init (setq lsp-keymap-prefix "s-l")
     :hook ((latex-mode . lsp)
            (gdscript-mode . lsp)
+           (clojure-mode . lsp)
            (lsp-mode . lsp-enable-which-key-integration))
+    :config
+    ;;; Clojure
+    (setenv "PATH" (concat
+                     "/usr/local/bin" path-separator
+                     (getenv "PATH")))
+    (dolist (m '(clojure-mode
+                 clojurec-mode
+                 clojurescript-mode
+                 clojurex-mode))
+       (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
+    (setq lsp-enable-indentation nil
+          lsp-clojure-server-command '("bash" "-c" "clojure-lsp"))
     :commands lsp)
 
   (use-package lsp-ui
     :ensure t
     :commands lsp-ui-mode)
-
+#+END_SRC
+*** Company Integration
+#+BEGIN_SRC emacs-lisp
   (use-package company-lsp
     :ensure t
     :commands company-lsp)
-
+#+END_SRC
+*** Ivy Integration
+#+begin_src emacs-lisp
   (use-package lsp-ivy
     :ensure t
     :commands lsp-ivy-workspace-symbol)
-
-  (use-package dap-mode
-    :ensure t)
-#+END_SRC
-- Company Settings
-#+BEGIN_SRC emacs-lisp
-  (setq company-minimum-prefix-length 1
-        company-idle-delay 0.0)
-#+END_SRC
-- Increase GC threashold
+#+end_src
+*** Increase GC threashold
 #+BEGIN_SRC emacs-lisp
   (setq gc-cons-threshold 100000000)
 #+END_SRC
-- Increase data read by a process
+*** Increase data read by a process
 #+BEGIN_SRC emacs-lisp
   (setq read-process-output-max (* 1024 1024))
 #+END_SRC
-- Increase refresh rate.
+*** Increase refresh rate.
 #+BEGIN_SRC emacs-lisp
   (setq lsp-idle-delay 0.500)
 #+END_SRC
-- Treemacs Integration
+*** Treemacs Integration
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-treemacs
+    :ensure t
     :config
     (setq lsp-metals-treeview-show-when-views-received t)
     (lsp-treemacs-sync-mode 1))
@@ -516,8 +549,7 @@ Group ibuffer files based on projects
     (setq rustic-analyzer-command "/usr/bin/rust-analyzer")
     (setq rustic-lsp-server 'rust-analyzer)
     (add-hook 'rustic-mode-hook #'subword-mode)
-    (add-hook 'rustic-mode-hook #'smartparens-mode)
-  ;  (add-hook 'rustic-mode-hook #'(lambda () (setq company-idle-delay nil)))
+    (add-hook 'rustic-mode-hook #'smartparens-strict-mode)
     (add-hook 'rustic-mode-hook #'electric-pair-mode))
 
   (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
@@ -562,14 +594,22 @@ Group ibuffer files based on projects
     :hook (emacs-lisp-mode . highlight-defined-mode))
 #+END_SRC
 *** Clojure
+**** Clojure Mode
 #+BEGIN_SRC emacs-lisp
   (use-package clojure-mode
     :ensure t)
-
+#+END_SRC
+**** Cider
+#+begin_src emacs-lisp
   (use-package cider
     :ensure t
     :hook (clojure-mode . cider-mode))
-#+END_SRC
+#+end_src
+**** Snippets
+#+begin_src emacs-lisp
+  (use-package clojure-snippets
+    :ensure t)
+#+end_src
 ** Markdown
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
@@ -619,10 +659,10 @@ Group ibuffer files based on projects
 - Skewer Mode
 #+BEGIN_SRC emacs-lisp
   (use-package skewer-mode
+    :ensure t
     :hook ((js2-mode . skewer-mode)
            (css-mode . skewer-css-mode)
-           (html-mode . skewer-html-mode))
-    :ensure t)
+           (html-mode . skewer-html-mode)))
 #+END_SRC
 ** Rest Client
 - Basic package
@@ -661,8 +701,8 @@ Group ibuffer files based on projects
 #+END_SRC
 - Language Server
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-dart 
-    :ensure t 
+  (use-package lsp-dart
+    :ensure t
     :hook (dart-mode . lsp))
 #+END_SRC
 ** Golang
@@ -681,7 +721,8 @@ Group ibuffer files based on projects
 #+END_SRC
 - Run app from Desktop without emulator
 #+begin_src emacs-lisp
-  (use-package hover :ensure t)
+  (use-package hover
+    :ensure t)
 #+end_src
 ** General
 - Some Keybindings
@@ -696,6 +737,12 @@ Group ibuffer files based on projects
     :ensure t)
 #+END_SRC
 ** DAP
+- Base Install
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :ensure t)
+#+end_src
+- Posframe
 #+begin_src emacs-lisp
   (use-package posframe
     :ensure t)
@@ -745,10 +792,22 @@ Group ibuffer files based on projects
     :ensure t
     :hook (org-mode . toc-org-mode))
 #+end_src
-* Eshell
-** Aweshell
+* Terminal
+** Vterm
+*** Base Install
+#+begin_src emacs-lisp
+  (use-package vterm
+    :ensure t)
+#+end_src
+*** Disable line numbers
+#+begin_src emacs-lisp
+    (add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+end_src
+** Eshell
+*** Aweshell
 #+BEGIN_SRC emacs-lisp
   (use-package aweshell
+    :ensure t
     :quelpa (aweshell :fetcher git :url "https://github.com/manateelazycat/aweshell.git")
     :defer 1
     :config
@@ -763,18 +822,18 @@ Group ibuffer files based on projects
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
 #+END_SRC
-** Autosuggestions
+*** Autosuggestions
 #+BEGIN_SRC emacs-lisp
   (use-package esh-autosuggest
     :ensure t
     :hook (eshell-mode . esh-autosuggest-mode))
 #+END_SRC
-** Extras
+*** Extras
 #+BEGIN_SRC emacs-lisp
   (use-package eshell-prompt-extras
     :ensure t)
 #+END_SRC
-** Smart display
+*** Smart display
 #+BEGIN_SRC emacs-lisp
   (require 'eshell)
   (require 'em-smart)
@@ -782,7 +841,7 @@ Group ibuffer files based on projects
   (setq eshell-review-quick-commands nil)
   (setq eshell-smart-space-goes-to-end t)
 #+END_SRC
-** Load Path
+*** Load Path
 #+BEGIN_SRC emacs-lisp
   (setenv "PATH" (concat
                   "/usr/local/bin" path-separator
@@ -799,6 +858,7 @@ Group ibuffer files based on projects
 ** Dired+
 #+BEGIN_SRC emacs-lisp
   (use-package dired+
+    :ensure t
     :quelpa (dired+ :fetcher url :url "https://www.emacswiki.org/emacs/download/dired+.el")
     :defer 1)
 #+END_SRC
@@ -855,6 +915,35 @@ Group ibuffer files based on projects
     (doom-themes-treemacs-config))
 #+END_SRC
 * Other Modes
+** Pdf
+- Basic mode
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :ensure t
+    :config
+    (require 'pdf-tools)
+    (require 'pdf-view)
+    (require 'pdf-misc)
+    (require 'pdf-occur)
+    (require 'pdf-util)
+    (require 'pdf-annot)
+    (require 'pdf-info)
+    (require 'pdf-isearch)
+    (require 'pdf-history)
+    (require 'pdf-links)
+    (pdf-tools-install :no-query))
+#+END_SRC
+- Save last position
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-view-restore
+    :ensure t
+    :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+#+END_SRC
+- Disable line numbers
+#+begin_src emacs-lisp
+  (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+end_src
 ** Engine Mode
 To search directly from eamcs
 #+BEGIN_SRC emacs-lisp

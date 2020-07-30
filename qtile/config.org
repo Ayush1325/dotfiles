@@ -58,6 +58,10 @@
           wm_class == ("gw2-64.exe", "gw2-64.exe")
       ) or (
           wm_class == ("glyphclientapp.exe", "steam_app_743090")
+      ) or (
+          w_name == "JetBrains Toolbox"
+      ) or (
+          w_name == "Android Emulator - Pixel_3a:5554"
       ):
           window.floating = True
 #+end_src
@@ -113,16 +117,16 @@
           EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 4 -u")),
           EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 4 -u")),
           # Media
-          EzKey("<F1>", lazy.spawn("playerctl previous")),
-          EzKey("<F2>", lazy.spawn("playerctl play-pause")),
-          EzKey("<F3>", lazy.spawn("playerctl next")),
+          EzKey("<F6>", lazy.spawn("playerctl previous")),
+          EzKey("<F7>", lazy.spawn("playerctl play-pause")),
+          EzKey("<F8>", lazy.spawn("playerctl next")),
           # Applications
           EzKey("M-r", lazy.spawn("rofi -show run")),
           EzKey("M-<Return>", lazy.spawn(my_term)),
           EzKey("M-S-d", lazy.spawn("pcmanfm")),
           EzKey("M-e", lazy.spawn("emacsclient -nc")),
           EzKey("M-S-i", lazy.spawn("firefox")),
-          EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
+  #        EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
           EzKey("M-S-n", lazy.spawn("notion-app")),
           EzKey("M-S-m", lazy.spawn("ytmdesktop")),
       ]
@@ -279,7 +283,7 @@
       bring_front_click = False
       cursor_warp = False
       main = None
-      my_term = "alacritty"
+      my_term = "emacsclient -nce (vterm)"
       modifier_keys = {
           "M": "mod4",
           "A": "mod1",
