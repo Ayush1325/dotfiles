@@ -277,7 +277,8 @@ Random text generator
 - Projectile Integration
 #+begin_src emacs-lisp
   (use-package counsel-projectile
-      :bind (("C-c p" . projectile-command-map)))
+    :ensure t
+    :bind (("C-c p" . projectile-command-map)))
 #+end_src
 ** Ivy
 Lot of autocompletions
@@ -295,9 +296,11 @@ Lot of autocompletions
 - Icons
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-ivy-rich
+    :ensure t
     :init (all-the-icons-ivy-rich-mode 1))
 
   (use-package ivy-rich
+    :ensure t
     :init (ivy-rich-mode 1))
 
   (setq all-the-icons-ivy-rich-icon-size 0.8)
@@ -318,8 +321,9 @@ Lot of autocompletions
 - Emoji Support with Company
 #+begin_src emacs-lisp
   (use-package company-emoji
-      :config
-      (add-to-list 'company-backends 'company-emoji))
+    :ensure t
+    :config
+    (add-to-list 'company-backends 'company-emoji))
 #+end_src
 ** Undo Tree
 For better undo and redo
@@ -751,7 +755,7 @@ Group ibuffer files based on projects
 ** Easy templates
 - For <s shortcut and stuff.
 #+BEGIN_SRC emacs-lisp
-  (require 'org-tempo)
+  ;(require 'org-tempo)
 #+END_SRC
 ** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
@@ -777,7 +781,7 @@ Group ibuffer files based on projects
    'org-babel-load-languages
    '((restclient . t)
      (emacs-lisp . t)
-     (rust . t)
+  ;   (rust . t)
      (clojure . t)))
 
   (setq org-babel-clojure-backend 'cider)
