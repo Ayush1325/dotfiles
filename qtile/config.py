@@ -10,8 +10,28 @@ def start_once():
     home = os.path.expanduser("~")
     subprocess.call([home + "/.config/qtile/autostart.sh"])
 
+@lazy.function
+def float_to_front(qtile):
+    logging.info("bring floating windows to front")
+    for group in qtile.groups:
+        for window in group.windows:
+            if window.floating:
+                window.cmd_bring_to_front()
+
 @hook.subscribe.client_new
 def float_steam(window):
+    float_class = [
+        ("lxpolkit", "Lxpolkit"),
+        ("evelauncher.exe", "steam_app_8500"),
+        ("pavucontrol", "Pavucontrol"),
+        ("gw2-64.exe", "gw2-64.exe"),
+        ("glyphclientapp.exe", "steam_app_743090"),
+        ("War Thunder", "War Thunder")
+    ]
+    float_name = [
+        "JetBrains Toolbox",
+        "Android Emulator - Pixel_3a:5554"
+    ]
     wm_class = window.window.get_wm_class()
     w_name = window.window.get_name()
     if (
@@ -24,19 +44,11 @@ def float_steam(window):
             or "PMaxSize" in window.window.get_wm_normal_hints().get("flags", ())
         )
     ) or (
-        wm_class == ("lxpolkit", "Lxpolkit")
+        w_name in float_name
     ) or (
-        wm_class == ("evelauncher.exe", "steam_app_8500")
+        wm_class in float_class
     ) or (
-        wm_class == ("pavucontrol", "Pavucontrol")
-    ) or (
-        wm_class == ("gw2-64.exe", "gw2-64.exe")
-    ) or (
-        wm_class == ("glyphclientapp.exe", "steam_app_743090")
-    ) or (
-        w_name == "JetBrains Toolbox"
-    ) or (
-        w_name == "Android Emulator - Pixel_3a:5554"
+        wm_class == ("Places", "firefox") and w_name == "Library"
     ):
         window.floating = True
 
@@ -62,25 +74,19 @@ def init_keys():
         # Switch between windows in current stack pane
         # EzKey("-b", lazy.layout.down()),
         # EzKey("C-f", lazy.layout.up()),
-        # Move windows up or down in current stack
-        EzKey("C-S-b", lazy.layout.shuffle_down()),
-        EzKey("C-S-f", lazy.layout.shuffle_up()),
-        # Switch window focus to other pane(s) of stack
+        EzKey("M-b", lazy.layout.shuffle_down()),
+        EzKey("M-f", lazy.layout.shuffle_up()),
         EzKey("M-<space>", lazy.layout.next()),
+        EzKey("M-S-f", float_to_front),
         # Swap panes of split stack
-        EzKey("M-S-<space>", lazy.layout.rotate()),
+        # EzKey("M-S-<space>", lazy.layout.rotate()),
         # Toggle between split and unsplit sides of stack.
-        # Split = all windows displayed
-        # Unsplit = 1 window displayed, like Max layout, but still with
-        # multiple stack panes
-        EzKey("M-S-<Return>", lazy.layout.toggle_split()),
-        # Toggle between different layouts as defined below
+        # EzKey("M-S-<Return>", lazy.layout.toggle_split()),
         EzKey("M-<Tab>", lazy.next_layout()),
         EzKey("M-C-r", lazy.restart()),
         EzKey("M-C-q", lazy.shutdown()),
-        # Window Stuff
         EzKey("M-w", lazy.window.kill()),
-        EzKey("M-m", lazy.layout.maximize()),
+        EzKey("M-m", lazy.window.toggle_maximize()),
         # Sound
         EzKey("<XF86AudioMute>", lazy.spawn("pamixer -t")),
         EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 4 -u")),
@@ -92,12 +98,14 @@ def init_keys():
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show run")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
-        EzKey("M-S-d", lazy.spawn("pcmanfm")),
+        EzKey("M-C-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
-        EzKey("M-S-i", lazy.spawn("firefox")),
+        EzKey("M-C-i", lazy.spawn("firefox")),
 #        EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
-        EzKey("M-S-n", lazy.spawn("notion-app")),
-        EzKey("M-S-m", lazy.spawn("ytmdesktop")),
+        EzKey("M-C-n", lazy.spawn("notion-app")),
+        EzKey("M-C-m", lazy.spawn("youtubemusic-nativefier")),
+        # Screenshot
+        EzKey("M-<Print>", lazy.spawn("flameshot full -p /home/ayush/Pictures/Screenshots")),
     ]
 
 def init_group_names():
@@ -126,8 +134,8 @@ def init_groups(ks):
 def init_layouts():
     return [
         layout.MonadTall(**layout_theme),
-        layout.Max(**layout_theme),
         layout.TreeTab(**layout_theme),
+        layout.Max(**layout_theme),
         layout.Floating(**layout_theme),
     ]
 
@@ -163,7 +171,7 @@ def init_screens():
                     widget.Image(filename="~/.config/qtile/icons/sound.png",
                                  margin=4,
                                  background=colors["highlight"]),
-                    widget.Volume(volume_app="pavucontrol",
+                    widget.PulseVolume(volume_app="pavucontrol",
                                   padding=4,
                                   fontsize=18,
                                   background=colors["highlight"]),
@@ -212,7 +220,7 @@ def init_screens():
                     widget.Image(filename="~/.config/qtile/icons/restart.png",
                                  margin=2,
                                  background=colors["highlight"],
-                                 mouse_callbacks={"Button1": lambda _: os.system("sudo reboot")}),
+                                 mouse_callbacks={"Button1": lambda _: os.system("systemctl reboot")}),
                     widget.Image(filename="~/.config/qtile/icons/suspend.png",
                                  margin=2,
                                  background=colors["highlight"],
@@ -220,7 +228,7 @@ def init_screens():
                     widget.Image(filename="~/.config/qtile/icons/shutdown.png",
                                  margin=4,
                                  background=colors["highlight"],
-                                 mouse_callbacks={"Button1": lambda _: os.system("sudo shutdown now")}),
+                                 mouse_callbacks={"Button1": lambda _: os.system("systemctl poweroff")}),
                 ],
                 30,
                 background="#1d1f21",
