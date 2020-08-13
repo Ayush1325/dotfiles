@@ -33,6 +33,7 @@
   - [[#ibuffer-projectile][IBuffer Projectile]]
   - [[#hungry-delete][Hungry Delete]]
   - [[#move-text][Move Text]]
+  - [[#avy][Avy]]
   - [[#treemacs][Treemacs]]
 - [[#programming][Programming]]
   - [[#snippets][Snippets]]
@@ -368,6 +369,12 @@ Group ibuffer files based on projects
     :ensure t
     :bind (("M-<up>" . move-text-up)
            ("M-<down>" . move-text-down)))
+#+END_SRC
+** Avy
+- For better moving
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t)
 #+END_SRC
 ** Treemacs
 - Basic Install
@@ -920,7 +927,54 @@ Group ibuffer files based on projects
 #+END_SRC
 * Other Modes
 ** Pdf
-- Basic mode
+*** Keybindings
+***** Navigation
+| Action                                     | Key               |
+|--------------------------------------------+-------------------|
+| Scroll Up / Down by page-full              | space / backspace |
+| Scroll Up / Down by line                   | C-n / C-p         |
+| Scroll Right / Left                        | C-f / C-b         |
+| Top of Page / Bottom of Page               | < / >             |
+| Next Page / Previous Page                  | n / p             |
+| First Page / Last Page                     | M-< / M->         |
+| Incremental Search Forward / Backward      | C-s / C-r         |
+| Occur (list all lines containing a phrase) | M-s o             |
+| Jump to Occur Line                         | RETURN            |
+| Pick a Link and Jump                       | F                 |
+| Incremental Search in Links                | f                 |
+| History Back / Forwards                    | B / N             |
+| Display Outline                            | o                 |
+| Jump to Section from Outline               | RETURN            |
+| Jump to Page                               | M-g g             |
+
+***** Display
+| Action                                        | Key                                             |
+|-----------------------------------------------+-------------------------------------------------|
+| Zoom in / Zoom out                            | + / -                                           |
+| Fit Height / Fit Width / Fit Page             | H / W / P                                       |
+| Trim margins (set slice to bounding box)      | s b                                             |
+| Reset margins                                 | s r                                             |
+| Reset Zoom                                    | 0                                               |
+| Annotations                                   |                                                 |
+| List Annotations                              | C-c C-a l                                       |
+| Jump to Annotations from List                 | SPACE                                           |
+| Mark Annotation for Deletion                  | d                                               |
+| Delete Marked Annotations                     | x                                               |
+| Unmark Annotations                            | u                                               |
+| Close Annotation List                         | q                                               |
+| Add and edit annotations                      | via Mouse selection and left-click context menu |
+***** Syncing with Auctex
+| Action                                        | Key       |
+|-----------------------------------------------+-----------|
+| jump to PDF location from source              | C-c C-g   |
+| jump source location from PDF                 | C-mouse-1 |
+***** Miscellaneous
+| Action                                        | Key     |
+|-----------------------------------------------+---------|
+| Refresh File (e.g., after recompiling source) | g       |
+| Print File                                    | C-c C-p |
+*** Install
+**** Basic mode
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     :ensure t
@@ -937,14 +991,14 @@ Group ibuffer files based on projects
     (require 'pdf-links)
     (pdf-tools-install :no-query))
 #+END_SRC
-- Save last position
+**** Save last position
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-view-restore
     :ensure t
     :config
     (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 #+END_SRC
-- Disable line numbers
+**** Disable line numbers
 #+begin_src emacs-lisp
   (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
 #+end_src

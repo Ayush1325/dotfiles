@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(aw-scope (quote frame))
+ '(aw-scope 'frame)
  '(dart-format-on-save t t)
  '(dart-sdk-path "~/flutter/bin/cache/dart-sdk/" t)
  '(dired-hide-details-hide-information-lines t)
@@ -20,15 +20,13 @@
  '(markdown-fontify-code-blocks-natively t)
  '(org-support-shift-select nil)
  '(package-selected-packages
-   (quote
-    (lsp-mode treemacs-persp treemacs-magit treemacs-icons-dired treemacs company counsel ace-window lsp-treemacs vterm clojure-snippets posframe toc-org hover yasnippet gdscript-mode rustic elfeed-goodies elfeed-protocol elfeed-org elfeed ob-rust latex-pretty-symbols auctex cider aggressive-indent smartparens rainbow-delimiters clojure-mode skewer-mode js2-mode go-mode treemacs-projectile lsp-dart yaml-mode flutter dart-mode json-mode quelpa virtualenvwrapper exec-path-from-shell aweshell system-packages auto-package-update move-text prettier-js emmet-mode web-mode company-restclient pipenv sx slime all-the-icons-ivy-rich ivy-rich hungry-delete helm-company sunrise smart-hungry-delete pdf-view-restore pdf-tools engine-mode ob-restclient restclient quelpa-use-package dired+ ibuffer-projectile adaptive-wrap vue-mode emojify company-emoji which-key use-package undo-tree try rainbow-mode paredit org-bullets org-ac multiple-cursors magit lsp-ui lsp-ivy lorem-ipsum iedit highlight-parentheses highlight-defined helm expand-region eshell-prompt-extras esh-autosuggest edit-indirect dracula-theme doom-themes doom-modeline dashboard dap-mode counsel-projectile company-lsp)))
+   '(lsp-mode treemacs-persp treemacs-magit treemacs-icons-dired treemacs company counsel ace-window lsp-treemacs vterm clojure-snippets posframe toc-org hover yasnippet gdscript-mode rustic elfeed-goodies elfeed-protocol elfeed-org elfeed ob-rust latex-pretty-symbols auctex cider aggressive-indent smartparens rainbow-delimiters clojure-mode skewer-mode js2-mode go-mode treemacs-projectile lsp-dart yaml-mode flutter dart-mode json-mode quelpa virtualenvwrapper exec-path-from-shell aweshell system-packages auto-package-update move-text prettier-js emmet-mode web-mode company-restclient pipenv sx slime all-the-icons-ivy-rich ivy-rich hungry-delete helm-company sunrise smart-hungry-delete pdf-view-restore pdf-tools engine-mode ob-restclient restclient quelpa-use-package dired+ ibuffer-projectile adaptive-wrap vue-mode emojify company-emoji which-key use-package undo-tree try rainbow-mode paredit org-bullets org-ac multiple-cursors magit lsp-ui lsp-ivy lorem-ipsum iedit highlight-parentheses highlight-defined helm expand-region eshell-prompt-extras esh-autosuggest edit-indirect dracula-theme doom-themes doom-modeline dashboard dap-mode counsel-projectile company-lsp))
  '(server-switch-hook
-   (quote
-    ((lambda nil
+   '((lambda nil
        (let
 	   (server-buf)
-	 (setq backup-by-copying t))))))
- '(sunrise-attributes-display-mask (quote (t nil nil nil nil)))
+	 (setq backup-by-copying t)))))
+ '(sunrise-attributes-display-mask '(t nil nil nil nil))
  '(tool-bar-mode nil))
 
 (custom-set-faces
