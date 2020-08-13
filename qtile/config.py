@@ -30,7 +30,9 @@ def float_steam(window):
     ]
     float_name = [
         "JetBrains Toolbox",
-        "Android Emulator - Pixel_3a:5554"
+        "Heartache 101 v2.5",
+        "Android Emulator - Pixel_3a:5554",
+        "Welcome to Android Studio"
     ]
     wm_class = window.window.get_wm_class()
     w_name = window.window.get_name()
@@ -117,6 +119,7 @@ def init_group_names():
         ("🎥", {"layout": "max"}),
         ("🎮", {"layout": "max"}),
         ("📁", {"layout": "max"}),
+        ("📦", {"layout": "floating"})
     ]
 
 def init_groups(ks):
@@ -155,6 +158,7 @@ def init_screens():
         "underline": "#268bd2",
         "alert": "#ed0b0b",
     }
+    seperator = widget.Sep(linewidth=3, padding=4, foreground=colors["foreground"])
     return [
         Screen(
             top=bar.Bar(
@@ -168,66 +172,52 @@ def init_screens():
                         urgent_border=colors["alert"],
                     ),
                     widget.Spacer(),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/sound.png",
-                                 margin=4,
-                                 background=colors["highlight"]),
+                                 margin=4),
                     widget.PulseVolume(volume_app="pavucontrol",
                                   padding=4,
-                                  fontsize=18,
-                                  background=colors["highlight"]),
-                    widget.Spacer(length=10),
+                                  fontsize=18),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/network.png",
-                                 margin=4, background=colors["highlight"]),
-                    widget.Net(background=colors["highlight"],
-                               format="{down} ↓↑ {up}"),
-                    widget.Spacer(length=10),
+                                 margin=4),
+                    widget.Net(format="{down} ↓↑ {up}"),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/memory.png",
-                                 margin=4,
-                                 background=colors["highlight"]),
-                    widget.Memory(format="{MemUsed}M/{MemTotal}M",
-                                  background=colors["highlight"]),
-                    widget.Spacer(length=10),
+                                 margin=4),
+                    widget.Memory(format="{MemUsed}M/{MemTotal}M"),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/cpu.png",
-                                 margin=4,
-                                 background=colors["highlight"]),
-                    widget.CPU(format="{freq_current}GHz {load_percent}%",
-                               background=colors["highlight"]),
-                    widget.Spacer(length=10),
+                                 margin=4),
+                    widget.CPU(format="{freq_current}GHz {load_percent}%"),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/temp.png",
-                                 margin=4,
-                                 background=colors["highlight"]),
-                    widget.ThermalSensor(background=colors["highlight"]),
-                    widget.Spacer(length=10),
-                    widget.CurrentLayoutIcon(background=colors["highlight"],
-                                             foreground=colors["underline"],
+                                 margin=4),
+                    widget.ThermalSensor(),
+                    seperator,
+                    widget.CurrentLayoutIcon(foreground=colors["underline"],
                                              custom_icon_paths=["~/.config/qtile/icons/layouts/"],
                                              padding=5),
-                    widget.Spacer(length=10),
+                    seperator,
                     widget.Clock(foreground=colors["foreground"],
-                                 background=colors["highlight"],
                                  format="%A, %B %d - %H:%M",),
-                    widget.Spacer(length=10),
-                    widget.Systray(background=colors["highlight"],
-                                   icon_size=24, padding=5),
-                    widget.Spacer(length=10),
+                    seperator,
+                    widget.Systray(icon_size=24, padding=5),
+                    seperator,
                     widget.Image(filename="~/.config/qtile/icons/notification-resume.png",
                                  margin=2,
-                                 background=colors["highlight"],
                                  mouse_callbacks={
                                      "Button1":
                                      lambda _: os.system("notify-send \"DUNST_COMMAND_TOGGLE\"")
                                      }),
                     widget.Image(filename="~/.config/qtile/icons/restart.png",
                                  margin=2,
-                                 background=colors["highlight"],
                                  mouse_callbacks={"Button1": lambda _: os.system("systemctl reboot")}),
                     widget.Image(filename="~/.config/qtile/icons/suspend.png",
                                  margin=2,
-                                 background=colors["highlight"],
                                  mouse_callbacks={"Button1": lambda _: os.system("dm-tool lock")}),
                     widget.Image(filename="~/.config/qtile/icons/shutdown.png",
                                  margin=4,
-                                 background=colors["highlight"],
                                  mouse_callbacks={"Button1": lambda _: os.system("systemctl poweroff")}),
                 ],
                 30,
@@ -245,7 +235,8 @@ if __name__ in ["config", "__main__"]:
     bring_front_click = False
     cursor_warp = False
     main = None
-    my_term = "emacsclient -nce (vterm)"
+    my_term = "alacritty"
+#    my_term = "emacsclient -nce (vterm)"
     modifier_keys = {
         "M": "mod4",
         "A": "mod1",
