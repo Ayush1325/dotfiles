@@ -180,12 +180,17 @@
   (setq save-interprogram-paste-before-kill t)
 #+END_SRC
 ** Modline
-- Using doom modeline
+*** Using doom modeline
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
     :init (doom-modeline-mode 1))
 #+END_SRC
+*** Hide Modline
+#+begin_src emacs-lisp
+  (use-package hide-mode-line
+    :ensure t)
+#+end_src
 ** Dashboard
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
@@ -762,7 +767,7 @@ Group ibuffer files based on projects
 ** Easy templates
 - For <s shortcut and stuff.
 #+BEGIN_SRC emacs-lisp
-  ;(require 'org-tempo)
+  (require 'org-tempo)
 #+END_SRC
 ** Pretty Bullets
 #+BEGIN_SRC emacs-lisp
@@ -775,6 +780,7 @@ Group ibuffer files based on projects
   (setq org-startup-indented t)
   (setq org-startup-folded (quote overview))
   (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
+  (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 #+END_SRC
 ** Pretty stuff
 #+BEGIN_SRC emacs-lisp
@@ -812,7 +818,10 @@ Group ibuffer files based on projects
 #+end_src
 *** Disable line numbers
 #+begin_src emacs-lisp
-    (add-hook 'vterm-mode-hook (lambda () (display-line-numbers-mode -1)))
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (display-line-numbers-mode -1)
+              (hide-mode-line-mode t)))
 #+end_src
 ** Eshell
 *** Aweshell
