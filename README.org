@@ -1,4 +1,4 @@
-* Collection of my org files
+* Collection of my Config files
 Will try to have meaningful commit messages.
 
 * Actively Used applications
