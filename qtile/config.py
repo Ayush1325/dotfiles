@@ -26,7 +26,10 @@ def float_steam(window):
         ("pavucontrol", "Pavucontrol"),
         ("gw2-64.exe", "gw2-64.exe"),
         ("glyphclientapp.exe", "steam_app_743090"),
-        ("War Thunder", "War Thunder")
+        ("War Thunder", "War Thunder"),
+        ("totono_en.exe", "totono_en.exe"),
+        ("launcher.exe", "steam_app_230410"),
+        ("saya_en.exe", "saya_en.exe")
     ]
     float_name = [
         "JetBrains Toolbox",
@@ -98,7 +101,8 @@ def init_keys():
         EzKey("<F7>", lazy.spawn("playerctl play-pause")),
         EzKey("<F8>", lazy.spawn("playerctl next")),
         # Applications
-        EzKey("M-r", lazy.spawn("rofi -show run")),
+        EzKey("M-r", lazy.spawn("rofi -show drun")),
+        EzKey("M-S-w", lazy.spawn("rofi -show window")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
         EzKey("M-C-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
@@ -150,6 +154,67 @@ def init_layout_theme():
         "border_normal": "1D2330",
     }
 
+def bar_widgets(colors):
+    seperator = widget.Sep(linewidth=3, padding=4, foreground=colors["foreground"])
+    return [
+        widget.GroupBox(
+            active=colors["foreground"],
+            inactive=colors["foreground-alt"],
+            highlight_method="line",
+            highlight_color=colors["highlight"],
+            this_current_screen_border=colors["underline"],
+            urgent_border=colors["alert"],
+        ),
+        widget.Spacer(),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/sound.png",
+                     margin=4),
+        widget.PulseVolume(volume_app="pavucontrol",
+                           padding=4,
+                           fontsize=18),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/network.png",
+                     margin=4),
+        widget.Net(format="{down} ↓↑ {up}"),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/memory.png",
+                     margin=4),
+        widget.Memory(format="{MemUsed}M/{MemTotal}M"),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/cpu.png",
+                     margin=4),
+        widget.CPU(format="{freq_current}GHz {load_percent}%"),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/temp.png",
+                     margin=4),
+        widget.ThermalSensor(),
+        seperator,
+        widget.CurrentLayoutIcon(foreground=colors["underline"],
+                                 custom_icon_paths=["~/.config/qtile/icons/layouts/"],
+                                 padding=5),
+        seperator,
+        widget.Clock(foreground=colors["foreground"],
+                     format="%A, %B %d - %H:%M",),
+        seperator,
+        widget.Systray(icon_size=24, padding=5),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/notification-resume.png",
+                     margin=2,
+                     mouse_callbacks={
+                         "Button1":
+                         lambda _: os.system("notify-send \"DUNST_COMMAND_TOGGLE\"")
+                     }),
+        widget.Image(filename="~/.config/qtile/icons/restart.png",
+                     margin=2,
+                     mouse_callbacks={"Button1": lambda _: os.system("systemctl reboot")}),
+        widget.Image(filename="~/.config/qtile/icons/suspend.png",
+                     margin=2,
+                     mouse_callbacks={"Button1": lambda _: os.system("dm-tool lock")}),
+        widget.Image(filename="~/.config/qtile/icons/shutdown.png",
+                     margin=4,
+                     mouse_callbacks={"Button1": lambda _: os.system("systemctl poweroff")}),
+    ]
+
 def init_screens():
     colors = {
         "foreground": "#d8dee9",
@@ -158,71 +223,14 @@ def init_screens():
         "underline": "#268bd2",
         "alert": "#ed0b0b",
     }
-    seperator = widget.Sep(linewidth=3, padding=4, foreground=colors["foreground"])
     return [
         Screen(
             top=bar.Bar(
-                [
-                    widget.GroupBox(
-                        active=colors["foreground"],
-                        inactive=colors["foreground-alt"],
-                        highlight_method="line",
-                        highlight_color=colors["highlight"],
-                        this_current_screen_border=colors["underline"],
-                        urgent_border=colors["alert"],
-                    ),
-                    widget.Spacer(),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/sound.png",
-                                 margin=4),
-                    widget.PulseVolume(volume_app="pavucontrol",
-                                  padding=4,
-                                  fontsize=18),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/network.png",
-                                 margin=4),
-                    widget.Net(format="{down} ↓↑ {up}"),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/memory.png",
-                                 margin=4),
-                    widget.Memory(format="{MemUsed}M/{MemTotal}M"),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/cpu.png",
-                                 margin=4),
-                    widget.CPU(format="{freq_current}GHz {load_percent}%"),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/temp.png",
-                                 margin=4),
-                    widget.ThermalSensor(),
-                    seperator,
-                    widget.CurrentLayoutIcon(foreground=colors["underline"],
-                                             custom_icon_paths=["~/.config/qtile/icons/layouts/"],
-                                             padding=5),
-                    seperator,
-                    widget.Clock(foreground=colors["foreground"],
-                                 format="%A, %B %d - %H:%M",),
-                    seperator,
-                    widget.Systray(icon_size=24, padding=5),
-                    seperator,
-                    widget.Image(filename="~/.config/qtile/icons/notification-resume.png",
-                                 margin=2,
-                                 mouse_callbacks={
-                                     "Button1":
-                                     lambda _: os.system("notify-send \"DUNST_COMMAND_TOGGLE\"")
-                                     }),
-                    widget.Image(filename="~/.config/qtile/icons/restart.png",
-                                 margin=2,
-                                 mouse_callbacks={"Button1": lambda _: os.system("systemctl reboot")}),
-                    widget.Image(filename="~/.config/qtile/icons/suspend.png",
-                                 margin=2,
-                                 mouse_callbacks={"Button1": lambda _: os.system("dm-tool lock")}),
-                    widget.Image(filename="~/.config/qtile/icons/shutdown.png",
-                                 margin=4,
-                                 mouse_callbacks={"Button1": lambda _: os.system("systemctl poweroff")}),
-                ],
+                bar_widgets(colors),
                 30,
                 background="#1d1f21",
                 margin=0,
+                opacity=0.95,
             ),
         ),
     ]
