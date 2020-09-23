@@ -1,0 +1,12 @@
+picom --config ~/.config/picom/obconf.conf &
+nitrogen --restore &
+pcmanfm -d &
+emacs --daemon &
+dunst &
+redshift-gtk &
+nm-applet &
+/usr/bin/lxpolkit &
+light-locker --lock-after-screensaver=0 &
+flameshot &
+tint2 &
+pasystray &
