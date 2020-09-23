@@ -42,6 +42,7 @@
   - [[#lsp][LSP]]
   - [[#rust][Rust]]
   - [[#lisp][Lisp]]
+  - [[#smartparens][Smartparens]]
   - [[#markdown][Markdown]]
   - [[#web-dev][Web Dev]]
   - [[#rest-client][Rest Client]]
@@ -564,9 +565,7 @@ Group ibuffer files based on projects
     :config
     (setq rustic-analyzer-command "/usr/bin/rust-analyzer")
     (setq rustic-lsp-server 'rust-analyzer)
-    (add-hook 'rustic-mode-hook #'subword-mode)
-    (add-hook 'rustic-mode-hook #'smartparens-strict-mode)
-    (add-hook 'rustic-mode-hook #'electric-pair-mode))
+    (add-hook 'rustic-mode-hook #'subword-mode))
 
   (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
                                       (lsp-format-buffer))))
@@ -579,11 +578,6 @@ Group ibuffer files based on projects
   (use-package rainbow-delimiters
     :ensure t
     :hook ((lisp-mode clojure-mode emacs-lisp-mode cider-repl-mode) . rainbow-delimiters-mode))
-
-  (use-package smartparens
-    :ensure t
-    :hook ((clojure-mode cider-repl-mode emacs-lisp-mode slime-repl-mode lisp-mode) . smartparens-strict-mode)
-    :config (sp-use-smartparens-bindings))
 
   (use-package aggressive-indent
     :ensure t
@@ -625,6 +619,14 @@ Group ibuffer files based on projects
 #+begin_src emacs-lisp
   (use-package clojure-snippets
     :ensure t)
+#+end_src
+** Smartparens
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :ensure t
+    :hook (((clojure-mode cider-repl-mode emacs-lisp-mode slime-repl-mode lisp-mode) . smartparens-strict-mode)
+           ((prog-mode) . smartparens-mode))
+    :config (sp-use-smartparens-bindings))
 #+end_src
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -750,8 +752,16 @@ Group ibuffer files based on projects
 ** Godot
 #+BEGIN_SRC emacs-lisp
   (use-package gdscript-mode
-    :ensure t)
+    :ensure t
+    :config
+    (setq gdscript-use-tab-indents t)
+    (setq gdscript-indent-offset 4)
+    (setq gdscript-gdformat-save-and-format t))
 #+END_SRC
+- Hide lsp logs in gdscript
+#+begin_src emacs-lisp
+
+#+end_src
 ** DAP
 - Base Install
 #+begin_src emacs-lisp
@@ -778,7 +788,7 @@ Group ibuffer files based on projects
 ** Custom variables
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
-  (setq org-startup-folded (quote overview))
+  (setq org-startup-folded t)
   (add-hook 'org-mode-hook 'org-toggle-pretty-entities)
   (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 #+END_SRC
