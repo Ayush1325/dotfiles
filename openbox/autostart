@@ -1,4 +1,5 @@
 picom --config ~/.config/picom/obconf.conf &
+tint2 &
 nitrogen --restore &
 pcmanfm -d &
 emacs --daemon &
@@ -8,5 +9,4 @@ nm-applet &
 /usr/bin/lxpolkit &
 light-locker --lock-after-screensaver=0 &
 flameshot &
-tint2 &
 pasystray &
