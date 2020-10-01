@@ -11,3 +11,4 @@ nm-applet &
 /usr/bin/lxpolkit &
 light-locker --lock-after-screensaver=0 &
 flameshot &
+pasystray &

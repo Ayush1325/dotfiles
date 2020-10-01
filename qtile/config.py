@@ -1,6 +1,7 @@
 from libqtile.config import EzKey, Screen, Group, Drag, Click
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
+from libqtile.log_utils import logger
 from typing import List  # noqa: F401
 import os
 import subprocess
@@ -29,16 +30,27 @@ def float_steam(window):
         ("War Thunder", "War Thunder"),
         ("totono_en.exe", "totono_en.exe"),
         ("launcher.exe", "steam_app_230410"),
-        ("saya_en.exe", "saya_en.exe")
+        ("saya_en.exe", "saya_en.exe"),
+        ("xdman-Main", "xdman-Main"),
     ]
     float_name = [
         "JetBrains Toolbox",
         "Heartache 101 v2.5",
         "Android Emulator - Pixel_3a:5554",
-        "Welcome to Android Studio"
+        "Welcome to Android Studio",
+        "ActionRPG (DEBUG)",
+        "The Fruit of Grisaia Unrated Version",
+        "Wine configuration",
+        "The Labyrinth of Grisaia Unrated Version",
+        "The Eden of Grisaia Unrated Version",
+        "Genshin Impact Beta",
     ]
     wm_class = window.window.get_wm_class()
     w_name = window.window.get_name()
+    # logger.warning(wm_class)
+    # logger.warning(wm_class in float_class)
+    # logger.warning(w_name)
+    # logger.warning(w_name in float_name)
     if (
         wm_class == ("Steam", "Steam")
         and (
@@ -106,8 +118,8 @@ def init_keys():
         EzKey("M-<Return>", lazy.spawn(my_term)),
         EzKey("M-C-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
-        EzKey("M-C-i", lazy.spawn("firefox")),
-#        EzKey("M-S-h", lazy.spawn(my_term + " -e htop")),
+        EzKey("M-C-i", lazy.spawn("brave")),
+        EzKey("M-S-h", lazy.spawn(my_term + " -e bpytop")),
         EzKey("M-C-n", lazy.spawn("notion-app")),
         EzKey("M-C-m", lazy.spawn("youtubemusic-nativefier")),
         # Screenshot
@@ -119,7 +131,7 @@ def init_group_names():
         ("🌐", {"layout": "max"}),
         ("⚓", {"layout": "monadtall"}),
         ("😎", {"layout": "max"}),
-        ("📓", {"layout": "max"}),
+        ("📓", {"layout": "monadtall"}),
         ("🎥", {"layout": "max"}),
         ("🎮", {"layout": "max"}),
         ("📁", {"layout": "max"}),
@@ -154,6 +166,18 @@ def init_layout_theme():
         "border_normal": "1D2330",
     }
 
+def playerctl_control(icon, name):
+    return widget.Image(filename=icon, margin=2,
+                 mouse_callbacks={"Button1": lambda _: subprocess.Popen(f"playerctl --player={name} play-pause", shell=True)})
+
+def system_action(icon, cmd):
+    return widget.Image(filename=icon,
+                        margin=2,
+                        mouse_callbacks={
+                            "Button1":
+                            lambda _: subprocess.Popen(cmd, shell=True)
+                        })
+
 def bar_widgets(colors):
     seperator = widget.Sep(linewidth=3, padding=4, foreground=colors["foreground"])
     return [
@@ -167,52 +191,36 @@ def bar_widgets(colors):
         ),
         widget.Spacer(),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/sound.png",
-                     margin=4),
-        widget.PulseVolume(volume_app="pavucontrol",
-                           padding=4,
-                           fontsize=18),
+        playerctl_control("~/.config/qtile/icons/firefox.png", "firefox"),
+        playerctl_control("~/.config/qtile/icons/youtubemusic.png", "chromium"),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/network.png",
-                     margin=4),
+        widget.Image(filename="~/.config/qtile/icons/sound.png", margin=4),
+        widget.PulseVolume(volume_app="pavucontrol", padding=4, fontsize=18),
+        seperator,
+        widget.Image(filename="~/.config/qtile/icons/network.png", margin=4),
         widget.Net(format="{down} ↓↑ {up}"),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/memory.png",
-                     margin=4),
+        widget.Image(filename="~/.config/qtile/icons/memory.png", margin=4),
         widget.Memory(format="{MemUsed}M/{MemTotal}M"),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/cpu.png",
-                     margin=4),
+        widget.Image(filename="~/.config/qtile/icons/cpu.png", margin=4),
         widget.CPU(format="{freq_current}GHz {load_percent}%"),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/temp.png",
-                     margin=4),
+        widget.Image(filename="~/.config/qtile/icons/temp.png", margin=4),
         widget.ThermalSensor(),
         seperator,
         widget.CurrentLayoutIcon(foreground=colors["underline"],
                                  custom_icon_paths=["~/.config/qtile/icons/layouts/"],
                                  padding=5),
         seperator,
-        widget.Clock(foreground=colors["foreground"],
-                     format="%A, %B %d - %H:%M",),
+        widget.Clock(foreground=colors["foreground"], format="%A, %B %d - %H:%M",),
         seperator,
         widget.Systray(icon_size=24, padding=5),
         seperator,
-        widget.Image(filename="~/.config/qtile/icons/notification-resume.png",
-                     margin=2,
-                     mouse_callbacks={
-                         "Button1":
-                         lambda _: os.system("notify-send \"DUNST_COMMAND_TOGGLE\"")
-                     }),
-        widget.Image(filename="~/.config/qtile/icons/restart.png",
-                     margin=2,
-                     mouse_callbacks={"Button1": lambda _: os.system("systemctl reboot")}),
-        widget.Image(filename="~/.config/qtile/icons/suspend.png",
-                     margin=2,
-                     mouse_callbacks={"Button1": lambda _: os.system("dm-tool lock")}),
-        widget.Image(filename="~/.config/qtile/icons/shutdown.png",
-                     margin=4,
-                     mouse_callbacks={"Button1": lambda _: os.system("systemctl poweroff")}),
+        system_action("~/.config/qtile/icons/notification-resume.png", "notify-send \"DUNST_COMMAND_TOGGLE\""),
+        system_action("~/.config/qtile/icons/restart.png", "systemctl reboot"),
+        system_action("~/.config/qtile/icons/suspend.png", "dm-tool lock"),
+        system_action("~/.config/qtile/icons/shutdown.png", "systemctl poweroff"),
     ]
 
 def init_screens():
