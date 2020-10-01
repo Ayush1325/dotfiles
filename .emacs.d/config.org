@@ -24,7 +24,7 @@
   - [[#try][Try]]
   - [[#which-key][Which Key]]
   - [[#lorem-ipsum][Lorem ipsum]]
-  - [[#consel][Consel]]
+  - [[#counsel][Counsel]]
   - [[#ivy][Ivy]]
   - [[#company][Company]]
   - [[#undo-tree][Undo Tree]]
@@ -35,6 +35,7 @@
   - [[#move-text][Move Text]]
   - [[#avy][Avy]]
   - [[#treemacs][Treemacs]]
+  - [[#command-log][Command Log]]
 - [[#programming][Programming]]
   - [[#snippets][Snippets]]
   - [[#projectile][Projectile]]
@@ -269,7 +270,7 @@ Random text generator
   (use-package lorem-ipsum
     :ensure t)
 #+END_SRC
-** Consel
+** Counsel
 - For ivy and better kill support
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
@@ -474,6 +475,11 @@ Group ibuffer files based on projects
     :ensure t
     :config (treemacs-set-scope-type 'Perspectives))
 #+END_SRC
+** Command Log
+#+begin_src emacs-lisp
+  (use-package command-log-mode
+    :ensure t)
+#+end_src
 
 * Programming
 ** Snippets

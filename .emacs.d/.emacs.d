@@ -1,0 +1,1 @@
+/home/ayush/Documents/dotfiles/.emacs.d/
