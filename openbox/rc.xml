@@ -42,7 +42,7 @@
                   'Active' - where the active window is -->
   </placement>
   <theme>
-    <name>Arcbox</name>
+    <name>Mikachu</name>
     <titleLayout>NLIMC</titleLayout>
     <!--
       available characters are NDSLIMC, each can occur at most once.
@@ -183,176 +183,153 @@
     <!-- Desktops -->
     <keybind key="W-1">
       <action name="GoToDesktop">
-	<to>1</to>
+        <to>1</to>
       </action>
     </keybind>
-
     <keybind key="W-2">
       <action name="GoToDesktop">
-	<to>2</to>
+        <to>2</to>
       </action>
     </keybind>
-
     <keybind key="W-3">
       <action name="GoToDesktop">
-	<to>3</to>
+        <to>3</to>
       </action>
     </keybind>
-
     <keybind key="W-4">
       <action name="GoToDesktop">
-	<to>4</to>
+        <to>4</to>
       </action>
     </keybind>
-
     <keybind key="W-5">
       <action name="GoToDesktop">
-	<to>5</to>
+        <to>5</to>
       </action>
     </keybind>
-
     <keybind key="W-6">
       <action name="GoToDesktop">
-	<to>6</to>
+        <to>6</to>
       </action>
     </keybind>
-
     <keybind key="W-7">
       <action name="GoToDesktop">
-	<to>7</to>
+        <to>7</to>
       </action>
     </keybind>
-
     <keybind key="W-S-1">
       <action name="SendToDesktop">
-	<to>1</to>
+        <to>1</to>
       </action>
     </keybind>
-
     <keybind key="W-S-2">
       <action name="SendToDesktop">
-	<to>2</to>
+        <to>2</to>
       </action>
     </keybind>
-
     <keybind key="W-S-3">
       <action name="SendToDesktop">
-	<to>3</to>
+        <to>3</to>
       </action>
     </keybind>
-
     <keybind key="W-S-4">
       <action name="SendToDesktop">
-	<to>4</to>
+        <to>4</to>
       </action>
     </keybind>
-
     <keybind key="W-S-5">
       <action name="SendToDesktop">
-	<to>5</to>
+        <to>5</to>
       </action>
     </keybind>
-
     <keybind key="W-S-6">
       <action name="SendToDesktop">
-	<to>6</to>
+        <to>6</to>
       </action>
     </keybind>
-
     <keybind key="W-S-7">
       <action name="SendToDesktop">
-	<to>7</to>
+        <to>7</to>
       </action>
     </keybind>
-    
     <!-- Windows -->
     <keybind key="W-w">
       <action name="Close"/>
     </keybind>
-
     <keybind key="W-Up">
       <action name="Maximize"/>
     </keybind>
-
     <keybind key="W-Down">
       <action name="Unmaximize"/>
     </keybind>
-    
     <keybind key="W-Left">
-      <action name="Unmaximize" />
+      <action name="Unmaximize"/>
       <action name="MoveResizeTo">
-	<x>0</x>
-	<y>0</y>
-	<width>50%</width>
-	<height>100%</height>
+        <x>0</x>
+        <y>0</y>
+        <width>50%</width>
+        <height>100%</height>
       </action>
     </keybind>
-    
     <keybind key="W-Right">
-      <action name="Unmaximize" />
+      <action name="Unmaximize"/>
       <action name="MoveResizeTo">
-	<x>-0</x>
-	<y>0</y>
-	<width>50%</width>
-	<height>100%</height>
+        <x>-0</x>
+        <y>0</y>
+        <width>50%</width>
+        <height>100%</height>
       </action>
     </keybind>
-
     <keybind key="W-space">
       <action name="NextWindow">
-	<interactive>no</interactive>
+        <interactive>no</interactive>
       </action>
     </keybind>
-    
     <!-- Openbox -->
     <keybind key="W-C-r">
       <action name="Reconfigure"/>
     </keybind>
-
     <keybind key="W-C-q">
       <action name="Exit">
-	<prompt>yes</prompt>
+        <prompt>yes</prompt>
       </action>
     </keybind>
-    
     <!-- Sound -->
     <keybind key="XF86AudioMute">
       <action name="Execute">
         <command>pamixer -t</command>
       </action>
     </keybind>
-    
     <keybind key="XF86AudioLowerVolume">
       <action name="Execute">
         <command>pamixer -d 4 -u</command>
       </action>
     </keybind>
-    
     <keybind key="XF86AudioRaiseVolume">
       <action name="Execute">
         <command>pamixer -i 4 -u</command>
       </action>
     </keybind>
-    
     <!-- Media -->
-    <keybind key="F6">
+    <keybind key="XF86AudioPrev">
       <action name="Execute">
         <command>playerctl previous</command>
       </action>
     </keybind>
-    
-    <keybind key="F7">
+    <keybind key="XF86AudioPlay">
       <action name="Execute">
         <command>playerctl play-pause</command>
       </action>
     </keybind>
-    
-    <keybind key="F8">
+    <keybind key="XF86AudioStop">
+      <action name="Execute">
+        <command>playerctl stop</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioNex">
       <action name="Execute">
         <command>playerctl next</command>
       </action>
     </keybind>
-    
     <!-- Applications -->
     <keybind key="W-Return">
       <action name="Execute">
@@ -363,7 +340,6 @@
         <command>alacritty</command>
       </action>
     </keybind>
-    
     <keybind key="W-e">
       <action name="Execute">
         <startupnotify>
@@ -373,13 +349,11 @@
         <command>emacsclient -nc</command>
       </action>
     </keybind>
-    
     <keybind key="W-r">
       <action name="Execute">
         <command>rofi -show drun</command>
       </action>
     </keybind>
-    
     <keybind key="W-C-d">
       <action name="Execute">
         <startupnotify>
@@ -389,7 +363,6 @@
         <command>pcmanfm</command>
       </action>
     </keybind>
-    
     <keybind key="W-C-i">
       <action name="Execute">
         <startupnotify>
@@ -399,7 +372,6 @@
         <command>firefox</command>
       </action>
     </keybind>
-    
     <keybind key="W-C-m">
       <action name="Execute">
         <startupnotify>
@@ -409,7 +381,6 @@
         <command>youtubemusic-nativefier</command>
       </action>
     </keybind>
-    
     <!-- Screenshot -->
     <keybind key="W-Print">
       <action name="Execute">
