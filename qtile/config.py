@@ -44,6 +44,7 @@ def float_steam(window):
         "The Labyrinth of Grisaia Unrated Version",
         "The Eden of Grisaia Unrated Version",
         "Genshin Impact Beta",
+        "Android Virtual Device Manager",
     ]
     wm_class = window.window.get_wm_class()
     w_name = window.window.get_name()
@@ -106,21 +107,22 @@ def init_keys():
         EzKey("M-m", lazy.window.toggle_maximize()),
         # Sound
         EzKey("<XF86AudioMute>", lazy.spawn("pamixer -t")),
-        EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 4 -u")),
-        EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 4 -u")),
+        EzKey("<XF86AudioLowerVolume>", lazy.spawn("pamixer -d 1 -u")),
+        EzKey("<XF86AudioRaiseVolume>", lazy.spawn("pamixer -i 1 -u")),
         # Media
-        EzKey("<F6>", lazy.spawn("playerctl previous")),
-        EzKey("<F7>", lazy.spawn("playerctl play-pause")),
-        EzKey("<F8>", lazy.spawn("playerctl next")),
+        EzKey("<XF86AudioPrev>", lazy.spawn("playerctl previous")),
+        EzKey("<XF86AudioPlay>", lazy.spawn("playerctl play-pause")),
+        EzKey("<XF86AudioStop>", lazy.spawn("playerctl stop")),
+        EzKey("<XF86AudioNext>", lazy.spawn("playerctl next")),
         # Applications
         EzKey("M-r", lazy.spawn("rofi -show drun")),
         EzKey("M-S-w", lazy.spawn("rofi -show window")),
         EzKey("M-<Return>", lazy.spawn(my_term)),
         EzKey("M-C-d", lazy.spawn("pcmanfm")),
         EzKey("M-e", lazy.spawn("emacsclient -nc")),
-        EzKey("M-C-i", lazy.spawn("brave")),
+        EzKey("M-C-i", lazy.spawn("firefox")),
         EzKey("M-S-h", lazy.spawn(my_term + " -e bpytop")),
-        EzKey("M-C-n", lazy.spawn("notion-app")),
+        # EzKey("M-C-n", lazy.spawn("notion-app")),
         EzKey("M-C-m", lazy.spawn("youtubemusic-nativefier")),
         # Screenshot
         EzKey("M-<Print>", lazy.spawn("flameshot full -p /home/ayush/Pictures/Screenshots")),
