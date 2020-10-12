@@ -255,7 +255,8 @@
 To try out packages without installing
 #+BEGIN_SRC emacs-lisp
   (use-package try
-    :ensure t)
+    :ensure t
+    :defer t)
 #+END_SRC
 ** Which Key
 For key suggestions
@@ -478,7 +479,8 @@ Group ibuffer files based on projects
 ** Command Log
 #+begin_src emacs-lisp
   (use-package command-log-mode
-    :ensure t)
+    :ensure t
+    :defer t)
 #+end_src
 
 * Programming
@@ -500,6 +502,7 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
+    :defer t
     :config
     (setq git-commit-summary-max-length 50))
 #+END_SRC
@@ -570,8 +573,7 @@ Group ibuffer files based on projects
     :mode ("\\.rs\\'" . rustic-mode)
     :config
     (setq rustic-analyzer-command "/usr/bin/rust-analyzer")
-    (setq rustic-lsp-server 'rust-analyzer)
-    (add-hook 'rustic-mode-hook #'subword-mode))
+    (setq rustic-lsp-server 'rust-analyzer))
 
   (add-hook 'before-save-hook (lambda () (when (eq 'rustic-mode major-mode)
                                       (lsp-format-buffer))))
@@ -588,13 +590,12 @@ Group ibuffer files based on projects
   (use-package aggressive-indent
     :ensure t
     :hook (clojure-mode . aggressive-indent-mode))
-
-  (require 'smartparens-config)
 #+END_SRC
 *** Common Lisp
 #+BEGIN_SRC emacs-lisp
   (use-package slime
     :ensure t
+    :defer t
     :config
     (setq inferior-lisp-program "sbcl")
     (setq slime-contribs '(slime-fancy)))
@@ -631,8 +632,10 @@ Group ibuffer files based on projects
   (use-package smartparens
     :ensure t
     :hook (((clojure-mode cider-repl-mode emacs-lisp-mode slime-repl-mode lisp-mode) . smartparens-strict-mode)
-           ((prog-mode) . smartparens-mode))
-    :config (sp-use-smartparens-bindings))
+	   ((prog-mode) . smartparens-mode))
+    :config
+    (sp-use-smartparens-bindings)
+    (require 'smartparens-config))
 #+end_src
 ** Markdown
 #+BEGIN_SRC emacs-lisp
@@ -653,6 +656,7 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :ensure t
+    :defer t
     :config
     (setq web-mode-enable-auto-pairing t)
     (setq web-mode-enable-css-colorization t)
@@ -665,18 +669,21 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
     :ensure t
+    :defer t
     :hook web-mode)
 #+END_SRC
 - Prettier
 #+BEGIN_SRC emacs-lisp
   (use-package prettier-js
     :ensure t
+    :defer t
     :hook (web-mode . prettier-js-mode))
 #+END_SRC
 - Javascript
 #+BEGIN_SRC emacs-lisp
   (use-package js2-mode
     :ensure t
+    :defer t
     :config
     (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 #+END_SRC
@@ -684,6 +691,7 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package skewer-mode
     :ensure t
+    :defer t
     :hook ((js2-mode . skewer-mode)
            (css-mode . skewer-css-mode)
            (html-mode . skewer-html-mode)))
@@ -692,7 +700,8 @@ Group ibuffer files based on projects
 - Basic package
 #+BEGIN_SRC emacs-lisp
   (use-package restclient
-    :ensure t)
+    :ensure t
+    :defer t)
 #+END_SRC
 - Org support
 #+BEGIN_SRC emacs-lisp
@@ -711,6 +720,7 @@ Group ibuffer files based on projects
 #+BEGIN_SRC emacs-lisp
   (use-package pipenv
     :ensure t
+    :defer t
     :config
     (setq pipenv-with-flycheck nil))
 #+END_SRC
@@ -764,10 +774,6 @@ Group ibuffer files based on projects
     (setq gdscript-indent-offset 4)
     (setq gdscript-gdformat-save-and-format t))
 #+END_SRC
-- Hide lsp logs in gdscript
-#+begin_src emacs-lisp
-
-#+end_src
 ** DAP
 - Base Install
 #+begin_src emacs-lisp
@@ -830,7 +836,8 @@ Group ibuffer files based on projects
 *** Base Install
 #+begin_src emacs-lisp
   (use-package vterm
-    :ensure t)
+    :ensure t
+    :defer t)
 #+end_src
 *** Disable line numbers
 #+begin_src emacs-lisp
