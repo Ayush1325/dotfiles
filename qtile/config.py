@@ -136,7 +136,6 @@ def init_group_names():
         ("📓", {"layout": "monadtall"}),
         ("🎥", {"layout": "max"}),
         ("🎮", {"layout": "max"}),
-        ("📁", {"layout": "max"}),
         ("📦", {"layout": "floating"})
     ]
 
