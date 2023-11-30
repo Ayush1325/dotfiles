@@ -7,7 +7,7 @@
     // Choose the order of the modules
     "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "custom/media"],
     "modules-center": ["sway/window"],
-    "modules-right": ["mpd", "idle_inhibitor", "pulseaudio", "network", "bluetooth", "cpu", "memory", "battery", "custom/screenshot", "clock", "custom/powermenu"],
+    "modules-right": ["mpd", "idle_inhibitor", "pulseaudio", "network", "bluetooth", "cpu", "memory", "battery", "custom/screenshot", "clock", "custom/powermenu", "tray"],
     // Modules configuration
     "custom/powermenu": {
       "format": "{icon}",
@@ -25,7 +25,7 @@
         "disable-scroll": true,
         "all-outputs": true,
         "warp-on-scroll": false,
-        "format": "{icon}",
+        "format": "{name} {icon}",
         "persistent_workspaces": {
           "1": [],
           "2": [],
@@ -33,20 +33,18 @@
           "4": [],
           "5": [],
           "6": [],
-          "7": [],
-          "8": []
+          "7": []
         },
         "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "🗎",
-            "6": "🎓",
-            "7": "🎮",
-            "8": "",
-            "urgent": "",
+            "1": "🌐",
+            "2": "⌨",
+            "3": "💬",
+            "4": "📃",
+            "6": "🎬",
+            "7": "📧",
+            "urgent": "❗",
             "focused": "",
-            "default": ""
+            "default": "❓"
         }
     },
     "keyboard-state": {
