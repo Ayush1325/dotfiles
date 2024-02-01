@@ -1,7 +1,9 @@
 configuration {
-	display-drun: "App: ";
-	font: "UbuntuMonoNerdFont 18";
-	show-icons: true;
+ font: "UbuntuMonoNerdFontMono Regular 20";
+ show-icons: true;
+ display-drun: "";
 }
-
-@import "~/.config/rofi/rounded-purple-dark.rasi"
+@theme "/usr/share/rofi/themes/DarkBlue.rasi"
+element-icon { 
+ size: 3ch ; 
+} 
