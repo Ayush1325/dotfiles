@@ -11,7 +11,7 @@
     // Modules configuration
     "custom/powermenu": {
       "format": "{icon}",
-      "format-icons": "⏻",
+      "format-icons": "⏻ ",
       "tooltip": false,
       "on-click": "sh ~/.config/waybar/powermenu.sh"
     },
@@ -30,9 +30,9 @@
             "1": "🌐",
             "2": "⌨",
             "3": "💬",
-            "4": "📃",
+            "4": "📧",
+            "5": "📃",
             "6": "🎬",
-            "7": "📧",
             "urgent": "❗",
             "focused": "",
             "default": "❓"
@@ -84,7 +84,7 @@
         "tooltip-format-disconnected": "MPD (disconnected)"
     },
     "idle_inhibitor": {
-        "format": "{icon}",
+        "format": "{icon} ",
         "format-icons": {
             "activated": "",
             "deactivated": ""
@@ -100,11 +100,11 @@
         "format-alt": "{:%Y-%m-%d}"
     },
     "cpu": {
-        "format": "{usage}% ",
+        "format": "{usage}%  ",
         "tooltip": true
     },
     "memory": {
-        "format": "{}% "
+        "format": "{}%  "
     },
     "temperature": {
         // "thermal-zone": 2,
@@ -125,7 +125,7 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{capacity}% {icon}",
+        "format": "{capacity}% {icon} ",
         "format-charging": "{capacity}% ",
         "format-plugged": "{capacity}% ",
         "format-alt": "{time} {icon}",
@@ -138,7 +138,7 @@
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-wifi": "{essid} ({signalStrength}%)  ",
         "format-ethernet": "{ipaddr}/{cidr} ",
         "tooltip-format": "{ifname} via {gwaddr} ",
         "format-linked": "{ifname} (No IP) ",
@@ -152,8 +152,8 @@
         "format-bluetooth": "{volume}% {icon}  {format_source}",
         "format-bluetooth-muted": " {icon}  {format_source}",
         "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+        "format-source": " {volume}%  ",
+        "format-source-muted": " ",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -178,9 +178,9 @@
         // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
     },
     "bluetooth": {
-        "format": " {status}",
+        "format": "  {status} ",
         "format-disabled": "", // an empty format will hide the module
-        "format-connected": " {num_connections}",
+        "format-connected": "  {num_connections} ",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
