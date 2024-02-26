@@ -1,0 +1,19 @@
+# Have an entry for each file here for better tracking
+
+.git
+.gitignore
+.gitmodules
+README.md
+.config/alacritty
+# .config/dunst
+.config/emacs
+# .config/foot
+.config/mangohud
+# .config/mpv
+.config/qtile
+# .config/rofi
+# .config/sway
+# .config/swaylock
+# .config/waybar
+# .config/zellij
+# .config/zsh
