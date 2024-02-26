@@ -4,6 +4,8 @@
 .gitignore
 .gitmodules
 README.md
+
+# Configs
 .config/alacritty
 # .config/dunst
 .config/emacs
@@ -17,9 +19,12 @@ README.md
 # .config/waybar
 # .config/zellij
 # .config/zsh
+# .config/nvim
 
+# Scripts
 # .local/bin/uefi-run
 # .local/bin/toolbox-custom-create
 
+# Fonts
 # .local/share/fonts/JetBrainsMono
 # .local/share/fonts/UbuntuMono
