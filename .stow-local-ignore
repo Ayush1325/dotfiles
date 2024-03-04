@@ -22,6 +22,10 @@ README.md
 # .config/nvim
 # .config/git
 
+# Theme
+# .local/share/icons/Dracula
+# .local/share/themes/Dracula
+
 # Scripts
 # .local/bin/uefi-run
 # .local/bin/toolbox-custom-create
