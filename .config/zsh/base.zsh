@@ -14,3 +14,5 @@ source $PLUGINS_PATH/zsh-autoswitch-virtualenv/autoswitch_virtualenv.plugin.zsh
 
 # Theme
 source $PLUGINS_PATH/powerlevel10k/powerlevel10k.zsh-theme
+
+eval "$(direnv hook zsh)"
