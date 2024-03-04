@@ -1,0 +1,10 @@
+[init]
+	defaultBranch = main
+[user]
+	name = Ayush Singh
+	email = ayushdevel1325@gmail.com
+	signingkey = 05CEF5C789E55A74
+[commit]
+	gpgsign = true
+[format]
+	signOff = true
