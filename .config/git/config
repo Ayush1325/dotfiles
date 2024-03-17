@@ -8,3 +8,10 @@
 	gpgsign = true
 [format]
 	signOff = true
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = ayushdevel1325@gmail.com
+	smtpServerPort = 587
+[credential]
+    helper = store
