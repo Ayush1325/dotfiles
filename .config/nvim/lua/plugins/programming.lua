@@ -22,6 +22,7 @@ return {
 			require("lspconfig").sqlls.setup(default_lsp_config())
 			require("lspconfig").pyright.setup(default_lsp_config())
 			require("lspconfig").gopls.setup(default_lsp_config())
+			require("lspconfig").html.setup(default_lsp_config())
 		end
 	},
 	{
@@ -77,19 +78,6 @@ return {
 		config = function ()
 			require('treesitter-context').setup({})
 		end
-	},
-	{
-		"zbirenbaum/copilot.lua",
-		event = "InsertEnter",
-		opts = {
-			suggestion = {
-				auto_trigger = true,
-				keymap = {
-					accept = "<M-CR>",
-				}
-			}
-		},
-		config = true
 	},
 	{
 		'akinsho/flutter-tools.nvim',
