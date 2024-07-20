@@ -37,7 +37,7 @@ def install_basic_packages(container_name: str):
 @pretty_block
 def install_development_packages(container_name: str):
     print("Install Development Packages")
-    packages = ["neovim", "gcc", "g++", "pinentry-gnome3", "nodejs"]
+    packages = ["neovim", "gcc", "g++", "pinentry-qt", "nodejs"]
     toolbox_run(container_name, ["sudo", "dnf", "install", "-y"] + packages)
 
 
