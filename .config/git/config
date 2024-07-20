@@ -2,7 +2,7 @@
 	defaultBranch = main
 [user]
 	name = Ayush Singh
-	email = ayushdevel1325@gmail.com
+	email = ayush@beagleboard.org
 	signingkey = 05CEF5C789E55A74
 [commit]
 	gpgsign = true
@@ -11,7 +11,7 @@
 [sendemail]
 	smtpEncryption = tls
 	smtpServer = smtp.gmail.com
-	smtpUser = ayushdevel1325@gmail.com
+	smtpUser = ayush@beagleboard.org
 	smtpServerPort = 587
 [credential]
 	helper = store
