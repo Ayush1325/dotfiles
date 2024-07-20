@@ -3,8 +3,9 @@
 shutdown="⏻ Shutdown"
 reboot="↺ Reboot"
 lock="🔒Lock"
+sleep_opt="⏾ Suspend"
 
-selected_option=$(echo -e "$shutdown\n$reboot\n$lock" | rofi -dmenu -p "Power")
+selected_option=$(echo -e "$shutdown\n$sleep_opt\n$reboot\n$lock" | rofi -dmenu -p "Power")
 
 if [ "$selected_option" == "$shutdown" ]
 then
@@ -15,6 +16,9 @@ then
 elif [ "$selected_option" == "$lock" ]
 then
 	swaylock
+elif [ "$selected_option" == "$sleep_opt" ]
+then
+	systemctl suspend
 else
 	echo "No Match"
 fi
