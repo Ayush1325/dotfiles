@@ -163,6 +163,7 @@ return {
 			"sindrets/diffview.nvim",      -- optional
 			"ibhagwan/fzf-lua",            -- optional
 		},
+		version = "0.0.1",
 		config = true
 	}
 }

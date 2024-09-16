@@ -23,6 +23,7 @@ return {
 			require("lspconfig").pyright.setup(default_lsp_config())
 			require("lspconfig").gopls.setup(default_lsp_config())
 			require("lspconfig").html.setup(default_lsp_config())
+			require("lspconfig").ginko_ls.setup(default_lsp_config())
 		end
 	},
 	{
