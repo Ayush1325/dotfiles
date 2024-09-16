@@ -1,5 +1,6 @@
 # General Stuff
 setopt inc_append_history
+zstyle ':completion:*' rehash true
 
 # Variables
 export EDITOR=nvim
@@ -16,3 +17,6 @@ source $PLUGINS_PATH/zsh-autoswitch-virtualenv/autoswitch_virtualenv.plugin.zsh
 source $PLUGINS_PATH/powerlevel10k/powerlevel10k.zsh-theme
 
 eval "$(direnv hook zsh)"
+
+# Alias
+alias zola="flatpak run org.getzola.zola"
