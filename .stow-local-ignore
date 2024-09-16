@@ -23,6 +23,7 @@ README.md
 # .config/git
 # .config/qBittorrent
 # .config/systemd/user/flatpak-update.*
+# .config/helix
 
 # Theme
 # .local/share/icons/Dracula
