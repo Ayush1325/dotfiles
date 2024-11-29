@@ -19,4 +19,4 @@ source $PLUGINS_PATH/powerlevel10k/powerlevel10k.zsh-theme
 eval "$(direnv hook zsh)"
 
 # Alias
-alias zola="flatpak run org.getzola.zola"
+# alias zola="flatpak run org.getzola.zola"
