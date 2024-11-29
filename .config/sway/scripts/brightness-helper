@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if ! command -v brightnessctl >/dev/null; then
+    exit 0;
+fi
+
+brightnessctl -q set $1
+
+# Display desktop notification
+
+if ! command -v notify-send >/dev/null; then
+    exit 0;
+fi
+
+BRIGHTNESS=$(brightnessctl get)
+BRIGHTNESS_MAX=$(brightnessctl max)
+BRIGHTNESS_PER=$(( $BRIGHTNESS * 100 / $BRIGHTNESS_MAX ))
+TEXT="Brightness: ${BRIGHTNESS_PER}%"
+
+notify-send \
+    --app-name sway \
+    --expire-time 800 \
+    --hint string:x-canonical-private-synchronous:brightness \
+    --hint "int:value:$BRIGHTNESS_PER" \
+    --transient \
+    "${TEXT}"
