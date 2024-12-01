@@ -5,7 +5,7 @@ reboot="↺ Reboot"
 lock="🔒Lock"
 sleep_opt="⏾ Suspend"
 
-selected_option=$(echo -e "$shutdown\n$sleep_opt\n$reboot\n$lock" | rofi -dmenu -p "Power")
+selected_option=$(echo -e "$shutdown\n$sleep_opt\n$reboot\n$lock" | fuzzel -d -p "Power")
 
 if [ "$selected_option" == "$shutdown" ]
 then
