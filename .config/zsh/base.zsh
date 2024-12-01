@@ -20,3 +20,5 @@ eval "$(direnv hook zsh)"
 
 # Alias
 # alias zola="flatpak run org.getzola.zola"
+alias ls='ls --color=auto'
+alias ll='ls -la'
