@@ -29,8 +29,8 @@ set $term alacritty
 bindsym $mod+Return exec $term
 
 # Your preferred application launcher
-set $launcher fuzzel --terminal '$term'
-bindsym $mod+d exec $launcher
+set $menu /usr/bin/fuzzel --terminal '$term'
+bindsym $mod+d exec $menu
 
 # File manager
 bindsym $mod+Shift+d exec thunar
