@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync Personal Documents
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone bisync "PersonalDrive:Personal Docs/" /home/ayush/Documents/PersonalDocs -P -v
+
+[Install]
+WantedBy=default.target

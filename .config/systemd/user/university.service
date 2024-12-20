@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync University Stuff
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone bisync "PersonalDrive:University Material/" /home/ayush/Documents/University -P -v
+
+[Install]
+WantedBy=default.target
