@@ -16,9 +16,20 @@ source $PLUGINS_PATH/zsh-autoswitch-virtualenv/autoswitch_virtualenv.plugin.zsh
 # Theme
 source $PLUGINS_PATH/powerlevel10k/powerlevel10k.zsh-theme
 
-eval "$(direnv hook zsh)"
+if [ -e /run/.toolboxenv ]
+then
+	eval "$(direnv hook zsh)"
+	eval "$(zoxide init zsh)"
+	alias cd="z"
+	alias zola="flatpak-spawn --host flatpak run org.getzola.zola"
+else
+	alias te="toolbox enter"
+	alias zola="flatpak run org.getzola.zola"
+fi
 
 # Alias
 # alias zola="flatpak run org.getzola.zola"
 alias ls='ls --color=auto'
 alias ll='ls -la'
+
+source $HOME/.cargo/env
