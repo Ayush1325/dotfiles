@@ -89,7 +89,9 @@ return {
 				lua_ls = {},
 				rust_analyzer = {},
 				clangd = {},
-				jsonls = {}
+				jsonls = {},
+				pyright = {},
+				gopls = {}
 			}
 		},
 		config = function(_, opts)
@@ -167,11 +169,15 @@ return {
 			vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 			vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 			vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+
+			vim.keymap.set('n', "gd", builtin.lsp_definitions, { desc = "List definations" })
+			vim.keymap.set('n', "grr", builtin.lsp_references, { desc = "List LSP references" })
+			vim.keymap.set('n', 'grd', builtin.diagnostics, { desc = "Diagnostics" })
 		end
 	},
 	{
 		"HiPhish/rainbow-delimiters.nvim",
-		config = function ()
+		config = function()
 			require('rainbow-delimiters.setup').setup({})
 		end
 	}
