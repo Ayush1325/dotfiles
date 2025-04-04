@@ -9,6 +9,7 @@ selected_option=$(echo -e "$screenshot_active\n$screenshot_window\n$screenshot_r
 
 time=`date +%Y-%m-%d-%H-%M-%S`
 dir="`xdg-user-dir PICTURES`/Screenshots"
+mkdir -p $dir
 file_name="Screenshot_${time}.png"
 file=$dir/$file_name
 
