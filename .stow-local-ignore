@@ -10,21 +10,21 @@ README.md
 # .config/dunst
 .config/emacs
 # .config/foot
+.config/fuzzel
+# .config/git
+.config/helix
 .config/MangoHud
 .config/mpv
+# .config/nvim
+# .config/qBittorrent
 .config/qtile
 # .config/rofi
-.config/fuzzel
 # .config/sway
 # .config/swaylock
+.config/systemd/
 # .config/waybar
 # .config/zellij
 # .config/zsh
-# .config/nvim
-# .config/git
-.config/qBittorrent
-.config/systemd/user/flatpak-update.*
-.config/helix
 
 # Scripts
 # .local/bin/uefi-run
