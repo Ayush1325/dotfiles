@@ -69,12 +69,12 @@ def qemu_run(
 
 
 # Crete fat32 rootfs using dd and mtools
-def setup_rootfs(tempdir: str, efi_file: str, startup_file: str, other_files: list[str]) -> str:
+def setup_rootfs(tempdir: str, other_files: list[str]) -> str:
     rootfs_img = path.join(tempdir, ROOTFS_IMG_NAME)
     subprocess.run(
         ["dd", "if=/dev/zero", f"of={rootfs_img}", "bs=1M", "count=1024"])
     subprocess.run(["mformat", "-i", rootfs_img, "::"])
-    subprocess.run(["mcopy", "-i", rootfs_img, efi_file, startup_file] + other_files + ["::"])
+    subprocess.run(["mcopy", "-i", rootfs_img] + other_files + ["::"])
     return rootfs_img
 
 
@@ -222,15 +222,16 @@ if __name__ == "__main__":
     uefi_shell = args.shell if args.shell else ARCH[args.arch].uefi_shell
 
     with TemporaryDirectory() as tempdir:
-        efi_file = copy_efi_file(tempdir, args.EFI_File)
         extra_files = []
+
+        extra_files.append(copy_efi_file(tempdir, args.EFI_File))
+        extra_files.append(create_startup_file(tempdir, args.startup))
 
         if args.extra_file:
             for f in args.extra_file:
                 extra_files.append(copy_file(tempdir, f))
 
-        startup_file = create_startup_file(tempdir, args.startup)
-        rootfs_img = setup_rootfs(tempdir, efi_file, startup_file, extra_files)
+        rootfs_img = setup_rootfs(tempdir, extra_files)
         ovmf_code_path, ovmf_vars_path, uefi_shell_path = copy_ovmf_files(
             tempdir, ovmf_code, ovmf_vars, uefi_shell)
         qemu_run(qemu, rootfs_img, ovmf_code_path,
