@@ -41,7 +41,7 @@ def qemu_run(
     ovmf_code_path: str,
     ovmf_vars_path: str,
     uefi_shell_path: str,
-    networking: bool,
+    args,
     extra_args: list[str],
 ):
     command = [
@@ -63,7 +63,9 @@ def qemu_run(
         "-cpu",
         "max"
     ] + extra_args
-    if not networking:
+    if args.tcp_port:
+        command += ["-nic", f"user,hostfwd=tcp::{args.tcp_port}-:{args.tcp_port}"]
+    elif not args.net:
         command += ["-net", "none"]
     subprocess.run(command)
 
@@ -165,6 +167,11 @@ def setup_cli():
         help="path to qemu executable",
     )
     my_parser.add_argument(
+        "--tcp-port",
+        type=str,
+        help="tcp port to share with host",
+    )
+    my_parser.add_argument(
         "-n",
         "--net",
         action='store_true',
@@ -235,4 +242,4 @@ if __name__ == "__main__":
         ovmf_code_path, ovmf_vars_path, uefi_shell_path = copy_ovmf_files(
             tempdir, ovmf_code, ovmf_vars, uefi_shell)
         qemu_run(qemu, rootfs_img, ovmf_code_path,
-                 ovmf_vars_path, uefi_shell_path, args.net, extra_args)
+                 ovmf_vars_path, uefi_shell_path, args, extra_args)
