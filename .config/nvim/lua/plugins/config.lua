@@ -91,7 +91,9 @@ return {
 				clangd = {},
 				jsonls = {},
 				pyright = {},
-				gopls = {}
+				gopls = {},
+				emmet_ls = {},
+				tailwindcss = {}
 			}
 		},
 		config = function(_, opts)
