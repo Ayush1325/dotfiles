@@ -97,16 +97,15 @@ return {
 			}
 		},
 		config = function(_, opts)
-			require('neoconf').setup({})
-
-			local lspconfig = require('lspconfig')
 			for server, config in pairs(opts.servers) do
-				-- passing config.capabilities to blink.cmp merges with the capabilities in your
-				-- `opts[server].capabilities, if you've defined it
-				config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-				lspconfig[server].setup(config)
+				vim.lsp.config(server, config)
+				vim.lsp.enable(server)
 			end
 		end
+	},
+	{
+		'folke/neoconf.nvim',
+		config = true,
 	},
 	{
 		"williamboman/mason.nvim",
@@ -152,7 +151,7 @@ return {
 	},
 	{
 		'nvim-telescope/telescope.nvim',
-		branch = '0.1.x',
+		tag = 'v0.2.0',
 		dependencies = {
 			'nvim-lua/plenary.nvim',
 			{ "nvim-tree/nvim-web-devicons", opts = {} },
