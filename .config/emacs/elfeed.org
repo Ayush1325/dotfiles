@@ -1,8 +1,0 @@
-* Blogs                                                              :elfeed:
-** Software                                                         :software:
-*** Godot                                                          :godot:
-**** https://godotengine.org/rss.xml
-** Arch Linux                                                       :arch:
-*** https://www.archlinux.org/feeds/news/
-** Programming Languages                                            :programming:
-*** https://blog.rust-lang.org/feed.xml
