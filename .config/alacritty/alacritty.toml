@@ -1,8 +1,0 @@
-[general]
-import = [
-	"argonaut.toml"
-]
-
-[font]
-size = 18
-normal = { family = "JetBrainsMono NFM", style = "Regular" }
