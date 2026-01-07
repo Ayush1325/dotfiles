@@ -1,0 +1,1 @@
+../../../_waybar/.config/waybar/screenshot.sh

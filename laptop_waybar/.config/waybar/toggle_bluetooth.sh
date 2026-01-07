@@ -1,0 +1,1 @@
+../../../_waybar/.config/waybar/toggle_bluetooth.sh

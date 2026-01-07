@@ -1,0 +1,1 @@
+../../../_waybar/.config/waybar/powermenu.sh
