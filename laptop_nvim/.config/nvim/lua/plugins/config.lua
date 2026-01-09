@@ -1,0 +1,1 @@
+../../../../../_nvim/.config/nvim/lua/plugins/config.lua
