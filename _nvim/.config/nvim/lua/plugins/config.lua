@@ -93,7 +93,8 @@ return {
 				pyright = {},
 				gopls = {},
 				emmet_ls = {},
-				tailwindcss = {}
+				tailwindcss = {},
+                        	tinymist = {}
 			}
 		},
 		config = function(_, opts)
