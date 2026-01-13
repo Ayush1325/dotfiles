@@ -1,9 +1,10 @@
+@import "font.css";
+
 * {
     border: none;
     border-radius: 0;
     font-weight: bold;
     font-family: "UbuntuMonoNerdFont";
-    font-size: 16px;
     min-height: 0;
 }
 
