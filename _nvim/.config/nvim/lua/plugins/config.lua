@@ -92,8 +92,8 @@ return {
 				jsonls = {},
 				pyright = {},
 				gopls = {},
-				emmet_ls = {},
-				tailwindcss = {},
+				emmet_language_server = {},
+				html = {},
                         	tinymist = {}
 			}
 		},
