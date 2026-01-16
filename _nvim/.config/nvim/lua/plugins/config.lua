@@ -94,7 +94,7 @@ return {
 				gopls = {},
 				emmet_language_server = {},
 				html = {},
-                        	tinymist = {}
+				tinymist = {}
 			}
 		},
 		config = function(_, opts)
@@ -173,5 +173,9 @@ return {
 		config = function()
 			require('rainbow-delimiters.setup').setup({})
 		end
+	},
+	{
+		'numToStr/Comment.nvim',
+		config = true
 	}
 }
