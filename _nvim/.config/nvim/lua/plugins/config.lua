@@ -94,6 +94,7 @@ return {
 				gopls = {},
 				emmet_language_server = {},
 				html = {},
+				bashls = {},
 				tinymist = {}
 			}
 		},
