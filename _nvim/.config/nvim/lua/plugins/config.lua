@@ -92,8 +92,12 @@ return {
 				jsonls = {},
 				pyright = {},
 				gopls = {},
-				emmet_language_server = {},
-				html = {},
+				emmet_language_server = {
+					filetypes = { "css", "html", "handlebars" }
+				},
+				html = {
+					filetypes = { "html", "handlebars" }
+				},
 				bashls = {},
 				tinymist = {}
 			}
