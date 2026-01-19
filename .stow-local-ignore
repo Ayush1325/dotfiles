@@ -6,13 +6,5 @@
 README.md
 
 # Configs
-# .config/dunst
 # .config/git
-# .config/sway
-# .config/swaylock
 .config/systemd/
-# .config/zellij
-
-# Scripts
-# .local/bin/uefi-run
-# .local/bin/toolbox-custom-create
