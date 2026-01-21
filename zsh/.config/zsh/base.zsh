@@ -1,5 +1,6 @@
 # General Stuff
 setopt inc_append_history
+unsetopt nomatch
 zstyle ':completion:*' rehash true
 
 # Variables
