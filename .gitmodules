@@ -7,6 +7,3 @@
 [submodule "zsh/.config/zsh/plugins/powerlevel10k"]
 	path = zsh/.config/zsh/plugins/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "zsh/.config/zsh/plugins/zsh-autoswitch-virtualenv"]
-	path = zsh/.config/zsh/plugins/zsh-autoswitch-virtualenv
-	url = https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv.git
