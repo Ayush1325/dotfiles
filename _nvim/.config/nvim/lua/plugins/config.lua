@@ -14,6 +14,10 @@ vim.keymap.set('n', "<leader>bn", "<cmd>echo expand('%:p')<CR>", { desc = "Displ
 
 return {
 	{
+		"j-hui/fidget.nvim",
+		config = true,
+	},
+	{
 		"hoob3rt/lualine.nvim",
 		dependencies = { "kyazdani42/nvim-web-devicons", opt = true },
 		config = true,
