@@ -1,6 +1,12 @@
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.cursorline = true
+vim.g.termguicolors = true
+
+vim.o.nu = true
+vim.o.relativenumber = true
+vim.o.cursorline = true
+vim.o.expandtab = true
+vim.o.hlsearch = true
+vim.o.incsearch = true
+vim.o.wrap = false
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
 -- Persistant Undo
