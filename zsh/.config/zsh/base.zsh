@@ -21,6 +21,7 @@ then
 	eval "$(direnv hook zsh)"
 	alias zola="flatpak-spawn --host flatpak run org.getzola.zola"
 	alias flatpak-builder="flatpak-spawn --host flatpak run org.flatpak.Builder"
+	alias podman="flatpak-spawn --host podman"
 else
 	alias te="toolbox enter"
 	alias zola="flatpak run org.getzola.zola"
