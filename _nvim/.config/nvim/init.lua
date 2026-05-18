@@ -1,3 +1,7 @@
+require('vim._core.ui2').enable({})
+vim.loader.enable() -- Lua bytecode cache for faster startup
+
+-- Setup leader
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -10,10 +14,15 @@ vim.o.expandtab = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.wrap = false
+vim.opt.lazyredraw = true -- do not redraw during macros
 -- Clipboard
-vim.opt.clipboard = "unnamedplus"
--- Persistant Undo
+vim.schedule(function()
+  vim.o.clipboard = 'unnamedplus'
+end) -- deferred to avoid startup slowdown
+
+-- Better Undo
 vim.opt.undofile = true
+vim.cmd.packadd("nvim.undotree")
 
 vim.keymap.set('n', "grn", vim.lsp.buf.rename, { desc = "Rename" })
 vim.keymap.set('n', "gra", vim.lsp.buf.code_action, { desc = "Code Action" })
