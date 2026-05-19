@@ -148,10 +148,6 @@ for server, config in pairs(servers) do
     vim.lsp.enable(server)
 end
 
--- Comments
-vim.pack.add({'https://github.com/numToStr/Comment.nvim'})
-require('Comment').setup()
-
 -- Treesitter
 vim.pack.add({
         'https://github.com/romus204/tree-sitter-manager.nvim',
