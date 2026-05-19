@@ -27,7 +27,7 @@ def update_container(container_name: str):
 @pretty_block
 def install_basic_packages(container_name: str):
     print("Install Basic Packages")
-    packages = ["direnv", "fd-find", "ripgrep", "zsh", "sqlite", "bat", "python", "wl-clipboard", "zoxide"]
+    packages = ["direnv", "fd-find", "ripgrep", "zsh", "sqlite", "bat", "python", "wl-clipboard"]
     toolbox_run(
         container_name,
         ["sudo", "dnf", "install", "-y"] + packages,
