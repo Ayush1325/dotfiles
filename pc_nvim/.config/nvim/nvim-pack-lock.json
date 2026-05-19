@@ -1,9 +1,5 @@
 {
   "plugins": {
-    "auto-save.nvim": {
-      "rev": "979b6c82f60cfa80f4cf437d77446d0ded0addf0",
-      "src": "https://github.com/Pocco81/auto-save.nvim"
-    },
     "blink.cmp": {
       "rev": "2ef3db111181c5eef22a462aa0122349a6027f28",
       "src": "https://github.com/saghen/blink.cmp"
