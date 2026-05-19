@@ -62,7 +62,8 @@ require('nvim-autopairs').setup()
 require('rainbow-delimiters.setup').setup({})
 
 -- Auto Save
-vim.o.autowriteall = true
+vim.pack.add({'https://github.com/Pocco81/auto-save.nvim'})
+require('auto-save').setup()
 
 -- Git
 vim.pack.add({
