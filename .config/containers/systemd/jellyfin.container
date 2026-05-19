@@ -1,0 +1,24 @@
+[Unit]
+Description=jellyfin
+
+[Container]
+Image=docker.io/jellyfin/jellyfin:latest
+AutoUpdate=registry
+PublishPort=8096:8096/tcp
+PublishPort=8920:8920/tcp
+PublishPort=7359:7359/udp
+PublishPort=1900:1900/udp
+UserNS=keep-id
+AddDevice=/dev/dri/:/dev/dri/
+Volume=jellyfin-config:/config:Z
+Volume=jellyfin-cache:/cache:Z
+Volume=/home/ayush/Videos/Movies:/movies:Z
+Volume=/home/ayush/Videos/Series:/series:Z
+
+[Service]
+# Inform systemd of additional exit status
+SuccessExitStatus=0 143
+
+[Install]
+# Start by default on boot
+WantedBy=default.target
