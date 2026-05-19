@@ -14,7 +14,6 @@ vim.o.expandtab = true
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.wrap = false
-vim.opt.lazyredraw = true -- do not redraw during macros
 -- Clipboard
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
