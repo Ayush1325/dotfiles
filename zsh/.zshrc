@@ -14,6 +14,9 @@ bindkey -v
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/ayush/.zshrc'
 
+# Additional completion
+fpath+=("$HOME/.local/share/zsh/site-functions")
+
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
