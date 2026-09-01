@@ -131,6 +131,7 @@ local servers = {
     clangd = {},
     jsonls = {},
     pyright = {},
+    pylsp = {},
     gopls = {},
     emmet_language_server = {
         filetypes = { 'css', 'html', 'handlebars' },
