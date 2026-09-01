@@ -31,3 +31,4 @@ fi
 # Alias
 alias ls='ls --color=auto'
 alias ll='ls -la'
+alias clang-format-last-commit='git diff -U0 --no-color --relative HEAD^ | clang-format-diff -p1 -i'
