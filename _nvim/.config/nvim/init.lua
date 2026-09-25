@@ -7,6 +7,7 @@ vim.g.maplocalleader = "\\"
 
 vim.g.termguicolors = true
 
+vim.o.textwidth = 100
 vim.o.nu = true
 vim.o.relativenumber = true
 vim.o.cursorline = true
