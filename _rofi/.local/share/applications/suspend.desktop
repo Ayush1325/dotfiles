@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Suspend
+Exec=sh -c "swaylock -f && systemctl suspend"
+Icon=system-suspend
+Keywords=sleep;

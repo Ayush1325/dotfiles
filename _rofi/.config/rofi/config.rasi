@@ -5,6 +5,8 @@
 configuration {
     display-drun:    "";
     disable-history: false;
+    show-icons: true;
+    icon-theme: "Dracula";
 }
 
 * {
