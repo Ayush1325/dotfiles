@@ -29,8 +29,9 @@
 #+end_src
 
 ** Packaging
+- use-package is built in (Emacs 29+). Only used for packages that aren't.
 #+begin_src emacs-lisp
-(require 'package)
+  (require 'package)
 #+end_src
 
 * Ui
@@ -41,28 +42,27 @@
 #+end_src
 - Disable Menu Bar
 #+begin_src emacs-lisp
-(menu-bar-mode -1) 
+  (menu-bar-mode -1)
 #+end_src
 - Disable scrollbar
 #+begin_src emacs-lisp
-(scroll-bar-mode -1)
+  (scroll-bar-mode -1)
 #+end_src
-- Shortent prompt answers
+- Shorten prompt answers
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 ** Which Key
+- Built in since Emacs 30
 #+begin_src emacs-lisp
-  (unless (package-installed-p 'which-key)
-    (package-install 'which-key))
-  (require 'which-key)
   (which-key-mode)
 #+end_src
 ** Theme
 #+begin_src emacs-lisp
-  (unless (package-installed-p 'dracula-theme)
-    (package-install 'dracula-theme))
-  (load-theme 'dracula t)
+  (use-package dracula-theme
+    :ensure t
+    :config
+    (load-theme 'dracula t))
 #+end_src
 
 ** Font
@@ -73,19 +73,21 @@
 * Evil
 ** Basic
 #+begin_src emacs-lisp
-  (setq evil-want-keybinding nil)
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
-(require 'evil)
-(evil-mode 1)
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-keybinding nil)
+    :config
+    (evil-mode 1))
 #+end_src
 
 ** Evil collection
 #+begin_src emacs-lisp
-  (unless (package-installed-p 'evil-collection)
-    (package-install 'evil-collection))
-  (require 'evil-collection)
-  (evil-collection-init)
+  (use-package evil-collection
+    :ensure t
+    :after evil
+    :config
+    (evil-collection-init))
 #+end_src
 
 * Gnus
@@ -94,41 +96,41 @@
 #+begin_src emacs-lisp
   (setq gnus-select-method '(nnnil ""))
 #+end_src
-- Set up mail boxes. Route expired emails into thrash (default is Archive).
-#+Begin_src emacs-lisp
+- Set up mail boxes. Route expired emails into trash (default is Archive).
+#+begin_src emacs-lisp
   (setq gnus-secondary-select-methods
         '((nnimap "personal"
-  		(nnimap-user "ayushsingh1325@gmail.com")
+                  (nnimap-user "ayushsingh1325@gmail.com")
                   (nnimap-address "imap.gmail.com")
                   (nnimap-server-port 993)
                   (nnimap-stream tls)
-  		(nnmail-expiry-target "nnimap+personal:[Gmail]/Trash"))
-  	(nnimap "work"
-  		(nnimap-user "ayush@beagleboard.org")
+                  (nnmail-expiry-target "nnimap+personal:[Gmail]/Trash"))
+          (nnimap "work"
+                  (nnimap-user "ayush@beagleboard.org")
                   (nnimap-address "imap.gmail.com")
                   (nnimap-server-port 993)
                   (nnimap-stream tls)
-  		(nnmail-expiry-target "nnimap+work:[Gmail]/Trash"))
-  	(nnimap "dev"
-  		(nnimap-user "ayushdevel1325@gmail.com")
+                  (nnmail-expiry-target "nnimap+work:[Gmail]/Trash"))
+          (nnimap "dev"
+                  (nnimap-user "ayushdevel1325@gmail.com")
                   (nnimap-address "imap.gmail.com")
                   (nnimap-server-port 993)
                   (nnimap-stream tls)
-  		(nnmail-expiry-target "nnimap+dev:[Gmail]/Trash"))
-  	(nnimap "banking"
-  		(nnimap-user "ayushcreator1325@gmail.com")
+                  (nnmail-expiry-target "nnimap+dev:[Gmail]/Trash"))
+          (nnimap "banking"
+                  (nnimap-user "ayushcreator1325@gmail.com")
                   (nnimap-address "imap.gmail.com")
                   (nnimap-server-port 993)
                   (nnimap-stream tls)
-  		(nnmail-expiry-target "nnimap+banking:[Gmail]/Trash"))
-  	(nnimap "college"
-  		(nnimap-user "20je0239@am.iitism.ac.in")
+                  (nnmail-expiry-target "nnimap+banking:[Gmail]/Trash"))
+          (nnimap "college"
+                  (nnimap-user "20je0239@am.iitism.ac.in")
                   (nnimap-address "imap.gmail.com")
                   (nnimap-server-port 993)
                   (nnimap-stream tls)
-  		(nnmail-expiry-target "nnimap+college:[Gmail]/Trash"))))
+                  (nnmail-expiry-target "nnimap+college:[Gmail]/Trash"))))
 #+end_src
-- Configure SMTP for seting email
+- Configure SMTP for sending email
 #+begin_src emacs-lisp
   (setq message-send-mail-function 'smtpmail-send-it
         smtpmail-smtp-server "smtp.gmail.com"
@@ -138,11 +140,11 @@
 - Select correct smtp server based on FROM email
 #+begin_src emacs-lisp
   (setq message-server-alist
-        '(("ayushsingh1325@gmail.com"  . "smtp smtp.gmail.com 587 ayushsingh1325@gmail.com starttls")
-          ("ayush@beagleboard.org"     . "smtp smtp.gmail.com 587 ayush@beagleboard.org starttls")
-          ("ayushdevel1325@gmail.com"  . "smtp smtp.gmail.com 587 ayushdevel1325@gmail.com starttls")
+        '(("ayushsingh1325@gmail.com"   . "smtp smtp.gmail.com 587 ayushsingh1325@gmail.com starttls")
+          ("ayush@beagleboard.org"      . "smtp smtp.gmail.com 587 ayush@beagleboard.org starttls")
+          ("ayushdevel1325@gmail.com"   . "smtp smtp.gmail.com 587 ayushdevel1325@gmail.com starttls")
           ("ayushcreator1325@gmail.com" . "smtp smtp.gmail.com 587 ayushcreator1325@gmail.com starttls")
-          ("20je0239@am.iitism.ac.in"  . "smtp smtp.gmail.com 587 20je0239@am.iitism.ac.in starttls")))
+          ("20je0239@am.iitism.ac.in"   . "smtp smtp.gmail.com 587 20je0239@am.iitism.ac.in starttls")))
 #+end_src
 - Automatically use correct FROM email in replies
 #+begin_src emacs-lisp
@@ -206,11 +208,13 @@
 #+begin_src emacs-lisp
   (setq nnimap-connection-timeout 10)
 #+end_src
-- Scan for new mail every 10 minutes, but only when Emacs has been idle for 3 minutes — so it doesn't freeze you mid-edit.
+- Scan for new mail every 5 minutes, but only when Emacs has been idle for 1 minute — so it doesn't freeze you mid-edit.
+- Deferred until Gnus loads, so Gnus isn't pulled in at startup.
 #+begin_src emacs-lisp
-  (require 'gnus-demon)
-  (gnus-demon-add-handler 'gnus-demon-scan-news 5 1)
-  (gnus-demon-add-handler 'gnus-demon-close-connections 60 nil)
+  (with-eval-after-load 'gnus
+    (require 'gnus-demon)
+    (gnus-demon-add-handler 'gnus-demon-scan-news 5 1)
+    (gnus-demon-add-handler 'gnus-demon-close-connections 60 nil))
   (add-hook 'gnus-started-hook #'gnus-demon-init)
 #+end_src
 ** Default email client
