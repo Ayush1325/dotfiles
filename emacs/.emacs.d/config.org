@@ -64,6 +64,10 @@
     :config
     (load-theme 'dracula t))
 #+end_src
+- Use windmove for better buffer navigation
+#+begin_src emacs-lisp
+  (windmove-default-keybindings)
+#+end_src
 
 ** Font
 #+begin_src emacs-lisp
