@@ -1,0 +1,276 @@
+* Basic Setup
+** Lexical binding
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+#+end_src
+** My Info
+#+begin_src emacs-lisp
+  (setq user-full-name "Ayush Singh"
+        user-mail-address "ayushsingh1325@gmail.com")
+#+end_src
+** Auto-save
+- Create auto-save files in /tmp
+#+begin_src emacs-lisp
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+#+end_src
+** IDO
+#+begin_src emacs-lisp
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 1)
+#+end_src
+** Line Numbers
+#+begin_src emacs-lisp
+  (setq-default display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode 1)
+#+end_src
+
+** Packaging
+#+begin_src emacs-lisp
+(require 'package)
+#+end_src
+
+* Ui
+** Menus stuff
+- Disable toolbar
+#+begin_src emacs-lisp
+  (tool-bar-mode -1)
+#+end_src
+- Disable Menu Bar
+#+begin_src emacs-lisp
+(menu-bar-mode -1) 
+#+end_src
+- Disable scrollbar
+#+begin_src emacs-lisp
+(scroll-bar-mode -1)
+#+end_src
+- Shortent prompt answers
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+** Which Key
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'which-key)
+    (package-install 'which-key))
+  (require 'which-key)
+  (which-key-mode)
+#+end_src
+** Theme
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'dracula-theme)
+    (package-install 'dracula-theme))
+  (load-theme 'dracula t)
+#+end_src
+
+** Font
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 140 :weight 'medium)
+#+end_src
+
+* Evil
+** Basic
+#+begin_src emacs-lisp
+  (setq evil-want-keybinding nil)
+(unless (package-installed-p 'evil)
+  (package-install 'evil))
+(require 'evil)
+(evil-mode 1)
+#+end_src
+
+** Evil collection
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'evil-collection)
+    (package-install 'evil-collection))
+  (require 'evil-collection)
+  (evil-collection-init)
+#+end_src
+
+* Gnus
+** Accounts
+- Disable NNTP. Not using it
+#+begin_src emacs-lisp
+  (setq gnus-select-method '(nnnil ""))
+#+end_src
+- Set up mail boxes. Route expired emails into thrash (default is Archive).
+#+Begin_src emacs-lisp
+  (setq gnus-secondary-select-methods
+        '((nnimap "personal"
+  		(nnimap-user "ayushsingh1325@gmail.com")
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-server-port 993)
+                  (nnimap-stream tls)
+  		(nnmail-expiry-target "nnimap+personal:[Gmail]/Trash"))
+  	(nnimap "work"
+  		(nnimap-user "ayush@beagleboard.org")
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-server-port 993)
+                  (nnimap-stream tls)
+  		(nnmail-expiry-target "nnimap+work:[Gmail]/Trash"))
+  	(nnimap "dev"
+  		(nnimap-user "ayushdevel1325@gmail.com")
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-server-port 993)
+                  (nnimap-stream tls)
+  		(nnmail-expiry-target "nnimap+dev:[Gmail]/Trash"))
+  	(nnimap "banking"
+  		(nnimap-user "ayushcreator1325@gmail.com")
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-server-port 993)
+                  (nnimap-stream tls)
+  		(nnmail-expiry-target "nnimap+banking:[Gmail]/Trash"))
+  	(nnimap "college"
+  		(nnimap-user "20je0239@am.iitism.ac.in")
+                  (nnimap-address "imap.gmail.com")
+                  (nnimap-server-port 993)
+                  (nnimap-stream tls)
+  		(nnmail-expiry-target "nnimap+college:[Gmail]/Trash"))))
+#+end_src
+- Configure SMTP for seting email
+#+begin_src emacs-lisp
+  (setq message-send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-service 587
+        smtpmail-stream-type 'starttls)
+#+end_src
+- Select correct smtp server based on FROM email
+#+begin_src emacs-lisp
+  (setq message-server-alist
+        '(("ayushsingh1325@gmail.com"  . "smtp smtp.gmail.com 587 ayushsingh1325@gmail.com starttls")
+          ("ayush@beagleboard.org"     . "smtp smtp.gmail.com 587 ayush@beagleboard.org starttls")
+          ("ayushdevel1325@gmail.com"  . "smtp smtp.gmail.com 587 ayushdevel1325@gmail.com starttls")
+          ("ayushcreator1325@gmail.com" . "smtp smtp.gmail.com 587 ayushcreator1325@gmail.com starttls")
+          ("20je0239@am.iitism.ac.in"  . "smtp smtp.gmail.com 587 20je0239@am.iitism.ac.in starttls")))
+#+end_src
+- Automatically use correct FROM email in replies
+#+begin_src emacs-lisp
+  (setq message-alternative-emails
+        (regexp-opt '("ayushsingh1325@gmail.com"
+                      "ayush@beagleboard.org"
+                      "ayushdevel1325@gmail.com"
+                      "ayushcreator1325@gmail.com"
+                      "20je0239@am.iitism.ac.in")))
+#+end_src
+
+** Sane defaults
+- Article prefetch.
+#+begin_src emacs-lisp
+  (setq gnus-asynchronous t)
+#+end_src
+- Use Gmail default handling for sent mail.
+#+begin_src emacs-lisp
+  (setq gnus-message-archive-group nil)
+#+end_src
+- Better logging
+#+begin_src emacs-lisp
+  (setq nnimap-record-commands t)
+#+end_src
+- Auto-wrap
+#+begin_src emacs-lisp
+  (setq message-fill-column 75)
+#+end_src
+- Better expiry
+#+begin_src emacs-lisp
+  (setq nnmail-expiry-wait 'immediate)
+  (setq nnmail-expunge 'on-exit)
+#+end_src
+** Threads
+- Show the whole thread when you enter one
+#+begin_src emacs-lisp
+  (setq gnus-fetch-old-headers 'some)
+#+end_src
+- I hate reading un-threaded email -- especially mailing lists.  This helps a ton!
+#+begin_src emacs-lisp
+  (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
+#+end_src
+- Sort threads by most recent activity
+#+begin_src emacs-lisp
+  (setq gnus-thread-sort-functions
+        '(gnus-thread-sort-by-most-recent-date))
+#+end_src
+- Only show top-level messages in threads
+#+begin_src emacs-lisp
+  (setq gnus-thread-hide-subtree t)
+  (setq gnus-thread-ignore-subject t)
+#+end_src
+
+** Disable pinentry
+- Flatpak emacs was failing
+#+begin_src emacs-lisp
+  (setq epg-pinentry-mode 'loopback)
+#+end_src
+** Autofetch
+- Give up on a dead connection instead of hanging indefinitely
+#+begin_src emacs-lisp
+  (setq nnimap-connection-timeout 10)
+#+end_src
+- Scan for new mail every 10 minutes, but only when Emacs has been idle for 3 minutes — so it doesn't freeze you mid-edit.
+#+begin_src emacs-lisp
+  (require 'gnus-demon)
+  (gnus-demon-add-handler 'gnus-demon-scan-news 5 1)
+  (gnus-demon-add-handler 'gnus-demon-close-connections 60 nil)
+  (add-hook 'gnus-started-hook #'gnus-demon-init)
+#+end_src
+** Default email client
+- Make gnus default
+#+begin_src emacs-lisp
+  (setopt
+     mail-user-agent 'gnus-user-agent
+     read-mail-command #'gnus)
+#+end_src
+
+** Pretty
+- Enable topics
+#+begin_src emacs-lisp
+  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+#+end_src
+- Shorter names since topic name is already shown
+#+begin_src emacs-lisp
+  (setq gnus-group-line-format "%M%S%p%P%5y  %B%(%c%)\n"
+        gnus-group-uncollapsed-levels 2)
+#+end_src
+- Better email summary line
+#+begin_src emacs-lisp
+  (setq gnus-summary-line-format
+        "%U%R%z %&user-date;  %-20,20f  %B%s\n")
+#+end_src
+
+** Better Spam
+- Add bindings to add/remove from spam
+#+begin_src emacs-lisp
+  (defun my/gnus-move-to-folder (folder)
+    "Move current (or process-marked) articles to FOLDER on this group's server."
+    (let ((group (or gnus-newsgroup-name "")))
+      (if (string-match "\\`\\(nnimap\\+[^:]+\\):" group)
+          (gnus-summary-move-article nil (concat (match-string 1 group) ":" folder))
+        (user-error "Not an nnimap group"))))
+
+  (defun my/gnus-mark-spam ()
+    "Move article(s) to this account's Spam folder."
+    (interactive)
+    (my/gnus-move-to-folder "[Gmail]/Spam"))
+
+  (defun my/gnus-mark-not-spam ()
+    "Move article(s) out of Spam into this account's INBOX."
+    (interactive)
+    (my/gnus-move-to-folder "INBOX"))
+
+  (with-eval-after-load 'gnus-sum
+    (evil-define-key 'normal gnus-summary-mode-map
+      (kbd "s") #'my/gnus-mark-spam
+      (kbd "S") #'my/gnus-mark-not-spam))
+#+end_src
+
+** Notifications
+- Show new email notifications.
+#+begin_src emacs-lisp
+  (add-hook 'gnus-after-getting-new-news-hook #'gnus-notifications)
+#+end_src
+
+* Org Mode
+- Useful shortcuts
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+#+end_src
