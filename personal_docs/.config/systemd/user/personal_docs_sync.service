@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync Personal Docs
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rclone bisync "PersonalDrive:Personal Docs/" %h/Documents/PersonalDocs -v --resilient --recover
+
+[Install]
+WantedBy=default.target
