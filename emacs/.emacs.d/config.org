@@ -165,6 +165,12 @@
                       "20je0239@am.iitism.ac.in")))
 #+end_src
 
+** RSS
+#+begin_src emacs-lisp
+  (add-to-list 'gnus-secondary-select-methods
+               '(nnatom "blog.rust-lang.org/feed.xml"))
+#+end_src
+
 ** Sane defaults
 - Article prefetch.
 #+begin_src emacs-lisp
