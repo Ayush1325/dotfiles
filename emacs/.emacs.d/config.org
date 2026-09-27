@@ -33,6 +33,11 @@
 #+begin_src emacs-lisp
   (require 'package)
 #+end_src
+** Spellcheck
+#+begin_src emacs-lisp
+  (setq ispell-program-name "hunspell"
+        ispell-dictionary "en_IN")
+#+end_src
 
 * Ui
 ** Menus stuff
@@ -182,6 +187,11 @@
   (setq nnmail-expiry-wait 'immediate)
   (setq nnmail-expunge 'on-exit)
 #+end_src
+- Turn on spellcheck for email composition
+#+begin_src emacs-lisp
+  (add-hook 'message-mode-hook #'turn-on-flyspell)
+#+end_src
+
 ** Threads
 - Show the whole thread when you enter one
 #+begin_src emacs-lisp
