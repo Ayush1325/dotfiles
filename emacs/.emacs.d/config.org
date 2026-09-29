@@ -38,6 +38,11 @@
   (setq ispell-program-name "hunspell"
         ispell-dictionary "en_IN")
 #+end_src
+** Refresh files
+- Mainly for notes
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+#+end_src
 
 * Ui
 ** Menus stuff
@@ -297,4 +302,34 @@
 - Useful shortcuts
 #+begin_src emacs-lisp
   (require 'org-tempo)
+#+end_src
+
+* Denote
+- Planning to use emacs for note-taking
+** Basic setup
+#+begin_src emacs-lisp
+  (use-package denote
+    :ensure t
+    :hook (dired-mode . denote-dired-mode)
+    :bind
+    (("C-c n n" . denote)
+     ("C-c n r" . denote-rename-file)
+     ("C-c n R" . denote-rename-file-using-front-matter)
+     ("C-c n l" . denote-link)
+     ("C-c n b" . denote-backlinks)
+     ("C-c n d" . denote-dired)
+     ("C-c n g" . denote-grep))
+    :config
+    (setq denote-directory (expand-file-name "~/Documents/Notes/"))
+    (setq denote-known-keywords '("projects"))
+
+    ;; Automatically rename Denote buffers when opening them so that
+    ;; instead of their long file name they have, for example, a literal
+    ;; "[D]" followed by the file's title.  Read the docstring of
+    ;; `denote-rename-buffer-format' for how to modify this.
+    (denote-rename-buffer-mode 1)
+    (setq denote-infer-keywords t)
+    (setq denote-sort-keywords t)
+    ;; Pick dates, where relevant, with Org's advanced interface:
+    (setq denote-date-prompt-use-org-read-date t))
 #+end_src
