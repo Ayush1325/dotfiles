@@ -1,0 +1,10 @@
+[Unit]
+Description=Sync Notes
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Documents/Notes
+ExecStart=%h/.local/bin/git-sync -n -s
+
+[Install]
+WantedBy=default.target
