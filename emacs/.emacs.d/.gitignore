@@ -4,3 +4,4 @@ config.el
 network-security.data
 transient/
 ido.last
+.#*

@@ -44,6 +44,18 @@
   (global-auto-revert-mode 1)
 #+end_src
 
+** Columns
+- Hard wrap at 100 cols
+#+begin_src emacs-lisp
+  (setq-default fill-column 100)
+  (add-hook 'text-mode-hook #'auto-fill-mode)
+#+end_src
+- Show col number in modline
+#+begin_src emacs-lisp
+  (column-number-mode 1)
+  (setq column-number-indicator-zero-based nil)  ; 1-based columns, like Vim
+#+end_src
+
 * Ui
 ** Menus stuff
 - Disable toolbar
@@ -62,6 +74,10 @@
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
+** Remove startpage
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+#+end_src
 ** Which Key
 - Built in since Emacs 30
 #+begin_src emacs-lisp
@@ -74,7 +90,7 @@
     :config
     (load-theme 'dracula t))
 #+end_src
-- Use windmove for better buffer navigation
+** Better buffer nav
 #+begin_src emacs-lisp
   (windmove-default-keybindings)
 #+end_src
@@ -82,6 +98,24 @@
 ** Font
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 140 :weight 'medium)
+#+end_src
+
+** Better completion
+- Vertical completion for some commands.
+#+begin_src emacs-lisp
+  (fido-vertical-mode 1)
+#+end_src
+- When fido-vertical-mode is being used, hide the normal completions
+#+begin_src emacs-lisp
+  (with-eval-after-load 'icomplete
+    (define-key icomplete-fido-mode-map (kbd "TAB") #'icomplete-force-complete))
+#+end_src
+
+** Modeline
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
 #+end_src
 
 * Evil
@@ -92,7 +126,8 @@
     :init
     (setq evil-want-keybinding nil)
     :config
-    (evil-mode 1))
+    (evil-mode 1)
+    (setq evil-undo-system 'undo-redo))
 #+end_src
 
 ** Evil collection
@@ -299,21 +334,33 @@
 #+end_src
 
 * Org Mode
-- Useful shortcuts
+** Useful shortcuts
 #+begin_src emacs-lisp
   (require 'org-tempo)
 #+end_src
+** Pretty bullets
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+#+end_src
+** Better startup
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+  (setq org-startup-folded 'content)
+#+end_src
+
+#+RESULTS:
+: content
 
 * Denote
-- Planning to use emacs for note-taking
 ** Basic setup
 #+begin_src emacs-lisp
   (use-package denote
     :ensure t
     :hook (dired-mode . denote-dired-mode)
     :bind
-    (("C-c n n" . denote)
-     ("C-c n r" . denote-rename-file)
+    (("C-c n n" . denote-open-or-create)
      ("C-c n R" . denote-rename-file-using-front-matter)
      ("C-c n l" . denote-link)
      ("C-c n b" . denote-backlinks)
@@ -321,7 +368,7 @@
      ("C-c n g" . denote-grep))
     :config
     (setq denote-directory (expand-file-name "~/Documents/Notes/"))
-    (setq denote-known-keywords '("projects"))
+    (setq denote-known-keywords '("projects" "misc"))
 
     ;; Automatically rename Denote buffers when opening them so that
     ;; instead of their long file name they have, for example, a literal
@@ -332,4 +379,29 @@
     (setq denote-sort-keywords t)
     ;; Pick dates, where relevant, with Org's advanced interface:
     (setq denote-date-prompt-use-org-read-date t))
+#+end_src
+** Journal
+#+begin_src emacs-lisp
+  (use-package denote-journal
+    :ensure t
+    :hook (calendar-mode . denote-journal-calendar-mode)
+    :bind
+    (("C-c n j" . denote-journal-new-or-existing-entry))
+    :config
+    (setq denote-journal-directory
+          (expand-file-name "journal" denote-directory))
+    (setq denote-journal-keyword "journal")
+    (setq denote-journal-title-format 'day-date-month-year))
+#+end_src
+** Agenda
+- Org-agenda integration
+#+begin_src emacs-lisp
+  (use-package denote-agenda
+    :ensure t
+    :custom
+    (denote-agenda-include-regexp "\\.org\\'")
+    (denote-agenda-exclude-regexp "_journal")
+    (denote-agenda-include-journal t)
+    :config
+    (denote-agenda-insinuate))
 #+end_src
