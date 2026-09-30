@@ -5,3 +5,4 @@ network-security.data
 transient/
 ido.last
 .#*
+.emacs-custom.el
