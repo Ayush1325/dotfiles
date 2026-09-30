@@ -349,6 +349,20 @@
   (add-hook 'gnus-after-getting-new-news-hook #'gnus-notifications)
 #+end_src
 
+** Rebind SPC
+- I want to use SPC as leader key
+#+begin_src emacs-lisp
+  (with-eval-after-load 'gnus-group
+    (evil-define-key '(normal motion) gnus-group-mode-map
+      (kbd "RET") #'gnus-group-read-group
+      (kbd "SPC") #'evil-send-leader))
+
+  (with-eval-after-load 'gnus-sum
+    (evil-define-key '(normal motion) gnus-summary-mode-map
+      (kbd "RET") #'gnus-summary-next-page
+      (kbd "SPC") #'evil-send-leader))
+#+end_src
+
 * Org Mode
 ** Useful shortcuts
 #+begin_src emacs-lisp
