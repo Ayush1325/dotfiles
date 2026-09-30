@@ -465,3 +465,16 @@
     :config
     (denote-agenda-insinuate))
 #+end_src
+
+** Scatch
+- A static note to store rudementary ideas.
+#+begin_src emacs-lisp
+  (defun my/open-scratch-note ()
+    "Open the scratch note."
+    (interactive)
+    (require 'denote)
+    (find-file (expand-file-name "scratch.org" denote-directory)))
+
+  (evil-define-key '(normal visual motion) 'global
+    (kbd "<leader>ns") #'my/open-scratch-note)
+#+end_src
