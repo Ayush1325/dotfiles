@@ -56,6 +56,12 @@
   (setq column-number-indicator-zero-based nil)  ; 1-based columns, like Vim
 #+end_src
 
+** Auto save
+#+begin_src emacs-lisp
+  (setq auto-save-visited-interval 60)   ; seconds of idle time before saving
+  (auto-save-visited-mode 1)
+#+end_src
+
 * Ui
 ** Menus stuff
 - Disable toolbar
@@ -127,6 +133,7 @@
     (setq evil-want-keybinding nil)
     :config
     (evil-mode 1)
+    (evil-set-leader '(normal visual motion) (kbd "SPC"))
     (setq evil-undo-system 'undo-redo))
 #+end_src
 
@@ -137,6 +144,15 @@
     :after evil
     :config
     (evil-collection-init))
+#+end_src
+
+** Basic keybindings
+#+begin_src emacs-lisp
+  (evil-define-key '(normal visual motion) 'global
+    ;; files and buffers, matching your Neovim setup
+    (kbd "<leader>ff") #'find-file
+    (kbd "<leader>fb") #'switch-to-buffer
+    (kbd "<leader>bk") #'kill-buffer)
 #+end_src
 
 * Gnus
@@ -353,19 +369,45 @@
 #+RESULTS:
 : content
 
+** Agenda
+#+begin_src emacs-lisp
+  (setq org-agenda-start-with-log-mode t)
+#+end_src
+*** Record time when marking done
+#+begin_src emacs-lisp
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+#+end_src
+
+*** States
+- Add WAITING (when waiting on input from others) and CANCELLED states.
+- Add QUESTION/ANSWERED flow for doubts.
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "IN-PROGRESS(p!)" "|" "DONE(d!)" "CANCELLED(c@)")
+  	(sequence "QUESTION(q)" "|" "ANSWERED(a@)")))
+#+end_src
+
+*** Keybiding for all tasks
+#+begin_src emacs-lisp
+  (evil-define-key '(normal visual motion) 'global
+    (kbd "<leader>na") (lambda () (interactive) (org-agenda nil "T")))
+#+end_src
+
 * Denote
 ** Basic setup
 #+begin_src emacs-lisp
   (use-package denote
     :ensure t
     :hook (dired-mode . denote-dired-mode)
-    :bind
-    (("C-c n n" . denote-open-or-create)
-     ("C-c n R" . denote-rename-file-using-front-matter)
-     ("C-c n l" . denote-link)
-     ("C-c n b" . denote-backlinks)
-     ("C-c n d" . denote-dired)
-     ("C-c n g" . denote-grep))
+    :init
+    (evil-define-key '(normal visual motion) 'global
+      (kbd "<leader>nn") #'denote-open-or-create
+      (kbd "<leader>nR") #'denote-rename-file-using-front-matter
+      (kbd "<leader>nl") #'denote-link
+      (kbd "<leader>nb") #'denote-backlinks
+      (kbd "<leader>nd") #'denote-dired
+      (kbd "<leader>ng") #'denote-grep)
     :config
     (setq denote-directory (expand-file-name "~/Documents/Notes/"))
     (setq denote-known-keywords '("projects" "misc"))
@@ -379,20 +421,24 @@
     (setq denote-sort-keywords t)
     ;; Pick dates, where relevant, with Org's advanced interface:
     (setq denote-date-prompt-use-org-read-date t))
+
 #+end_src
+
 ** Journal
 #+begin_src emacs-lisp
   (use-package denote-journal
     :ensure t
     :hook (calendar-mode . denote-journal-calendar-mode)
-    :bind
-    (("C-c n j" . denote-journal-new-or-existing-entry))
+    :init
+    (evil-define-key '(normal visual motion) 'global
+      (kbd "<leader>nj") #'denote-journal-new-or-existing-entry)
     :config
     (setq denote-journal-directory
           (expand-file-name "journal" denote-directory))
     (setq denote-journal-keyword "journal")
     (setq denote-journal-title-format 'day-date-month-year))
 #+end_src
+
 ** Agenda
 - Org-agenda integration
 #+begin_src emacs-lisp
