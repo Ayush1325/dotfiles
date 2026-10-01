@@ -147,6 +147,7 @@
     (setq evil-want-keybinding nil)
     :config
     (evil-mode 1)
+    (setq which-key-allow-evil-operators t)
     (evil-set-leader '(normal visual motion) (kbd "SPC"))
     (setq evil-undo-system 'undo-redo))
 #+end_src
@@ -161,21 +162,47 @@
 #+end_src
 
 ** Basic keybindings
+*** Nice keymps
+#+begin_src emacs-lisp
+  ;; In evil's :config, right after evil-set-leader and BEFORE any <leader> bindings
+  (dolist (prefix '(("b" . "buffer-prefix")
+  		  ("f" . "files-prefix")
+                    ("n" . "notes-prefix")
+                    ("h" . "help-prefix")
+                    ("m" . "mail-prefix")))
+    (evil-define-key '(normal visual motion) 'global
+      (kbd (concat "<leader>" (car prefix)))
+      (cons (cdr prefix) (make-sparse-keymap))))
+#+end_src
+
+*** File/buffer related
 #+begin_src emacs-lisp
   (evil-define-key '(normal visual motion) 'global
     ;; files and buffers, matching your Neovim setup
     (kbd "<leader>ff") #'find-file
     (kbd "<leader>fb") #'switch-to-buffer
+    (kbd "<leader>bb") #'switch-to-buffer
+    (kbd "<leader>bi") #'ibuffer
     (kbd "<leader>bk") #'kill-buffer)
+#+end_src
+
+*** Help
+#+begin_src emacs-lisp
+  (evil-define-key '(normal visual motion) 'global
+    (kbd "<leader>hf") #'describe-function
+    (kbd "<leader>hv") #'describe-variable
+    (kbd "<leader>hk") #'describe-key
+    (kbd "<leader>hm") #'describe-mode
+    (kbd "<leader>ho") #'describe-symbol)
 #+end_src
 
 * Gnus
 ** Accounts
-- Disable NNTP. Not using it
+*** Disable NNTP. Not using it
 #+begin_src emacs-lisp
   (setq gnus-select-method '(nnnil ""))
 #+end_src
-- Set up mail boxes. Route expired emails into trash (default is Archive).
+*** Set up mail boxes. Route expired emails into trash (default is Archive).
 #+begin_src emacs-lisp
   (setq gnus-secondary-select-methods
         '((nnimap "personal"
@@ -209,14 +236,14 @@
                   (nnimap-stream tls)
                   (nnmail-expiry-target "nnimap+college:[Gmail]/Trash"))))
 #+end_src
-- Configure SMTP for sending email
+*** Configure SMTP for sending email
 #+begin_src emacs-lisp
   (setq message-send-mail-function 'smtpmail-send-it
         smtpmail-smtp-server "smtp.gmail.com"
         smtpmail-smtp-service 587
         smtpmail-stream-type 'starttls)
 #+end_src
-- Select correct smtp server based on FROM email
+*** Select correct smtp server based on FROM email
 #+begin_src emacs-lisp
   (setq message-server-alist
         '(("ayushsingh1325@gmail.com"   . "smtp smtp.gmail.com 587 ayushsingh1325@gmail.com starttls")
@@ -225,7 +252,7 @@
           ("ayushcreator1325@gmail.com" . "smtp smtp.gmail.com 587 ayushcreator1325@gmail.com starttls")
           ("20je0239@am.iitism.ac.in"   . "smtp smtp.gmail.com 587 20je0239@am.iitism.ac.in starttls")))
 #+end_src
-- Automatically use correct FROM email in replies
+*** Automatically use correct FROM email in replies
 #+begin_src emacs-lisp
   (setq message-alternative-emails
         (regexp-opt '("ayushsingh1325@gmail.com"
@@ -233,6 +260,31 @@
                       "ayushdevel1325@gmail.com"
                       "ayushcreator1325@gmail.com"
                       "20je0239@am.iitism.ac.in")))
+#+end_src
+*** Use correct email when replying in mailing list
+#+begin_src emacs-lisp
+  (setq gnus-posting-styles
+        '(("^nnimap\\+personal:" (address "ayushsingh1325@gmail.com"))
+          ("^nnimap\\+work:"     (address "ayush@beagleboard.org")
+  	                       (signature "BeagleBoard.org Foundation\nhttps://www.beagleboard.org"))
+          ("^nnimap\\+dev:"      (address "ayushdevel1325@gmail.com"))
+          ("^nnimap\\+banking:"  (address "ayushcreator1325@gmail.com"))
+          ("^nnimap\\+college:"  (address "20je0239@am.iitism.ac.in"))))
+#+end_src
+
+*** Signoff
+- Add signoff to all outgoing emails
+#+begin_src emacs-lisp
+  (defun my/message-insert-signoff ()
+    "Add a sign-off before the signature, or at the end if there is none."
+    (save-excursion
+      (goto-char (point-max))
+      (if (re-search-backward message-signature-separator nil t)
+          (goto-char (match-beginning 0))   ; start of the "-- " line
+        (goto-char (point-max)))
+      (insert "\nBest Regards,\nAyush Singh\n\n")))
+
+  (add-hook 'message-setup-hook #'my/message-insert-signoff)
 #+end_src
 
 ** RSS
@@ -363,7 +415,15 @@
   (add-hook 'gnus-after-getting-new-news-hook #'gnus-notifications)
 #+end_src
 
-** Rebind SPC
+** Keybindings
+*** Rebind SPC
+- Launch binding.
+#+begin_src emacs-lisp
+  (evil-define-key '(normal visual motion) 'global
+    (kbd "<leader>mm") #'gnus             ; open Gnus
+    (kbd "<leader>mc") #'compose-mail)    ; write a new message from anywhere
+#+end_src
+
 - I want to use SPC as leader key
 #+begin_src emacs-lisp
   (with-eval-after-load 'gnus-group
@@ -375,6 +435,13 @@
     (evil-define-key '(normal motion) gnus-summary-mode-map
       (kbd "RET") #'gnus-summary-next-page
       (kbd "SPC") #'evil-send-leader))
+#+end_src
+** Graceful Shutdonw
+#+begin_src emacs-lisp
+  (add-hook 'kill-emacs-hook
+            (lambda ()
+              (when (and (fboundp 'gnus-alive-p) (gnus-alive-p))
+                (gnus-group-save-newsrc))))
 #+end_src
 
 * Org Mode
@@ -537,7 +604,7 @@
   (setq delete-by-moving-to-trash 1)
 #+end_src
 * Programming
-- Autclose parens
+- Autclose parens in programming modes.
 #+begin_src emacs-lisp
-  (electric-pair-mode 1)
+  (add-hook 'prog-mode-hook #'electric-pair-local-mode)
 #+end_src
