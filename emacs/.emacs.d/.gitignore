@@ -6,3 +6,9 @@ transient/
 ido.last
 .#*
 .emacs-custom.el
+persist/
+request/
+.org-generic-id-locations
+.org-id-locations
+oauth2-auto.plist
+calendars/

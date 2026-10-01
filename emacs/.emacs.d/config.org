@@ -26,20 +26,16 @@
 ** IDO
 #+begin_src emacs-lisp
   (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
   (ido-mode 1)
+  (ido-everywhere 1)
 #+end_src
+
 ** Line Numbers
 #+begin_src emacs-lisp
   (setq-default display-line-numbers-type 'relative)
   (global-display-line-numbers-mode 1)
 #+end_src
 
-** Packaging
-- use-package is built in (Emacs 29+). Only used for packages that aren't.
-#+begin_src emacs-lisp
-  (require 'package)
-#+end_src
 ** Spellcheck
 #+begin_src emacs-lisp
   (setq ispell-program-name "hunspell"
@@ -67,6 +63,17 @@
 #+begin_src emacs-lisp
   (setq auto-save-visited-interval 60)   ; seconds of idle time before saving
   (auto-save-visited-mode 1)
+#+end_src
+
+* Packaging
+** Packaging
+- use-package is built in (Emacs 29+). Only used for packages that aren't.
+#+begin_src emacs-lisp
+  (require 'package)
+#+end_src
+** MELPA
+#+begin_src emacs-lisp
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 #+end_src
 
 * Ui
@@ -411,8 +418,35 @@
 
 *** Keybiding for all tasks
 #+begin_src emacs-lisp
+  (defun my/org-agenda-todos ()
+    "Open the custom \"T\" org agenda view."
+    (interactive)
+    (org-agenda nil "T"))
+
   (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>na") (lambda () (interactive) (org-agenda nil "T")))
+    (kbd "<leader>na") #'my/org-agenda-todos)
+#+end_src
+
+** Google Calendar
+#+begin_src emacs-lisp
+  (use-package org-gcal
+    :ensure t
+    :init
+    (when-let* ((entry (car (auth-source-search :host "org-gcal" :max 1))))
+      (setq org-gcal-client-id (plist-get entry :user)
+            org-gcal-client-secret (let ((s (plist-get entry :secret)))
+                                     (if (functionp s) (funcall s) s))))
+    (setq plstore-encrypt-to "05CEF5C789E55A74")
+    (setq org-gcal-fetch-file-alist
+        (let ((dir (expand-file-name "calendars/" user-emacs-directory)))
+  	(make-directory dir t)
+          `(("ayush@beagleboard.org" . ,(expand-file-name "work.org" dir)))))
+    (with-eval-after-load 'denote-agenda
+      (dolist (pair org-gcal-fetch-file-alist)
+        (add-to-list 'denote-agenda-static-files (cdr pair))))
+    :config
+    ;; fetch a minute after startup, then hourly
+    (run-with-timer 60 3600 #'org-gcal-fetch))
 #+end_src
 
 * Denote
@@ -501,4 +535,9 @@
 - Move files to trash on delete.
 #+begin_src emacs-lisp
   (setq delete-by-moving-to-trash 1)
+#+end_src
+* Programming
+- Autclose parens
+#+begin_src emacs-lisp
+  (electric-pair-mode 1)
 #+end_src
