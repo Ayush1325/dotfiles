@@ -609,11 +609,13 @@
     (require 'denote)
     (find-file (expand-file-name "scratch.org" denote-directory)))
 
+  (with-eval-after-load 'org
+    (add-to-list 'org-agenda-files (expand-file-name "scratch.org" denote-directory)))
+
   (evil-define-key '(normal visual motion) 'global
     (kbd "<leader>ns") #'my/open-scratch-note)
 #+end_src
 
- Dired
 ** Trash
 - Move files to trash on delete.
 #+begin_src emacs-lisp
@@ -631,11 +633,14 @@
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
   (add-hook 'ielm-mode-hook 'eldoc-mode)
+  (add-hook 'emacs-lisp-mode-hook #'completion-preview-mode)
 #+end_src
+
 ** Git
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
+  (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
 #+end_src
 
 * Helpers
@@ -679,4 +684,76 @@
 
   (evil-define-key '(normal visual motion) 'global
     (kbd "<leader>og") #'my/org-insert-gh-item-at-point)
+#+end_src
+** Biweekly report emails
+- All helpers to actually generate the email contents
+#+begin_src emacs-lisp
+  (require 'denote-journal)
+
+  (defvar my/report-days 14
+    "Number of days the report covers, counting today.")
+  (defvar my/report-heading "BeagleBoard"
+    "Journal heading whose contents go into the report.")
+
+  (defun my/journal-files-for (time)
+    "Return denote-journal files whose identifier falls on TIME's date.
+  Signal an error if `denote-journal-directory' is not set."
+    (sort (denote-journal--get-entry time 'daily)))
+
+  (defun my/journal-section (time)
+    "Return the body of `my/report-heading' in the journal entry for TIME, or nil."
+    (mapcar
+     (lambda (file)
+       (denote--file-with-temp-buffer file
+         (delay-mode-hooks (org-mode))
+         (when-let ((pos (org-find-exact-headline-in-buffer my/report-heading)))
+  	 (goto-char pos)
+  	 (string-trim (org-get-entry)))))
+     (my/journal-files-for time)))
+
+  (defun my/journal-days (days)
+    "Generate sequence of time for last `days` days"
+    (mapcar
+     (lambda (idx)
+       (time-subtract
+        (current-time)
+        (days-to-time idx)))
+     (number-sequence (- days 1) 0 -1)))
+
+  (defun my/journal-report (days)
+    (mapcar
+     (lambda (time)
+       (format "* %s\n%s\n\n"
+  	     (format-time-string "%B %d" time)
+  	     (string-join (my/journal-section time))))
+     (my/journal-days days)))
+
+  (defun my/biweekly-report ()
+    "Collect the BeagleBoard sections of the last `days' days."
+    (string-join (my/journal-report 14)))
+#+end_src
+
+- Acutal compose function
+#+begin_src emacs-lisp
+  (defun my/mail-biweekly-report ()
+    "Compose the biweekly work report from the denote-journal entries."
+    (interactive)
+    (let* ((days  (my/journal-days 14))
+           (fmt   "%d %b")
+           (body  (my/biweekly-report)))
+      (message-mail (string-join '("Jason Kridner <jkridner@beagleboard.org>"
+                               "christi@beagleboard.org"
+                               "lorforlinux@beagleboard.org")
+                             ", ")
+                (format "Biweekly report: %s – %s"
+                        (format-time-string fmt (car days))
+                        (format-time-string fmt (car (last days))))
+                `(("From" . "Ayush Singh <ayush@beagleboard.org>")
+                  ("Cc"   . ,(string-join '("kathy.giori@beagleboard.org"
+                                            "robertcnelson@gmail.com"
+                                            "drew@beagleboard.org"
+                                            "markayoder@beagleboard.org")
+                                          ", "))))
+      (message-goto-body)
+      (save-excursion (insert body))))
 #+end_src
