@@ -196,6 +196,12 @@
     (kbd "<leader>ho") #'describe-symbol)
 #+end_src
 
+*** Calendar
+#+begin_src emacs-lisp
+  (evil-define-key 'normal 'global
+    (kbd "<leader>c") #'calendar)
+#+end_src
+
 * Gnus
 ** Accounts
 *** Disable NNTP. Not using it
@@ -458,11 +464,7 @@
 ** Better startup
 #+begin_src emacs-lisp
   (setq org-startup-indented t)
-  (setq org-startup-folded 'content)
 #+end_src
-
-#+RESULTS:
-: content
 
 ** Agenda
 #+begin_src emacs-lisp
@@ -513,7 +515,14 @@
         (add-to-list 'denote-agenda-static-files (cdr pair))))
     :config
     ;; fetch a minute after startup, then hourly
-    (run-with-timer 60 3600 #'org-gcal-fetch))
+    (run-with-timer 60 (* 60 60 12) #'org-gcal-fetch))
+#+end_src
+
+** Babble
+- Use lexical bindings by default
+#+begin_src emacs-lisp
+  (setq org-babel-default-header-args:emacs-lisp
+        '((:lexical . "yes")))
 #+end_src
 
 * Denote
@@ -543,7 +552,6 @@
     (setq denote-sort-keywords t)
     ;; Pick dates, where relevant, with Org's advanced interface:
     (setq denote-date-prompt-use-org-read-date t))
-
 #+end_src
 
 ** Journal
@@ -569,6 +577,14 @@
     (setq denote-journal-keyword "journal")
     (setq denote-journal-title-format 'day-date-month-year)
     (add-hook 'denote-journal-hook #'my/denote-journal-insert-template))
+#+end_src
+
+*** Calendar integration
+#+begin_src emacs-lisp
+  (with-eval-after-load 'calendar
+    (evil-define-key 'normal calendar-mode-map
+      (kbd "RET") #'denote-journal-calendar-new-or-existing)
+    (add-hook 'calendar-mode-hook #'denote-journal-calendar-mode))
 #+end_src
 
 ** Agenda
@@ -597,7 +613,7 @@
     (kbd "<leader>ns") #'my/open-scratch-note)
 #+end_src
 
-* Dired
+ Dired
 ** Trash
 - Move files to trash on delete.
 #+begin_src emacs-lisp
@@ -607,4 +623,60 @@
 - Autclose parens in programming modes.
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'electric-pair-local-mode)
+#+end_src
+** Elisp
+*** Eldoc
+- eldoc shows a nice function signature in echo area.
+#+begin_src emacs-lisp
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+  (add-hook 'ielm-mode-hook 'eldoc-mode)
+#+end_src
+** Git
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
+#+end_src
+
+* Helpers
+** Github Link to Title
+- Mainly for daily journaling. Will take a Github PR link and create a line for format "{PR Title}: {URL}"
+#+begin_src emacs-lisp
+  (defun my/gh/issue-or-pull-title (owner repo num callback)
+    "Fetch the title of issue or pull request NUM in OWNER/REPO asynchronously.
+  Call CALLBACK with the title as a valid string if it succeeds"
+    (url-retrieve
+     (format "https://api.github.com/repos/%s/%s/issues/%s" owner repo num)
+     (lambda (status)
+       (let ((title (unless (plist-get status :error)
+                      (goto-char url-http-end-of-headers)
+                      (gethash "title" (json-parse-buffer)))))
+         (kill-buffer)
+         (unless title
+  	 (message "Couldn't fetch title for %s" url))
+         (funcall callback title)))
+     nil t))
+
+  (defun my/gh/item (url callback)
+    "Fetch the title of issue and call callback if valid title is found"
+    (unless (string-match
+             "github\\.com/\\([^/]+\\)/\\([^/]+\\)/\\(?:pull\\|issues\\)/\\([0-9]+\\)" url)
+      (user-error "Not a GitHub pull request or issue URL: %s" url))
+    (my/gh/issue-or-pull-title (match-string 1 url) (match-string 2 url) (match-string 3 url) callback))
+
+  (defun my/org-insert-gh-item-at-point (url)
+    "Insert \"- TITLE: URL\" for the GitHub pull request or issue at URL."
+    (interactive
+     (list (read-string "GitHub URL: " (current-kill 0 t))))
+    (let ((marker (point-marker)))
+      (my/gh/item
+       url
+       (lambda (title)
+         (with-current-buffer (marker-buffer marker)
+           (save-excursion
+             (goto-char marker)
+             (insert (format "%s: %s" title url))))))))
+
+  (evil-define-key '(normal visual motion) 'global
+    (kbd "<leader>og") #'my/org-insert-gh-item-at-point)
 #+end_src
