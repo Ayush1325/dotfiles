@@ -145,6 +145,7 @@
     :ensure t
     :init
     (setq evil-want-keybinding nil)
+    (setq evil-want-minibuffer t)
     :config
     (evil-mode 1)
     (setq which-key-allow-evil-operators t)
@@ -481,7 +482,7 @@
 - Add QUESTION/ANSWERED flow for doubts.
 #+begin_src emacs-lisp
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "IN-PROGRESS(p!)" "|" "DONE(d!)" "CANCELLED(c@)")
+        '((sequence "TODO(t)" "IN-PROGRESS(p@)" "|" "DONE(d!)" "CANCELLED(c@)")
   	(sequence "QUESTION(q)" "|" "ANSWERED(a@)")))
 #+end_src
 
@@ -514,8 +515,8 @@
       (dolist (pair org-gcal-fetch-file-alist)
         (add-to-list 'denote-agenda-static-files (cdr pair))))
     :config
-    ;; fetch a minute after startup, then hourly
-    (run-with-timer 60 (* 60 60 12) #'org-gcal-fetch))
+    ;; fetch a minute after startup
+    (run-with-timer 60 nil #'org-gcal-fetch))
 #+end_src
 
 ** Babble
@@ -640,6 +641,7 @@
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
+
   (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
 #+end_src
 
@@ -756,4 +758,10 @@
                                           ", "))))
       (message-goto-body)
       (save-excursion (insert body))))
+#+end_src
+
+* Dired
+#+begin_src emacs-lisp
+  (setq dired-dwim-target t)
+  (add-hook 'dired-mode-hook #'auto-revert-mode)
 #+end_src
