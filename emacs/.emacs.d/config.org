@@ -688,7 +688,7 @@
     (kbd "<leader>og") #'my/org-insert-gh-item-at-point)
 #+end_src
 ** Biweekly report emails
-- All helpers to actually generate the email contents
+*** Helpers to generate email contents
 #+begin_src emacs-lisp
   (require 'denote-journal)
 
@@ -735,7 +735,7 @@
     (string-join (my/journal-report 14)))
 #+end_src
 
-- Acutal compose function
+*** Compose function
 #+begin_src emacs-lisp
   (defun my/mail-biweekly-report ()
     "Compose the biweekly work report from the denote-journal entries."
@@ -758,6 +758,69 @@
                                           ", "))))
       (message-goto-body)
       (save-excursion (insert body))))
+#+end_src
+
+** Monthly invoices
+*** Helper to rename denote files to a better format
+- Only enabled for fircs/invoices, but should be useful when adding almost any denote named file.
+#+begin_src emacs-lisp
+  (require 'mml)
+  (require 'denote)
+
+  (defun my/invoice-filename (fname)
+    "Return a simplified filename for a Denote invoice or FIRC FNAME.
+  Return nil if FNAME is not a Denote file with the keyword
+  \"invoice\" or \"firc\"."
+    (when (stringp fname)
+      (let ((title (denote-retrieve-filename-title fname))
+            (keyword (denote-retrieve-filename-keywords fname)))
+        (when (and title (member keyword '("invoice" "firc")))
+          (format "%s-%s.%s"
+                  (upcase keyword)
+                  (upcase title)
+                  (file-name-extension fname))))))
+
+  (defun my/invoices--add-recipient-filename (args)
+    "Add a recipient-filename to attachment tags of invoices and FIRCs.
+  ARGS are the arguments of `mml-insert-empty-tag'."
+    (let ((name (and (eq (car args) 'part)
+                     (my/invoice-filename (plist-get (cdr args) 'filename)))))
+      (if name
+          (append args (list 'recipient-filename name))
+        args)))
+
+  (advice-add 'mml-insert-empty-tag :filter-args #'my/invoices--add-recipient-filename)
+#+end_src
+*** Montly invoice generator function
+#+begin_src emacs-lisp
+  (defun my/invoice-for-month (year month)
+    "All invoices/fircs for month"
+    (directory-files
+     (expand-file-name "invoices" denote-directory)
+     t
+     (format "\\`%04d%02d.*\\.pdf\\'" year month)))
+
+  (defun my/invoices-mail-last-month ()
+    "Compose a mail with last month's invoices and FIRCs attached.
+  A file belongs to a month by its Denote identifier."
+    (interactive)
+    (let* ((now (decode-time))
+           ;; Day 0 of this month is the last day of the previous one.
+           (last-month (encode-time (list 0 0 0 0 (decoded-time-month now)
+                                          (decoded-time-year now) nil -1 nil)))
+           (decoded (decode-time last-month))
+           (files (my/invoice-for-month (decoded-time-year decoded)
+                                        (decoded-time-month decoded))))
+      (unless files
+        (user-error "No invoices or FIRCs for %s"
+                    (format-time-string "%B %Y" last-month)))
+      (message-mail "Jawalshah3@yahoo.com"
+                    (format-time-string "Invoice and FIRC for %B %Y" last-month)
+                    `(("From" . ,"Ayush Singh <ayushsingh1325@gmail.com>")))
+      (message-goto-body)
+      (save-excursion
+        (dolist (f files)
+          (mml-attach-file f "application/pdf" nil "attachment")))))
 #+end_src
 
 * Dired
