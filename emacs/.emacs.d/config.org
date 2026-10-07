@@ -184,7 +184,8 @@
     (kbd "<leader>fb") #'switch-to-buffer
     (kbd "<leader>bb") #'switch-to-buffer
     (kbd "<leader>bi") #'ibuffer
-    (kbd "<leader>bk") #'kill-buffer)
+    (kbd "<leader>bk") #'kill-buffer
+    (kbd "<leader>bd") #'kill-current-buffer)
 #+end_src
 
 *** Help
@@ -465,6 +466,7 @@
 ** Better startup
 #+begin_src emacs-lisp
   (setq org-startup-indented t)
+  (setq org-startup-folded 'content)
 #+end_src
 
 ** Agenda
@@ -623,10 +625,6 @@
   (setq delete-by-moving-to-trash 1)
 #+end_src
 * Programming
-- Autclose parens in programming modes.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook #'electric-pair-local-mode)
-#+end_src
 ** Elisp
 *** Eldoc
 - eldoc shows a nice function signature in echo area.
@@ -821,6 +819,20 @@
       (save-excursion
         (dolist (f files)
           (mml-attach-file f "application/pdf" nil "attachment")))))
+#+end_src
+** Sync Notes
+- I have a systemd service (with daily timer) to sync my notes. Here, we just add a helper to sync
+  on emacs entry and exit as well
+#+begin_src emacs-lisp
+  (defun my/notes-sync (&optional wait)
+    "Start the notes sync service on the host. With WAIT, block until it finishes."
+    (let ((args '("--host" "systemctl" "--user" "start" "notes-sync.service")))
+      (if wait
+          (apply #'call-process "flatpak-spawn" nil nil nil args)
+        (apply #'start-process "notes-sync" nil "flatpak-spawn" args))))
+
+  (add-hook 'emacs-startup-hook #'my/notes-sync)
+  (add-hook 'kill-emacs-hook (lambda () (my/notes-sync t)))
 #+end_src
 
 * Dired
