@@ -22,10 +22,12 @@ then
 	alias zola="flatpak-spawn --host flatpak run org.getzola.zola"
 	alias flatpak-builder="flatpak-spawn --host flatpak run org.flatpak.Builder"
 	alias podman="flatpak-spawn --host podman"
+        tftpcp() { flatpak-spawn --host cp -- "$@" /var/lib/tftpboot/; }
 else
 	alias te="toolbox enter"
 	alias zola="flatpak run org.getzola.zola"
 	alias flatpak-builder="flatpak run org.flatpak.Builder"
+        tftpcp() { cp -- "$@" /var/lib/tftpboot/; }
 fi
 
 # Alias
