@@ -65,6 +65,12 @@
   (auto-save-visited-mode 1)
 #+end_src
 
+** Shortcut for this file
+- C-x r j c
+#+begin_src emacs-lisp
+  (set-register ?c `(file . ,(expand-file-name "config.org" user-emacs-directory)))
+#+end_src
+
 * Packaging
 ** Packaging
 - use-package is built in (Emacs 29+). Only used for packages that aren't.
@@ -169,7 +175,6 @@
   (dolist (prefix '(("b" . "buffer-prefix")
   		  ("f" . "files-prefix")
                     ("n" . "notes-prefix")
-                    ("h" . "help-prefix")
                     ("m" . "mail-prefix")))
     (evil-define-key '(normal visual motion) 'global
       (kbd (concat "<leader>" (car prefix)))
@@ -186,16 +191,6 @@
     (kbd "<leader>bi") #'ibuffer
     (kbd "<leader>bk") #'kill-buffer
     (kbd "<leader>bd") #'kill-current-buffer)
-#+end_src
-
-*** Help
-#+begin_src emacs-lisp
-  (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>hf") #'describe-function
-    (kbd "<leader>hv") #'describe-variable
-    (kbd "<leader>hk") #'describe-key
-    (kbd "<leader>hm") #'describe-mode
-    (kbd "<leader>ho") #'describe-symbol)
 #+end_src
 
 *** Calendar
@@ -834,7 +829,7 @@
   (add-hook 'emacs-startup-hook #'my/notes-sync)
   (add-hook 'kill-emacs-hook (lambda () (my/notes-sync t)))
 #+end_src
-
+** Import Invoice/FIRC
 * Dired
 #+begin_src emacs-lisp
   (setq dired-dwim-target t)
