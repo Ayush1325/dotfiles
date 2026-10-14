@@ -27,7 +27,6 @@
 #+begin_src emacs-lisp
   (setq ido-enable-flex-matching t)
   (ido-mode 1)
-  (ido-everywhere 1)
 #+end_src
 
 ** Line Numbers
@@ -126,6 +125,7 @@
 #+begin_src emacs-lisp
   (fido-vertical-mode 1)
 #+end_src
+
 - When fido-vertical-mode is being used, hide the normal completions
 #+begin_src emacs-lisp
   (with-eval-after-load 'icomplete
@@ -832,6 +832,27 @@
   (add-hook 'kill-emacs-hook (lambda () (my/notes-sync t)))
 #+end_src
 ** Import Invoice/FIRC
+#+begin_src emacs-lisp
+  (defun my/denote-rename-bbf-invoice-firc (file date num kind)
+    "Rename denote invoice from invoice number"
+    (interactive
+     (list (or (and (derived-mode-p 'dired-mode)
+                    (dired-get-filename nil t))
+               (read-file-name "File: "))
+           (org-read-date nil nil nil "Invoice date: ")
+           (read-number "Invoice number: ")
+           (completing-read "Kind: " '("invoice" "firc") nil t)))
+    (unless (member kind '("invoice" "firc"))
+      (user-error "KIND must be \"invoice\" or \"firc\", got %S" kind))
+    (let* ((title (format "BBF-%011d" num))
+  	 (id (format-time-string denote-date-identifier-format
+  				 (org-time-string-to-time date)))
+  	 (dest (expand-file-name (file-name-nondirectory file)
+  				 (expand-file-name "invoices" denote-directory))))
+      (copy-file file dest)
+      (denote-rename-file dest title (list kind) nil date id)))
+#+end_src
+
 * Dired
 #+begin_src emacs-lisp
   (setq dired-dwim-target t)
