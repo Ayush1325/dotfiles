@@ -69,18 +69,14 @@
   (set-register ?c `(file . ,(expand-file-name "config.org" user-emacs-directory)))
 #+end_src
 
-* Packaging
 ** Packaging
 - use-package is built in (Emacs 29+). Only used for packages that aren't.
+- Also enable melpa
 #+begin_src emacs-lisp
   (require 'package)
-#+end_src
-** MELPA
-#+begin_src emacs-lisp
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 #+end_src
 
-* Ui
 ** Menus stuff
 - Disable toolbar
 #+begin_src emacs-lisp
@@ -615,6 +611,26 @@
     :ensure t)
 
   (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
+#+end_src
+
+** Markdown
+*** TODO Markdown Mode: Remove once I get emacs 31
+- emacs 31 has markdown-ts-mode built-in, so better to use it. At the moment of writing this, I am
+  on emacs 30.2
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode ("\\.md\\'" . gfm-mode))
+#+end_src
+*** Org like indent
+#+begin_src emacs-lisp
+  (use-package markdown-indent-mode
+    :ensure t
+    :hook ((markdown-mode markdown-ts-mode) . markdown-indent-mode))
+#+end_src
+*** Add spellcheck
+#+begin_src emacs-lisp
+  (add-hook 'gfm-mode-hook #'turn-on-flyspell)
 #+end_src
 
 * Helpers
