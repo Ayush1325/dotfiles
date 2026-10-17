@@ -52,6 +52,10 @@
   (column-number-mode 1)
   (setq column-number-indicator-zero-based nil)  ; 1-based columns, like Vim
 #+end_src
+- Enable hard-wrap in text-mode
+#+begin_src emacs-lisp
+  (add-hook 'text-mode-hook #'auto-fill-mode)
+#+end_src
 
 ** Auto save
 #+begin_src emacs-lisp
@@ -105,11 +109,9 @@
 #+end_src
 ** Theme
 #+begin_src emacs-lisp
-  (use-package dracula-theme
-    :ensure t
-    :config
-    (load-theme 'dracula t))
+  (load-theme 'modus-vivendi-tinted t)
 #+end_src
+
 ** Better buffer nav
 #+begin_src emacs-lisp
   (windmove-default-keybindings)
@@ -169,7 +171,6 @@
   ;; In evil's :config, right after evil-set-leader and BEFORE any <leader> bindings
   (dolist (prefix '(("b" . "buffer-prefix")
   		  ("f" . "files-prefix")
-                    ("n" . "notes-prefix")
                     ("m" . "mail-prefix")))
     (evil-define-key '(normal visual motion) 'global
       (kbd (concat "<leader>" (car prefix)))
@@ -186,12 +187,6 @@
     (kbd "<leader>bi") #'ibuffer
     (kbd "<leader>bk") #'kill-buffer
     (kbd "<leader>bd") #'kill-current-buffer)
-#+end_src
-
-*** Calendar
-#+begin_src emacs-lisp
-  (evil-define-key 'normal 'global
-    (kbd "<leader>c") #'calendar)
 #+end_src
 
 * Gnus
@@ -417,23 +412,9 @@
 *** Rebind SPC
 - Launch binding.
 #+begin_src emacs-lisp
-  (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>mm") #'gnus             ; open Gnus
-    (kbd "<leader>mc") #'compose-mail)    ; write a new message from anywhere
+  (keymap-global-set "C-c m" #'gnus)
 #+end_src
 
-- I want to use SPC as leader key
-#+begin_src emacs-lisp
-  (with-eval-after-load 'gnus-group
-    (evil-define-key '(normal motion) gnus-group-mode-map
-      (kbd "RET") #'gnus-group-read-group
-      (kbd "SPC") #'evil-send-leader))
-
-  (with-eval-after-load 'gnus-sum
-    (evil-define-key '(normal motion) gnus-summary-mode-map
-      (kbd "RET") #'gnus-summary-next-page
-      (kbd "SPC") #'evil-send-leader))
-#+end_src
 ** Graceful Shutdonw
 #+begin_src emacs-lisp
   (add-hook 'kill-emacs-hook
@@ -485,8 +466,7 @@
     (interactive)
     (org-agenda nil "T"))
 
-  (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>na") #'my/org-agenda-todos)
+  (keymap-global-set "C-c n a" #'my/org-agenda-todos)
 #+end_src
 
 ** Google Calendar
@@ -531,14 +511,13 @@
   (use-package denote
     :ensure t
     :hook (dired-mode . denote-dired-mode)
-    :init
-    (evil-define-key '(normal visual motion) 'global
-      (kbd "<leader>nn") #'denote-open-or-create
-      (kbd "<leader>nR") #'denote-rename-file-using-front-matter
-      (kbd "<leader>nl") #'denote-link
-      (kbd "<leader>nb") #'denote-backlinks
-      (kbd "<leader>nd") #'denote-dired
-      (kbd "<leader>ng") #'denote-grep)
+    :bind
+    (("C-c n n" . denote-open-or-create)
+     ("C-c n r" . denote-rename-file-using-front-matter)
+     ("C-c n l" . denote-link)
+     ("C-c n b" . denote-backlinks)
+     ("C-c n d" . denote-dired)
+     ("C-c n g" . denote-grep))
     :config
     (setq denote-directory (expand-file-name "~/Documents/Notes/"))
     (setq denote-known-keywords '("projects" "misc"))
@@ -568,9 +547,8 @@
   (use-package denote-journal
     :ensure t
     :hook (calendar-mode . denote-journal-calendar-mode)
-    :init
-    (evil-define-key '(normal visual motion) 'global
-      (kbd "<leader>nj") #'denote-journal-new-or-existing-entry)
+    :bind
+    (("C-c n j" . denote-journal-new-or-existing-entry))
     :config
     (setq denote-journal-directory
           (expand-file-name "journal" denote-directory))
@@ -612,8 +590,7 @@
   (with-eval-after-load 'org
     (add-to-list 'org-agenda-files (expand-file-name "scratch.org" denote-directory)))
 
-  (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>ns") #'my/open-scratch-note)
+  (keymap-global-set "C-c n s" #'my/open-scratch-note)
 #+end_src
 
 ** Trash
@@ -679,9 +656,9 @@
              (goto-char marker)
              (insert (format "%s: %s" title url))))))))
 
-  (evil-define-key '(normal visual motion) 'global
-    (kbd "<leader>og") #'my/org-insert-gh-item-at-point)
+  (keymap-global-set "C-c o g" #'my/org-insert-gh-item-at-point)
 #+end_src
+
 ** Biweekly report emails
 *** Helpers to generate email contents
 #+begin_src emacs-lisp
