@@ -570,6 +570,9 @@
     (denote-agenda-include-regexp "\\.org\\'")
     (denote-agenda-exclude-regexp "_journal")
     (denote-agenda-include-journal t)
+    (denote-agenda-static-files
+     (list (expand-file-name "config.org" user-emacs-directory)
+  	 (expand-file-name "scratch.org" denote-directory)))
     :config
     (denote-agenda-insinuate))
 #+end_src
@@ -582,9 +585,6 @@
     (interactive)
     (require 'denote)
     (find-file (expand-file-name "scratch.org" denote-directory)))
-
-  (with-eval-after-load 'org
-    (add-to-list 'org-agenda-files (expand-file-name "scratch.org" denote-directory)))
 
   (keymap-global-set "C-c n s" #'my/open-scratch-note)
 #+end_src
