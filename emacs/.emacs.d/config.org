@@ -594,54 +594,6 @@
 #+begin_src emacs-lisp
   (setq delete-by-moving-to-trash 1)
 #+end_src
-* Programming
-** Elisp
-*** Eldoc
-- eldoc shows a nice function signature in echo area.
-#+begin_src emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
-  (add-hook 'ielm-mode-hook 'eldoc-mode)
-  (add-hook 'emacs-lisp-mode-hook #'completion-preview-mode)
-#+end_src
-
-** Git
-#+begin_src emacs-lisp
-  (use-package magit
-    :ensure t)
-
-  (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
-#+end_src
-
-** Markdown
-*** TODO Markdown Mode: Remove once I get emacs 31
-- emacs 31 has markdown-ts-mode built-in, so better to use it. At the moment of writing this, I am
-  on emacs 30.2
-#+begin_src emacs-lisp
-  (use-package markdown-mode
-    :ensure t
-    :mode ("\\.md\\'" . gfm-mode))
-
-  (use-package edit-indirect
-    :ensure t)
-#+end_src
-
-*** Org like indent
-#+begin_src emacs-lisp
-  (use-package markdown-indent-mode
-    :ensure t
-    :hook ((markdown-mode markdown-ts-mode) . markdown-indent-mode))
-#+end_src
-*** Add spellcheck
-#+begin_src emacs-lisp
-  (add-hook 'gfm-mode-hook #'turn-on-flyspell)
-#+end_src
-*** Autowrap
-#+begin_src emacs-lisp
-  (add-hook 'gfm-mode-hook
-            (lambda () (setq-local fill-column 100)))
-#+end_src
-
 * Helpers
 ** Github Link to Title
 - Mainly for daily journaling. Will take a Github PR link and create a line for format "{PR Title}: {URL}"
@@ -853,6 +805,93 @@
   				 (expand-file-name "invoices" denote-directory))))
       (copy-file file dest)
       (denote-rename-file dest title (list kind) nil date id)))
+#+end_src
+** Flatpak detection
+#+begin_src emacs-lisp
+  (defconst my/in-flatpak-p
+    (or (getenv "FLATPAK_ID") (file-exists-p "/.flatpak-info"))
+    "Non-nil when Emacs is running inside a flatpak sandbox.")
+
+  (defun my/host-command (&rest cmd)
+    "Return CMD, wrapped to run on the host when inside a flatpak."
+    (if my/in-flatpak-p
+        (list "flatpak-spawn" "--host" "sh" "-lc"
+              (concat "exec " (mapconcat #'shell-quote-argument cmd " ")))
+      cmd))
+#+end_src
+
+* Programming
+** Basics
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'completion-preview-mode)
+  (setq tab-always-indent 'complete)
+#+end_src
+
+** Elisp
+*** Eldoc
+- eldoc shows a nice function signature in echo area.
+#+begin_src emacs-lisp
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+  (add-hook 'ielm-mode-hook 'eldoc-mode)
+#+end_src
+
+** Git
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
+
+  (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
+#+end_src
+
+** Markdown
+*** TODO Markdown Mode: Remove once I get emacs 31
+- emacs 31 has markdown-ts-mode built-in, so better to use it. At the moment of writing this, I am
+  on emacs 30.2
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode ("\\.md\\'" . gfm-mode))
+
+  (use-package edit-indirect
+    :ensure t)
+#+end_src
+
+*** Org like indent
+#+begin_src emacs-lisp
+  (use-package markdown-indent-mode
+    :ensure t
+    :hook ((markdown-mode markdown-ts-mode) . markdown-indent-mode))
+#+end_src
+*** Add spellcheck
+#+begin_src emacs-lisp
+  (add-hook 'gfm-mode-hook #'turn-on-flyspell)
+#+end_src
+*** Autowrap
+#+begin_src emacs-lisp
+  (add-hook 'gfm-mode-hook
+            (lambda () (setq-local fill-column 100)))
+#+end_src
+
+** Rust
+*** Treesitter
+- The mode is built-in
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :ensure nil
+    :mode "\\.rs\\'"
+    :init
+    (add-to-list 'treesit-language-source-alist
+                 '(rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.24.2")))
+#+end_src
+*** LSP
+#+begin_src emacs-lisp
+  (add-hook 'rust-ts-mode-hook #'eglot-ensure)
+
+  (with-eval-after-load 'eglot
+    (when my/in-flatpak-p
+      (add-to-list 'eglot-server-programs
+                   `((rust-ts-mode rust-mode) . ,(my/host-command "rust-analyzer")))))
 #+end_src
 
 * Dired
