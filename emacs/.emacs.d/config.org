@@ -621,7 +621,11 @@
   (use-package markdown-mode
     :ensure t
     :mode ("\\.md\\'" . gfm-mode))
+
+  (use-package edit-indirect
+    :ensure t)
 #+end_src
+
 *** Org like indent
 #+begin_src emacs-lisp
   (use-package markdown-indent-mode
@@ -631,6 +635,11 @@
 *** Add spellcheck
 #+begin_src emacs-lisp
   (add-hook 'gfm-mode-hook #'turn-on-flyspell)
+#+end_src
+*** Autowrap
+#+begin_src emacs-lisp
+  (add-hook 'gfm-mode-hook
+            (lambda () (setq-local fill-column 100)))
 #+end_src
 
 * Helpers
