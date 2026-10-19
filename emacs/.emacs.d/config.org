@@ -430,6 +430,11 @@
     :ensure t
     :hook (org-mode . org-bullets-mode))
 #+end_src
+** Hide bold markers
+#+begin_src emacs-lisp
+  (setq org-hide-emphasis-markers t)
+#+end_src
+
 ** Better startup
 #+begin_src emacs-lisp
   (setq org-startup-indented t)
@@ -818,6 +823,44 @@
         (list "flatpak-spawn" "--host" "sh" "-lc"
               (concat "exec " (mapconcat #'shell-quote-argument cmd " ")))
       cmd))
+#+end_src
+** Copy email
+- A simple helper to copy email from gnus and create a todo from it.
+- Pushes all items to a FIFO.
+#+begin_src emacs-lisp
+  (defvar my/gnus-org-entries nil
+    "Org TODO entries collected from Gnus articles, newest first.")
+
+  (defun my/gnus--org-entry ()
+    "Return an Org TODO entry for the article under point in the summary buffer."
+    (gnus-summary-select-article)
+    (let ((link (org-store-link nil))
+          (body (with-current-buffer gnus-article-buffer
+                  (save-restriction
+                    (widen)
+                    (article-goto-body)
+                    (string-trim
+                     (buffer-substring-no-properties (point) (point-max)))))))
+      (format "* TODO %s\n\n#+begin_quote\n%s\n#+end_quote\n" link body)))
+
+  (defun my/gnus-store-org-entries ()
+    "Store entries for process-marked articles, the region, or the current article."
+    (interactive)
+    (with-current-buffer gnus-summary-buffer
+      (let ((articles (gnus-summary-work-articles nil)))
+        (dolist (article articles)
+          (gnus-summary-goto-subject article)
+          (push (my/gnus--org-entry) my/gnus-org-entries))
+        (message "Stored %d, %d pending"
+                 (length articles) (length my/gnus-org-entries)))))
+
+  (defun my/gnus-insert-org-entries (keep)
+    "Insert all stored entries in the order stored. With prefix KEEP, don't clear them."
+    (interactive "P")
+    (if (null my/gnus-org-entries)
+        (user-error "No stored mail entries")
+      (insert (mapconcat #'identity (reverse my/gnus-org-entries) "\n"))
+      (unless keep (setq my/gnus-org-entries nil))))
 #+end_src
 
 * Programming
