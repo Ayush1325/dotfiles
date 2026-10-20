@@ -877,6 +877,17 @@
     (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
     (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions))
 #+end_src
+*** Elgot cleanup
+- Shutdown lsp servers when not in use
+#+begin_src emacs-lisp
+  (setq eglot-autoshutdown t)
+#+end_src
+
+*** Imporve word detection
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook
+            (lambda () (modify-syntax-entry ?_ "w")))
+#+end_src
 
 ** Elisp
 *** Eldoc
@@ -993,6 +1004,16 @@
     (when my/in-flatpak-p
       (add-to-list 'eglot-server-programs
                    `(devicetree-ts-mode . ,(my/host-command "dts-lsp")))))
+#+end_src
+** YAML
+*** Treesitter
+#+begin_src emacs-lisp
+  (use-package yaml-ts-mode
+    :ensure nil
+    :mode "\\.ya?ml\\'"
+    :init
+    (add-to-list 'treesit-language-source-alist
+                 '(yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 #+end_src
 
 * Dired
