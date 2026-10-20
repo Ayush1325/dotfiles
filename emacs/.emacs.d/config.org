@@ -865,9 +865,17 @@
 
 * Programming
 ** Basics
+*** Completion
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'completion-preview-mode)
   (setq tab-always-indent 'complete)
+#+end_src
+*** LSP keybindings
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (keymap-set eglot-mode-map "C-c l f" #'eglot-format)
+    (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
+    (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions))
 #+end_src
 
 ** Elisp
@@ -961,6 +969,30 @@
     (when my/in-flatpak-p
       (add-to-list 'eglot-server-programs
                    `((c-ts-mode c-mode) . ,(my/host-command "toolbox" "run" "clangd")))))
+#+end_src
+
+** Devicetree
+*** Treesitter
+#+begin_src emacs-lisp
+  (use-package devicetree-ts-mode
+    :ensure t
+    :init
+    (with-eval-after-load 'treesit
+      (add-to-list 'treesit-language-source-alist
+                   '(devicetree "https://github.com/joelspadin/tree-sitter-devicetree" "v0.15.0")))
+    :mode (("\\.dtsi?\\'"   . devicetree-ts-mode)
+           ("\\.dtso\\'"    . devicetree-ts-mode)   ; kernel overlays
+           ("\\.overlay\\'" . devicetree-ts-mode))  ; Zephyr board overlays
+    )
+#+end_src
+*** LSP
+#+begin_src emacs-lisp
+  (add-hook 'devicetree-ts-mode-hook #'eglot-ensure)
+
+  (with-eval-after-load 'eglot
+    (when my/in-flatpak-p
+      (add-to-list 'eglot-server-programs
+                   `(devicetree-ts-mode . ,(my/host-command "dts-lsp")))))
 #+end_src
 
 * Dired
