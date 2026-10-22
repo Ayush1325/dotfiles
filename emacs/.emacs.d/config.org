@@ -792,7 +792,8 @@
       (copy-file file dest)
       (denote-rename-file dest title (list kind) nil date id)))
 #+end_src
-** Flatpak detection
+** Fedora atomic
+*** Flatpak detection
 #+begin_src emacs-lisp
   (defconst my/in-flatpak-p
     (or (getenv "FLATPAK_ID") (file-exists-p "/.flatpak-info"))
@@ -801,10 +802,32 @@
   (defun my/host-command (&rest cmd)
     "Return CMD, wrapped to run on the host when inside a flatpak."
     (if my/in-flatpak-p
-        (list "flatpak-spawn" "--host" "sh" "-lc"
-              (concat "exec " (mapconcat #'shell-quote-argument cmd " ")))
+        (append (list "flatpak-spawn" "--host") cmd)
       cmd))
 #+end_src
+
+*** Toolbox
+#+begin_src emacs-lisp
+  (defvar my/build-container t
+    "Where builds and language servers run.
+  nil means the host, t means the default toolbox, and a string
+  names a specific toolbox container.")
+
+  (put 'my/build-container 'safe-local-variable
+       (lambda (v) (or (booleanp v) (stringp v))))
+
+  (defconst my/in-toolbox-p (file-exists-p "/run/.toolboxenv")
+    "Non-nil when Emacs is running inside a toolbox container.")
+
+  (defun my/container-command (&rest cmd)
+    "Return CMD wrapped to run where `my/build-container' says."
+    (apply #'my/host-command
+           (cond ((or (null my/build-container) my/in-toolbox-p) cmd)
+                 ((stringp my/build-container)
+                  (append (list "toolbox" "run" "-c" my/build-container "sh" "-c") cmd))
+                 (t (append '("toolbox" "run" "sh" "-c") cmd)))))
+#+end_src
+
 ** Copy email
 - A simple helper to copy email from gnus and create a todo from it.
 - Pushes all items to a FIFO.
@@ -879,6 +902,20 @@
     (yas-global-mode 1))
 #+end_src
 
+*** Run compile in container
+#+begin_src emacs-lisp
+  (defun my/compilation-start-in-container (args)
+    ;; Only real compiles; leave grep-mode etc. alone.
+    (if (memq (nth 1 args) '(nil compilation-mode))
+        (cons (combine-and-quote-strings
+  	     (my/container-command (car args)))
+  	    (cdr args))
+      args))
+
+  (advice-add 'compilation-start :filter-args #'my/compilation-start-in-container)
+  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter)
+#+end_src
+
 ** Elisp
 *** Eldoc
 - eldoc shows a nice function signature in echo area.
@@ -922,7 +959,6 @@
   (add-hook 'gfm-mode-hook
             (lambda () (setq-local fill-column 100)))
 #+end_src
-
 ** Rust
 *** Treesitter
 - The mode is built-in
@@ -941,8 +977,9 @@
   (with-eval-after-load 'eglot
     (when my/in-flatpak-p
       (add-to-list 'eglot-server-programs
-                   `((rust-ts-mode rust-mode) . ,(my/host-command "rust-analyzer")))))
+                   `((rust-ts-mode rust-mode) . ,(my/container-command "rust-analyzer")))))
 #+end_src
+
 ** C/CPP
 *** Treesitter
 - The mode is built-in
@@ -967,7 +1004,7 @@
   (with-eval-after-load 'eglot
     (when my/in-flatpak-p
       (add-to-list 'eglot-server-programs
-                   `((c-ts-mode c-mode) . ,(my/host-command "toolbox" "run" "clangd")))))
+                   `((c-ts-mode c-mode) . ,(my/container-command "clangd")))))
 #+end_src
 
 ** Devicetree
@@ -991,8 +1028,9 @@
   (with-eval-after-load 'eglot
     (when my/in-flatpak-p
       (add-to-list 'eglot-server-programs
-                   `(devicetree-ts-mode . ,(my/host-command "dts-lsp")))))
+                   `(devicetree-ts-mode . ,(my/container-command "dts-lsp")))))
 #+end_src
+
 ** YAML
 *** Treesitter
 #+begin_src emacs-lisp
