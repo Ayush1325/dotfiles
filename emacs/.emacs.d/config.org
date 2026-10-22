@@ -119,15 +119,20 @@
 #+end_src
 
 ** Better completion
-- Vertical completion for some commands.
+*** Vertical completion for some commands.
 #+begin_src emacs-lisp
   (fido-vertical-mode 1)
 #+end_src
 
-- When fido-vertical-mode is being used, hide the normal completions
+*** When fido-vertical-mode is being used, hide the normal completions
 #+begin_src emacs-lisp
   (with-eval-after-load 'icomplete
     (define-key icomplete-fido-mode-map (kbd "TAB") #'icomplete-force-complete))
+#+end_src
+
+*** Better completion sselection
+#+begin_src emacs-lisp
+  (setopt minibuffer-visible-completions t)
 #+end_src
 
 ** Modeline
@@ -887,6 +892,15 @@
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook
             (lambda () (modify-syntax-entry ?_ "w")))
+#+end_src
+
+*** Templates
+- eglot only seems to support yasnippet by default at the moment, so just use it.
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-global-mode 1))
 #+end_src
 
 ** Elisp
