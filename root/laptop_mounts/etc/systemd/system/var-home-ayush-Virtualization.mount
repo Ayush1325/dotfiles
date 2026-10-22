@@ -1,0 +1,11 @@
+[Unit]
+Description=Second SSD VM
+
+[Mount]
+What=/dev/disk/by-uuid/3a148e9a-55de-416c-bb6d-98a0d42f53a5
+Where=/var/home/ayush/Virtualization
+Type=btrfs
+Options=defaults,rw,nofail,ssd,noatime,compress=zstd:3,space_cache=v2,discard=async,subvol=@virtualization
+
+[Install]
+WantedBy=multi-user.target
