@@ -153,7 +153,6 @@
     :config
     (evil-mode 1)
     (setq which-key-allow-evil-operators t)
-    (evil-set-leader '(normal visual motion) (kbd "SPC"))
     (setq evil-undo-system 'undo-redo))
 #+end_src
 
@@ -167,29 +166,6 @@
 #+end_src
 
 ** Basic keybindings
-*** Nice keymps
-#+begin_src emacs-lisp
-  ;; In evil's :config, right after evil-set-leader and BEFORE any <leader> bindings
-  (dolist (prefix '(("b" . "buffer-prefix")
-  		  ("f" . "files-prefix")
-                    ("m" . "mail-prefix")))
-    (evil-define-key '(normal visual motion) 'global
-      (kbd (concat "<leader>" (car prefix)))
-      (cons (cdr prefix) (make-sparse-keymap))))
-#+end_src
-
-*** File/buffer related
-#+begin_src emacs-lisp
-  (evil-define-key '(normal visual motion) 'global
-    ;; files and buffers, matching your Neovim setup
-    (kbd "<leader>ff") #'find-file
-    (kbd "<leader>fb") #'switch-to-buffer
-    (kbd "<leader>bb") #'switch-to-buffer
-    (kbd "<leader>bi") #'ibuffer
-    (kbd "<leader>bk") #'kill-buffer
-    (kbd "<leader>bd") #'kill-current-buffer)
-#+end_src
-
 * Gnus
 ** Accounts
 *** Disable NNTP. Not using it
@@ -916,8 +892,6 @@
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
-
-  (evil-define-key 'normal 'global (kbd "<leader>gg") #'magit-status)
 #+end_src
 
 ** Markdown
