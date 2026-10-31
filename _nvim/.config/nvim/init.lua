@@ -2,7 +2,7 @@ require('vim._core.ui2').enable({})
 vim.loader.enable() -- Lua bytecode cache for faster startup
 
 -- Setup leader
-vim.g.mapleader = " "
+vim.g.mapleader = vim.keycode("<C-x>")
 vim.g.maplocalleader = "\\"
 
 vim.g.termguicolors = true
@@ -24,11 +24,11 @@ end) -- deferred to avoid startup slowdown
 vim.opt.undofile = true
 vim.cmd.packadd("nvim.undotree")
 
-vim.keymap.set('n', "grn", vim.lsp.buf.rename, { desc = "Rename" })
-vim.keymap.set('n', "gra", vim.lsp.buf.code_action, { desc = "Code Action" })
-vim.keymap.set('n', 'grf', vim.diagnostic.open_float, { desc = 'Line Diagnostics' })
-vim.keymap.set('n', "<leader>bf", vim.lsp.buf.format, { desc = "Format buffer" })
-vim.keymap.set('n', "<leader>bd", "<cmd>bd<CR>", { desc = "Close buffer" })
+vim.keymap.set("n", "<C-c>lr", vim.lsp.buf.rename, { desc = "Rename" })
+vim.keymap.set('n', "<C-c>la", vim.lsp.buf.code_action, { desc = "Code Action" })
+vim.keymap.set('n', '<C-c>ld', vim.diagnostic.open_float, { desc = 'Line Diagnostics' })
+vim.keymap.set('n', "<C-c>lf", vim.lsp.buf.format, { desc = "Format buffer" })
+vim.keymap.set('n', "<leader>k", "<cmd>bd<CR>", { desc = "Close buffer" })
 vim.keymap.set('n', "<leader>bn", "<cmd>echo expand('%:p')<CR>", { desc = "Display File Name" })
 
 -- Theme
@@ -73,7 +73,7 @@ vim.pack.add({
         'https://github.com/sindrets/diffview.nvim'
 })
 require('neogit').setup({})
-vim.keymap.set('n', '<leader>gg', require('neogit').open, { desc = 'Open Neogit' })
+vim.keymap.set('n', '<leader>g', require('neogit').open, { desc = 'Open Neogit' })
 require('gitsigns').setup()
 
 -- Telescope
@@ -83,14 +83,12 @@ vim.pack.add({
 })
 require('telescope').setup({})
 
-vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<leader>fg', require('telescope.builtin').live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>fb', require('telescope.builtin').buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<leader>fh', require('telescope.builtin').help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>pf', require('telescope.builtin').find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>pg', require('telescope.builtin').live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>pb', require('telescope.builtin').buffers, { desc = 'Telescope buffers' })
 
 vim.keymap.set('n', 'gd', require('telescope.builtin').lsp_definitions, { desc = 'List definitions' })
-vim.keymap.set('n', 'grr', require('telescope.builtin').lsp_references, { desc = 'List LSP references' })
-vim.keymap.set('n', 'grd', require('telescope.builtin').diagnostics, { desc = 'Diagnostics' })
+vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, { desc = 'List LSP references' })
 
 -- Completion
 vim.pack.add({
