@@ -130,7 +130,7 @@
     (define-key icomplete-fido-mode-map (kbd "TAB") #'icomplete-force-complete))
 #+end_src
 
-*** Better completion sselection
+*** Better completion selection
 #+begin_src emacs-lisp
   (setopt minibuffer-visible-completions t)
 #+end_src
@@ -259,8 +259,8 @@
 
 ** RSS
 #+begin_src emacs-lisp
-  (add-to-list 'gnus-secondary-select-methods
-               '(nnatom "blog.rust-lang.org/feed.xml"))
+  (dolist (feed '("blog.rust-lang.org/feed.xml"))
+    (add-to-list 'gnus-secondary-select-methods `(nnatom ,feed)))
 #+end_src
 
 ** Sane defaults
@@ -828,6 +828,12 @@
                  (t (append '("toolbox" "run" "sh" "-c") cmd)))))
 #+end_src
 
+*** Direnv
+#+begin_src emacs-lisp
+  (defun my/direnv-command (&rest cmd)
+    (combine-and-quote-strings (append '("env" "CARGO_TERM_PROGRESS_WHEN=never" "direnv" "exec" "." "sh" "-c") cmd)))
+#+end_src
+
 ** Copy email
 - A simple helper to copy email from gnus and create a todo from it.
 - Pushes all items to a FIFO.
@@ -908,12 +914,22 @@
     ;; Only real compiles; leave grep-mode etc. alone.
     (if (memq (nth 1 args) '(nil compilation-mode))
         (cons (combine-and-quote-strings
-  	     (my/container-command (car args)))
+  	     (my/container-command (my/direnv-command (car args))))
   	    (cdr args))
       args))
 
   (advice-add 'compilation-start :filter-args #'my/compilation-start-in-container)
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter)
+  (add-hook 'comint-output-filter-functions #'ansi-color-process-output)
+#+end_src
+
+#+RESULTS:
+| ansi-color-process-output | comint-postoutput-scroll-to-bottom | comint-watch-for-password-prompt |
+
+*** Improve project file find
+#+begin_src emacs-lisp
+  (setopt completion-category-overrides
+          '((project-file (styles basic substring partial-completion))))
 #+end_src
 
 ** Elisp
@@ -926,9 +942,15 @@
 #+end_src
 
 ** Git
+- Install magit
 #+begin_src emacs-lisp
   (use-package magit
     :ensure t)
+#+end_src
+- Add worktree keybindings to project keymap
+#+begin_src emacs-lisp
+  (keymap-set project-prefix-map "w" #'magit-worktree)
+  (add-to-list 'project-switch-commands '(magit-worktree "Worktree") t)
 #+end_src
 
 ** Markdown
@@ -1040,6 +1062,15 @@
     :init
     (add-to-list 'treesit-language-source-alist
                  '(yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+#+end_src
+** Typst
+*** Treesitter
+#+begin_src emacs-lisp
+  (use-package typst-ts-mode
+    :ensure t
+    :init
+    (add-to-list 'treesit-language-source-alist
+  	       '(typst "https://github.com/uben0/tree-sitter-typst" "master")))
 #+end_src
 
 * Dired
