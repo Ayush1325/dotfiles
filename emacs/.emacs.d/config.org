@@ -936,7 +936,6 @@
 #+end_src
 
 ** Elisp
-*** Eldoc
 - eldoc shows a nice function signature in echo area.
 #+begin_src emacs-lisp
   (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
@@ -1057,7 +1056,6 @@
 #+end_src
 
 ** YAML
-*** Treesitter
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode
     :ensure nil
@@ -1067,7 +1065,6 @@
                  '(yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 #+end_src
 ** Typst
-*** Treesitter
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
     :ensure t
