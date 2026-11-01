@@ -41,7 +41,6 @@
         ispell-dictionary "en_IN")
 #+end_src
 ** Refresh files
-- Mainly for notes
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
 #+end_src
@@ -70,7 +69,7 @@
 #+end_src
 
 ** Packaging
-- use-package is built in (Emacs 29+). Only used for packages that aren't.
+- use-package is built in (Emacs 29+).
 - Also enable melpa
 #+begin_src emacs-lisp
   (require 'package)
@@ -78,19 +77,13 @@
 #+end_src
 
 ** Menus stuff
-- Disable toolbar
 #+begin_src emacs-lisp
   (tool-bar-mode -1)
-#+end_src
-- Disable Menu Bar
-#+begin_src emacs-lisp
   (menu-bar-mode -1)
-#+end_src
-- Disable scrollbar
-#+begin_src emacs-lisp
   (scroll-bar-mode -1)
 #+end_src
-- Shorten prompt answers
+
+** Shorten prompt answers
 #+begin_src emacs-lisp
   (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
@@ -257,7 +250,7 @@
   (add-hook 'message-setup-hook #'my/message-insert-signoff)
 #+end_src
 
-** RSS
+** Atom
 #+begin_src emacs-lisp
   (dolist (feed '("blog.rust-lang.org/feed.xml"))
     (add-to-list 'gnus-secondary-select-methods `(nnatom ,feed)))
@@ -386,8 +379,6 @@
 #+end_src
 
 ** Keybindings
-*** Rebind SPC
-- Launch binding.
 #+begin_src emacs-lisp
   (keymap-global-set "C-c m" #'gnus)
 #+end_src
@@ -873,6 +864,18 @@
       (unless keep (setq my/gnus-org-entries nil))))
 #+end_src
 
+** Open file externally
+- Mainly for pdfs
+#+begin_src emacs-lisp
+  (defun my/open-file-externally ()
+    "Open the current buffer's file with the desktop's default application."
+    (interactive)
+    (require 'dired-aux)
+    (if buffer-file-name
+        (call-process shell-command-guess-open nil 0 nil buffer-file-name)
+      (user-error "Buffer is not visiting a file")))
+#+end_src
+
 * Programming
 ** Basics
 *** Completion
@@ -1077,4 +1080,14 @@
 #+begin_src emacs-lisp
   (setq dired-dwim-target t)
   (add-hook 'dired-mode-hook #'auto-revert-mode)
+#+end_src
+
+* PDFs
+#+begin_src emacs-lisp
+  (when my/in-flatpak-p
+    (setq
+     doc-view-pdfdraw-program (expand-file-name "mutool-flatpak" user-emacs-directory)
+     doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf
+     doc-view-cache-directory (expand-file-name "~/.cache/docview")
+     doc-view-mupdf-use-svg (image-type-available-p 'svg)))
 #+end_src
