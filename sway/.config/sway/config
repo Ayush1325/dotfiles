@@ -17,7 +17,7 @@ gaps inner 3px
 gaps outer 3px
 
 # font
-font pango:UbuntuMonoNerdFontMono Regular 11
+font pango:UbuntuSansMono Nerd Font Propo Regular 11
 
 # titlebar
 default_border pixel 5
