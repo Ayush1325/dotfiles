@@ -865,15 +865,36 @@
 #+end_src
 
 ** Open file externally
-- Mainly for pdfs
+- Always open some types of files with external programs.
 #+begin_src emacs-lisp
+  (defun my/open-externally (file)
+    "Open FILE with the desktop's default application."
+    (require 'dired-aux)
+    (call-process shell-command-guess-open nil 0 nil (expand-file-name file)))
+
   (defun my/open-file-externally ()
     "Open the current buffer's file with the desktop's default application."
     (interactive)
     (require 'dired-aux)
     (if buffer-file-name
-        (call-process shell-command-guess-open nil 0 nil buffer-file-name)
+        (my/open-externally buffer-file-name)
       (user-error "Buffer is not visiting a file")))
+
+  (defvar my/external-file-regexp
+    (rx "." (or "pdf" "djvu" "epub") eos)
+    "Files matching this are opened externally instead of visited.")
+
+  (defun my/find-file-externally (orig filename &optional nowarn rawfile wildcards)
+    "Open PDFs externally instead of visiting them."
+    (if (and (not rawfile)
+             (string-match-p my/external-file-regexp filename)
+             (not (file-remote-p filename)))
+        (progn
+          (my/open-externally filename)
+          (user-error "Opened %s externally" (file-name-nondirectory filename)))
+      (funcall orig filename nowarn rawfile wildcards)))
+
+  (advice-add 'find-file-noselect :around #'my/find-file-externally)
 #+end_src
 
 * Programming
@@ -933,6 +954,11 @@
 #+begin_src emacs-lisp
   (setopt completion-category-overrides
           '((project-file (styles basic substring partial-completion))))
+#+end_src
+
+*** Show current function name in modline
+#+begin_src emacs-lisp
+  (which-function-mode 1)
 #+end_src
 
 ** Elisp
@@ -1082,9 +1108,12 @@
 * PDFs
 #+begin_src emacs-lisp
   (when my/in-flatpak-p
-    (setq
-     doc-view-pdfdraw-program (expand-file-name "mutool-flatpak" user-emacs-directory)
-     doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf
-     doc-view-cache-directory (expand-file-name "~/.cache/docview")
-     doc-view-mupdf-use-svg (image-type-available-p 'svg)))
+    (let* ((pdftotext (my/host-command "pdftotext")))
+      (setq
+       doc-view-pdftotext-program (car pdftotext)
+       doc-view-pdftotext-program-args (append (cdr pdftotext) doc-view-pdftotext-program-args)
+       doc-view-pdfdraw-program (expand-file-name "mutool-flatpak" user-emacs-directory)
+       doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf
+       doc-view-cache-directory (expand-file-name "~/.cache/docview")
+       doc-view-mupdf-use-svg (image-type-available-p 'svg))))
 #+end_src
