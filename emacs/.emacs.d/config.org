@@ -1105,15 +1105,3 @@
   (add-hook 'dired-mode-hook #'auto-revert-mode)
 #+end_src
 
-* PDFs
-#+begin_src emacs-lisp
-  (when my/in-flatpak-p
-    (let* ((pdftotext (my/host-command "pdftotext")))
-      (setq
-       doc-view-pdftotext-program (car pdftotext)
-       doc-view-pdftotext-program-args (append (cdr pdftotext) doc-view-pdftotext-program-args)
-       doc-view-pdfdraw-program (expand-file-name "mutool-flatpak" user-emacs-directory)
-       doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf
-       doc-view-cache-directory (expand-file-name "~/.cache/docview")
-       doc-view-mupdf-use-svg (image-type-available-p 'svg))))
-#+end_src
