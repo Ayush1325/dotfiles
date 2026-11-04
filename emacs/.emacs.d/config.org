@@ -1029,6 +1029,16 @@
       (add-to-list 'eglot-server-programs
                    `((rust-ts-mode rust-mode) . ,(my/container-command "rust-analyzer")))))
 #+end_src
+*** Compilation error support
+- Basically enables jump to error functionality for rust projects when using compile from emacs.
+#+begin_src emacs-lisp
+  (with-eval-after-load 'compile
+    (add-to-list 'compilation-error-regexp-alist-alist
+                 '(rustc
+                   "^ *--> \\([^:\n]+\\):\\([0-9]+\\):\\([0-9]+\\)"
+                   1 2 3))
+    (add-to-list 'compilation-error-regexp-alist 'rustc))
+#+end_src
 
 ** C/CPP
 *** Treesitter
