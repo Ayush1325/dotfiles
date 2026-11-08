@@ -23,12 +23,6 @@
   (setq auto-save-file-name-transforms
         `((".*" ,temporary-file-directory t)))
 #+end_src
-** IDO
-#+begin_src emacs-lisp
-  (setq ido-enable-flex-matching t)
-  (ido-mode 1)
-#+end_src
-
 ** Line Numbers
 #+begin_src emacs-lisp
   (setq-default display-line-numbers-type 'relative)
@@ -83,10 +77,6 @@
   (scroll-bar-mode -1)
 #+end_src
 
-** Shorten prompt answers
-#+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
-#+end_src
 ** Remove startpage
 #+begin_src emacs-lisp
   (setq inhibit-startup-screen t)
@@ -142,7 +132,6 @@
     :ensure t
     :init
     (setq evil-want-keybinding nil)
-    (setq evil-want-minibuffer t)
     :config
     (evil-mode 1)
     (setq which-key-allow-evil-operators t)
@@ -158,7 +147,6 @@
     (evil-collection-init))
 #+end_src
 
-** Basic keybindings
 * Gnus
 ** Accounts
 *** Disable NNTP. Not using it
@@ -899,6 +887,12 @@
 
 * Programming
 ** Basics
+*** Treesitter
+#+begin_src emacs-lisp
+  (setopt treesit-enabled-modes t
+  	treesit-auto-install-grammar 'ask)
+#+end_src
+
 *** Completion
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'completion-preview-mode)
@@ -961,12 +955,11 @@
   (which-function-mode 1)
 #+end_src
 
-** Elisp
-- eldoc shows a nice function signature in echo area.
+*** Hover docs
 #+begin_src emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
-  (add-hook 'ielm-mode-hook 'eldoc-mode)
+  (with-eval-after-load 'eglot
+    (require 'markdown-ts-mode)
+    (setopt eglot-documentation-renderer #'markdown-ts-view-mode))
 #+end_src
 
 ** Git
@@ -1012,10 +1005,7 @@
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :ensure nil
-    :mode "\\.rs\\'"
-    :init
-    (add-to-list 'treesit-language-source-alist
-                 '(rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.24.2")))
+    :mode "\\.rs\\'")
 #+end_src
 *** LSP
 #+begin_src emacs-lisp
@@ -1043,14 +1033,7 @@
 #+begin_src emacs-lisp
   (use-package c-ts-mode
     :ensure nil
-    :mode "\\.c\\'"
-    :init
-    (add-to-list 'treesit-language-source-alist
-                 '(c "https://github.com/tree-sitter/tree-sitter-c" "v0.24.2"))
-    (add-to-list 'treesit-language-source-alist
-                 '(cpp "https://github.com/tree-sitter/tree-sitter-cpp" "v0.23.4"))
-    (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
-    (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode)))
+    :mode "\\.c\\'")
 #+end_src
 
 *** LSP
@@ -1092,10 +1075,7 @@
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode
     :ensure nil
-    :mode "\\.ya?ml\\'"
-    :init
-    (add-to-list 'treesit-language-source-alist
-                 '(yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+    :mode "\\.ya?ml\\'")
 #+end_src
 ** Typst
 #+begin_src emacs-lisp
