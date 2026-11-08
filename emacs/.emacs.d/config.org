@@ -634,7 +634,7 @@
      (lambda (file)
        (denote--file-with-temp-buffer file
          (delay-mode-hooks (org-mode))
-         (when-let ((pos (org-find-exact-headline-in-buffer my/report-heading)))
+         (when-let* ((pos (org-find-exact-headline-in-buffer my/report-heading)))
   	 (goto-char pos)
   	 (string-trim (org-get-entry)))))
      (my/journal-files-for time)))
@@ -982,31 +982,28 @@
 #+end_src
 
 ** Markdown
-*** TODO Markdown Mode: Remove once I get emacs 31
-- emacs 31 has markdown-ts-mode built-in, so better to use it. At the moment of writing this, I am
-  on emacs 30.2
+*** Treesitter
 #+begin_src emacs-lisp
-  (use-package markdown-mode
-    :ensure t
-    :mode ("\\.md\\'" . gfm-mode))
-
-  (use-package edit-indirect
-    :ensure t)
+  (use-package markdown-ts-mode
+    :ensure nil
+    :mode ("\\.md\\'" "\\.mdx\\'" "\\.markdown\\'")
+    :config
+    (require 'markdown-ts-mode-x))
 #+end_src
 
 *** Org like indent
 #+begin_src emacs-lisp
   (use-package markdown-indent-mode
     :ensure t
-    :hook ((markdown-mode markdown-ts-mode) . markdown-indent-mode))
+    :hook (markdown-ts-mode . markdown-indent-mode))
 #+end_src
 *** Add spellcheck
 #+begin_src emacs-lisp
-  (add-hook 'gfm-mode-hook #'turn-on-flyspell)
+  (add-hook 'markdown-ts-mode-hook #'turn-on-flyspell)
 #+end_src
 *** Autowrap
 #+begin_src emacs-lisp
-  (add-hook 'gfm-mode-hook
+  (add-hook 'markdown-ts-mode-hook
             (lambda () (setq-local fill-column 100)))
 #+end_src
 ** Rust
